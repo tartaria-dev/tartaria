@@ -32,7 +32,7 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
 
 # begin custom changes
 # GNOME
-RUN pacman -Sy --noconfirm gnome gnome-extra && \
+RUN pacman -Sy --noconfirm gnome gnome-extra networkmanager && \
     systemctl enable gdm.service && \
     systemctl enable NetworkManager.service
 
