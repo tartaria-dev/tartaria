@@ -1,3 +1,5 @@
+echo "::group:: Configure systemd services"
+
 # flatpak preinstall
 echo -e '[Unit]\n\
 Description=Preinstall Flatpaks\n\
@@ -33,6 +35,7 @@ WantedBy=default.target' > /usr/lib/systemd/user/wl-clip-persist.service
 mkdir -p /usr/lib/systemd/system-preset /usr/lib/systemd/system
 
 touch /usr/libexec/nirconium-group-fix
+
 echo -e '#!/bin/sh\ncat /usr/lib/sysusers.d/*.conf | grep -e "^g" | grep -v -e "^#" | awk "NF" | awk '\''{print $2}'\'' | grep -v -e "wheel" -e "root" -e "sudo" | xargs -I{} sed -i "/{}/d" $1' > /usr/libexec/nirconium-group-fix
 chmod +x /usr/libexec/nirconium-group-fix
 echo -e '[Unit]\n\
@@ -64,3 +67,5 @@ systemctl enable polkit.service \
 # user
 systemctl --global enable \
     wl-clip-persist.service
+
+echo "::endgroup::"

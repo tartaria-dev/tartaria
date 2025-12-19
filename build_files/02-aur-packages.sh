@@ -1,3 +1,5 @@
+echo "::group:: Install main packages (AUR)"
+
 # setup user
 useradd -m -G wheel builder
 echo "builder:1234" | chpasswd
@@ -15,3 +17,5 @@ su - builder -c "yay -S --noconfirm hypryou hypryou-greeter hypryou-utils"
 rm /etc/sudoers.d/10-installer
 pkill -u builder
 userdel -r builder
+
+echo "::endgroup::"

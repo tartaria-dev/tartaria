@@ -1,3 +1,5 @@
+echo "::group:: Install main packages"
+
 # init
 pacman -Syu --noconfirm
 
@@ -45,3 +47,5 @@ pacman -S --noconfirm greetd xwayland-satellite xdg-desktop-portal-kde xdg-deskt
 
 # yay deps
 pacman -S --noconfirm fakeroot debugedit go make gcc
+
+echo "::endgroup::"
