@@ -25,7 +25,11 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    sh /ctx/01-packages.sh
+    sh /ctx/01-packages.sh && \
+    sh /ctx/02-flatpaks.sh && \
+    sh /ctx/03-brew.sh && \
+    sh /ctx/04-systemd.sh && \
+    sh /ctx/05-misc.sh
 
 # https://github.com/bootc-dev/bootc/issues/1801
 RUN --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \

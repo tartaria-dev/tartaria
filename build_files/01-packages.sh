@@ -15,7 +15,7 @@ pacman -S --noconfirm noto-fonts noto-fonts-cjk noto-fonts-emoji unicode-emoji n
 
 # cli
 pacman -S --noconfirm sudo bash bash-completion fastfetch btop jq less lsof nano openssh powertop man-db wget yt-dlp \
-    tree usbutils vim wl-clip-persist cliphist unzip ptyxis glibc-locales tar udev starship tuned-ppd tuned hyfetch curl patchelf 
+    tree usbutils vim wl-clip-persist cliphist unzip ptyxis glibc-locales tar udev starship tuned-ppd tuned hyfetch curl patchelf yay
 
 # containerization
 pacman -S --noconfirm distrobox docker podman
@@ -37,3 +37,8 @@ pacman -S --noconfirm pipewire pipewire-pulse pipewire-zeroconf pipewire-ffado p
 
 # printer
 pacman -S --noconfirm cups cups-browsed hplip
+
+# desktop
+pacman -S --noconfirm greetd xwayland-satellite xdg-desktop-portal-kde xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome \
+    ffmpegthumbs kdegraphics-thumbnailers kdenetwork-filesharing kio-admin matugen accountsservice hyprland hypryou dgop cava dolphin \
+    breeze brightnessctl ddcutil xdg-utils kservice5 archlinux-xdg-menu shared-mime-info kio glycin greetd-regreet gnome-themes-extra
