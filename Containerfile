@@ -30,4 +30,10 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
 # RUN pacman -S whois --noconfirm
 # RUN usermod -p "$(echo "changeme" | mkpasswd -s)" root
 
+# begin custom changes
+# GNOME
+RUN pacman -Sy --noconfirm gnome gnome-extra && \
+    systemctl enable gdm.service && \
+    systemctl enable NetworkManager.service
+
 RUN bootc container lint
