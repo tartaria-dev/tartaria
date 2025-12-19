@@ -42,3 +42,6 @@ pacman -S --noconfirm cups cups-browsed hplip
 pacman -S --noconfirm greetd xwayland-satellite xdg-desktop-portal-kde xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome \
     ffmpegthumbs kdegraphics-thumbnailers kdenetwork-filesharing kio-admin matugen accountsservice hyprland dgop cava dolphin \
     breeze brightnessctl ddcutil xdg-utils kservice5 archlinux-xdg-menu shared-mime-info kio glycin gnome-themes-extra
+
+# yay deps
+pacman -S --noconfirm fakeroot debugedit
