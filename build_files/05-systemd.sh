@@ -68,4 +68,3 @@ systemctl --global enable \
     wl-clip-persist.service
 
 echo "::endgroup::"
-exit 1
