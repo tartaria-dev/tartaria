@@ -1,3 +1,7 @@
+#!/bin/bash
+# setup flatpak preinstalls
+
+set -euo pipefail
 echo "::group::Configure flatpak installation"
 
 mkdir -p /usr/share/flatpak/preinstall.d/

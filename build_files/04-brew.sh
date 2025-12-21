@@ -1,3 +1,7 @@
+#!/bin/bash
+# configure brew package manager, may switch soon though
+
+set -euo pipefail
 echo "::group:: Install and configure Brew"
 
 curl -s --variable '%AUTH_HEADER' --expand-header '{{AUTH_HEADER}}' https://api.github.com/repos/ublue-os/packages/releases/latest \

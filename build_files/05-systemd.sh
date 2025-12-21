@@ -1,3 +1,7 @@
+#!/bin/bash
+# configure important system services
+
+set -euo pipefail
 echo "::group:: Configure systemd services"
 
 # flatpak preinstall
@@ -30,10 +34,18 @@ ExecStart=/usr/bin/wl-clip-persist --clipboard regular\n\
 [Install]\n\
 WantedBy=default.target' > /usr/lib/systemd/user/wl-clip-persist.service
 
+RUN echo -e '[Unit]\n\
+Description=udiskie automounter\n\
+\n\
+[Service]\n\
+ExecStart=/usr/bin/udiskie\n\
+\n\
+[Install]\n\
+WantedBy=default.target' > /usr/lib/systemd/user/udiskie.service
+
 # This fixes a user/groups error with rebasing from other problematic images.
 # FIXME Do NOT remove until fixed upstream or fixed universally. Updating with new fix also fine. Script created by Tulip.
-mkdir -p /usr/lib/systemd/system-preset /usr/lib/systemd/system
-mkdir -p /usr/libexec # this directory doesnt seem to exist during build, hopefully this doesnt affect anything while live
+mkdir -p /usr/libexec /usr/lib/systemd/system-preset /usr/lib/systemd/system
 
 echo -e '#!/bin/sh\ncat /usr/lib/sysusers.d/*.conf | grep -e "^g" | grep -v -e "^#" | awk "NF" | awk '\''{print $2}'\'' | grep -v -e "wheel" -e "root" -e "sudo" | xargs -I{} sed -i "/{}/d" $1' > /usr/libexec/nirconium-group-fix
 chmod +x /usr/libexec/nirconium-group-fix
@@ -65,6 +77,8 @@ systemctl enable polkit.service \
 
 # user
 systemctl --global enable \
-    wl-clip-persist.service
+    wl-clip-persist.service \
+    udiskie.service \
+    opentabletdriver.service
 
 echo "::endgroup::"
