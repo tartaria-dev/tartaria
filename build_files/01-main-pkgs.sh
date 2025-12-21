@@ -7,8 +7,8 @@ set -euo pipefail
 set +x
 
 # media
-pacman -S --noconfirm librsvg libglvnd qt6-multimedia-ffmpeg plymouth acpid ddcutil dmidecode mesa-utils ntfs-3g \
-    vulkan-tools wayland-utils playerctl
+pacman -S --noconfirm librsvg libglvnd qt6-multimedia-ffmpeg plymouth acpid ddcutil dmidecode \
+    mesa-utils vulkan-tools wayland-utils playerctl
 
 # fonts
 pacman -S --noconfirm noto-fonts noto-fonts-cjk noto-fonts-emoji unicode-emoji noto-fonts-extra \
@@ -39,6 +39,9 @@ pacman -S --noconfirm pipewire pipewire-pulse pipewire-zeroconf pipewire-ffado p
 
 # printer
 pacman -S --noconfirm cups cups-browsed hplip
+
+# filesystems
+pacman -S --noconfirm gpart exfatprogs f2fs-tools jfsutils mtools nilfs-utils ntfs-3g udftools
 
 # interface
 pacman -S --noconfirm greetd hyprland xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome \
