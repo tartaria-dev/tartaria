@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   build_push:
-    name: Build Nirconium image
+    name: Build Nirconium
     runs-on: ubuntu-24.04
 
     permissions:

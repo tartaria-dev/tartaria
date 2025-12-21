@@ -46,7 +46,6 @@ set +oue pipefail
 
 # install aur pkgs
 su - builder -c "yay -S --noconfirm hypryou hypryou-greeter soar"
-set -oue pipefail
 
 # cleanup
 rm /etc/sudoers.d/10-installer
