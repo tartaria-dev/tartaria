@@ -1,10 +1,10 @@
 #!/bin/bash
-# commands for installing misc packages (AUR, chaotic AUR, bootc)
+# commands for installing misc packages (AUR, Chaotic AUR, bootc)
 
 set -euo pipefail
 echo "::group::Install misc packages"
 
-### chaotic AUR / bootc
+### Chaotic AUR / bootc
 pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
 pacman-key --init && pacman-key --lsign-key 3056513887B78AEB
 pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm
@@ -26,7 +26,7 @@ pacman -S --noconfirm \
     bootc/uupd && \
     systemctl enable uupd.timer
 
-### normal AUR
+### normal AUR (AUR packages not packaged in Chaotic AUR)
 
 # setup user
 useradd -m -G wheel builder
@@ -35,11 +35,11 @@ echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-installer
 
 # build yay
 su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
-                 cd ~/yay && \
-                 makepkg -si --noconfirm"
+                cd ~/yay && \
+                makepkg -si --noconfirm"
 
 # install aur pkgs
-su - builder -c "yay -S --noconfirm hypryou hypryou-greeter hypryou-utils"
+su - builder -c "yay -S --noconfirm hypryou hypryou-greeter"
 
 # cleanup
 rm /etc/sudoers.d/10-installer
