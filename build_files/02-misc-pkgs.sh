@@ -40,12 +40,11 @@ su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
                 cd ~/yay && \
                 makepkg -si --noconfirm"
 
-# install rust & disable safety
-pacman -S --noconfirm extra/rust
+# disable safety
 set +oue pipefail
 
 # install aur pkgs
-su - builder -c "yay -S --noconfirm hypryou hypryou-greeter soar"
+su - builder -c "yay -S --noconfirm hypryou hypryou-greeter"
 
 # cleanup
 rm /etc/sudoers.d/10-installer
