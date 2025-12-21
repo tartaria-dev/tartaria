@@ -16,4 +16,10 @@ echo -e 'ntsync' > /etc/modules-load.d/ntsync.conf
 echo -e 'net.core.default_qdisc=fq 
 net.ipv4.tcp_congestion_control=bbr' > /etc/sysctl.d/99-bbr3.conf
 
+# setup zram
+echo -e '[zram0]\nzram-size = min(ram, 8192)' > /usr/lib/systemd/zram-generator.conf
+echo -e 'enable systemd-resolved.service' > /usr/lib/systemd/system-preset/91-resolved-default.preset
+echo -e 'L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf' > /usr/lib/tmpfiles.d/resolved-default.conf
+systemctl preset systemd-resolved.service
+
 echo "::endgroup::"
