@@ -1,8 +1,10 @@
 #!/bin/bash
 # miscellaneous stuff
 
-set -euo pipefail
 echo "::group::Miscellaneous tasks"
+
+set -euo pipefail
+set +x
 
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true

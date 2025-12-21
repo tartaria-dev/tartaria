@@ -1,8 +1,10 @@
 #!/bin/bash
 # commands for installing main arch packages
 
-set -euo pipefail
 echo "::group::Install main packages"
+
+set -euo pipefail
+set +x
 
 # media
 pacman -S --noconfirm librsvg libglvnd qt6-multimedia-ffmpeg plymouth acpid ddcutil dmidecode mesa-utils ntfs-3g \

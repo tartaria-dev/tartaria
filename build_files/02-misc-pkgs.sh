@@ -3,9 +3,10 @@
 
 echo "::group::Install misc packages"
 
-### Chaotic AUR / bootc
-
 set -euo pipefail
+set +x
+
+### Chaotic AUR / bootc
 
 # setup Chaotic AUR
 pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com

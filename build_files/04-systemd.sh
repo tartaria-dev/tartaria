@@ -1,8 +1,10 @@
 #!/bin/bash
 # configure important system services
 
+echo "::group::Configure systemd services"
+
 set -euo pipefail
-echo "::group:: Configure systemd services"
+set +x
 
 # system
 systemctl enable polkit.service \
