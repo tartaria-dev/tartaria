@@ -29,12 +29,13 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    sh /ctx/01-packages.sh && \
-    sh /ctx/02-aur-packages.sh && \
-    sh /ctx/03-flatpaks.sh && \
-    sh /ctx/04-brew.sh && \
-    sh /ctx/05-systemd.sh && \
-    sh /ctx/06-misc.sh
+    sh /ctx/00-base.sh && \
+    bash /ctx/01-main-pkgs.sh && \
+    bash /ctx/02-misc-pkgs.sh && \
+    bash /ctx/03-flatpaks.sh && \
+    bash /ctx/04-brew.sh && \
+    bash /ctx/05-systemd.sh && \
+    bash /ctx/06-misc.sh
 
 RUN echo "::group::Finalize image build"
 
