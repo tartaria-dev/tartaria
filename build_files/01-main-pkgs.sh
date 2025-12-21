@@ -39,7 +39,7 @@ pacman -S --noconfirm pipewire pipewire-pulse pipewire-zeroconf pipewire-ffado p
 pacman -S --noconfirm cups cups-browsed hplip
 
 # interface
-pacman -S --noconfirm greetd xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome \
+pacman -S --noconfirm greetd hyprland xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome \
     ffmpegthumbs matugen accountsservice dgop cava nautilus kitty firefox brightnessctl \
     ddcutil xdg-utils archlinux-xdg-menu shared-mime-info glycin gnome-themes-extra
 
