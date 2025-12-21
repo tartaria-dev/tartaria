@@ -34,7 +34,6 @@ pacman -S --noconfirm \
 useradd -m -G wheel builder
 echo "builder:1234" | chpasswd
 echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-installer
-set +euo pipefail
 
 # build yay
 su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
