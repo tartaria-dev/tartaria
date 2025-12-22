@@ -49,7 +49,7 @@ pacman -S --noconfirm greetd hyprland xdg-desktop-portal xdg-user-dirs xdg-deskt
     accountsservice dgop cava  brightnessctl ddcutil xdg-utils archlinux-xdg-menu shared-mime-info glycin gnome-themes-extra
 
 # apps
-pacman -S --noconfirm firefox kitty dolphin okular gwenview ark plasma-systemmonitor kate kdenlive \
+pacman -S --noconfirm firefox kitty dolphin okular gwenview ark plasma-systemmonitor kate kdenlive frameworkintegration \
     kdeconnect krita partitionmanager kcalc haruna elisa kweather impression systemsettings
 
 echo "::endgroup::"
