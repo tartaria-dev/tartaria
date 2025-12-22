@@ -44,7 +44,7 @@ su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
 set +oue pipefail
 
 # install aur pkgs
-su - builder -c "yay -S --noconfirm hypryou hypryou-greeter"
+su - builder -c "yay -S --noconfirm hypryou hypryou-greeter darkly"
 
 # cleanup
 rm /etc/sudoers.d/10-installer
