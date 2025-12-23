@@ -1,7 +1,7 @@
 #!/bin/bash
 # commands for installing main arch packages
 
-echo "::group::Install main packages"
+echo "::group::===========================> Install main packages"
 
 set -euo pipefail
 set +x

@@ -1,7 +1,7 @@
 #!/bin/bash
 # final touches, DO NOT MODIFY
 
-echo "::group::Finalize image build"
+echo "::group::===========================> Finalize image build"
 
 set +x
 

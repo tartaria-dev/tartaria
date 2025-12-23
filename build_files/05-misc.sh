@@ -1,7 +1,7 @@
 #!/bin/bash
 # miscellaneous stuff
 
-echo "::group::Miscellaneous tasks"
+echo "::group::===========================> Miscellaneous tasks"
 
 set -euo pipefail
 set +x

@@ -1,7 +1,7 @@
 #!/bin/bash
 # configure important system services
 
-echo "::group::Configure systemd services"
+echo "::group::===========================> Configure systemd services"
 
 set -euo pipefail
 set +x

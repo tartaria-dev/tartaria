@@ -1,7 +1,7 @@
 #!/bin/bash
 # install Brew
 
-echo "::group::Install Brew"
+echo "::group::===========================> Install Brew"
 
 set +x
 
