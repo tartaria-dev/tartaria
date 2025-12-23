@@ -18,6 +18,7 @@ systemctl enable polkit.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \
+    bluetooth.service \
     uupd.timer
 
 # user
