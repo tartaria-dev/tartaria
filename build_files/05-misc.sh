@@ -6,6 +6,9 @@ echo "::group::===========================> Miscellaneous tasks"
 set -euo pipefail
 set +x
 
+# set Darkly as default Qt theme
+echo "QT_STYLE_OVERRIDE=Darkly" | tee -a /etc/environment
+
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
