@@ -1,1 +1,6 @@
-{"image":"mcr.microsoft.com/devcontainers/base:ubuntu"}
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "mounts": [
+        "source=/var/home,target=/home/host,type=bind,consistency=cached"
+    ]
+}
