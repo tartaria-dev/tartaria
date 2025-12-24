@@ -25,7 +25,7 @@ echo -e 'L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf' > /
 systemctl preset systemd-resolved.service
 
 # setup starship prompt
-echo 'eval "$(starship init bash)"' > /etc/profile.d/starship-init.sh
+echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
 # branding stuffs
 cp -f /usr/share/nirconium/pixmaps/watermark.png /usr/share/plymouth/themes/spinner/watermark.png
