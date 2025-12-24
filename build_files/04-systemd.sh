@@ -13,7 +13,6 @@ systemctl enable polkit.service \
     firewalld.service \
     greetd.service \
     rechunker-group-fix.service \
-    flatpak-preinstall.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \

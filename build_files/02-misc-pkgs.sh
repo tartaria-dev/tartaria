@@ -25,7 +25,7 @@ pacman -Sy --noconfirm
 pacman -S --noconfirm \
     chaotic-aur/flatpak-git chaotic-aur/obs-studio-stable chaotic-aur/obs-vkcapture-git chaotic-aur/distroshelf \
     chaotic-aur/ttf-symbola chaotic-aur/opentabletdriver chaotic-aur/qt6ct-kde chaotic-aur/ttf-twemoji chaotic-aur/bootc \
-    chaotic-aur/bibata-cursor-theme chaotic-aur/bazaar-git bootc/uupd
+    chaotic-aur/bibata-cursor-theme chaotic-aur/bazaar-git chaotic-aur/gearlever chaotic-aur/darkly-qt6-git bootc/uupd
 
 ### normal AUR (AUR packages not packaged in Chaotic AUR)
 
@@ -43,7 +43,7 @@ su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
 set +oue pipefail
 
 # install aur pkgs
-su - builder -c "yay -S --noconfirm hypryou hypryou-greeter darkly"
+su - builder -c "yay -S --noconfirm hypryou hypryou-greeter warehouse-git"
 
 # cleanup
 rm /etc/sudoers.d/10-installer
