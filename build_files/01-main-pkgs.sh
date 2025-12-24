@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # commands for installing main arch packages
 
 echo "::group::===========================> Install main packages"
@@ -21,7 +21,7 @@ pacman -S --noconfirm bluez bluez-utils
 # cli
 pacman -S --noconfirm sudo fastfetch btop jq less lsof nano openssh powertop man-db wget yt-dlp fakeroot debugedit go make \
     gcc tree usbutils vim wl-clip-persist cliphist unzip foot glibc-locales tar udev starship tuned-ppd tuned hyfetch \
-    curl patchelf git
+    curl patchelf git bash bash-completion
 
 # containerization
 pacman -S --noconfirm distrobox podman docker

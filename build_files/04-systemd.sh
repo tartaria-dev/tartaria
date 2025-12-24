@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # configure important system services
 
 echo "::group::===========================> Configure systemd services"

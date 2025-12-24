@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # commands for installing misc packages (AUR, Chaotic AUR, bootc)
 
 echo "::group::===========================> Install misc packages"

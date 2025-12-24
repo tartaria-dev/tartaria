@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # miscellaneous stuff
 
 echo "::group::===========================> Miscellaneous tasks"
