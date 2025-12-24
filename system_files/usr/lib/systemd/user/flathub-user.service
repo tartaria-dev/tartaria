@@ -1,0 +1,13 @@
+[Unit]
+Description=Enable Flathub User Repository
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+ExecStart=/usr/bin/systemctl --user disable flathub-user.service
+RemainAfterExit=no
+
+[Install]
+WantedBy=default.target

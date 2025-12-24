@@ -24,6 +24,7 @@ systemctl enable polkit.service \
 systemctl --global enable \
     wl-clip-persist.service \
     udiskie.service \
-    opentabletdriver.service
+    opentabletdriver.service \
+    flathub-user.service
 
 echo "::endgroup::"
