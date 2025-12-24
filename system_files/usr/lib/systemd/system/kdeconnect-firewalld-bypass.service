@@ -1,0 +1,13 @@
+[Unit]
+Description=Let KDE Connect bypass firewalld
+After=network-online.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=firewall-cmd --permanent --zone=public --add-service=kdeconnect
+ExecStart=firewall-cmd --reload
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target

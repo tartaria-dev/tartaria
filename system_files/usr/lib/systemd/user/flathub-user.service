@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=oneshot
 ExecStart=/usr/bin/flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 ExecStart=/usr/bin/systemctl --user disable flathub-user.service
-RemainAfterExit=no
+RemainAfterExit=false
 
 [Install]
 WantedBy=default.target
