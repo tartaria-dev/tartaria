@@ -28,7 +28,7 @@ systemctl preset systemd-resolved.service
 fc-cache --force --really-force --system-only --verbose
 
 # setup starship prompt
-echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
+echo 'eval "$(oh-my-posh init bash)"' >> /etc/bash.bashrc
 
 # make jetbrains-mono default Foot font
 sed -i 's/^# font=monospace:size=11/font=JetBrains Mono Nerd:size=11/' /etc/xdg/foot/foot.ini
