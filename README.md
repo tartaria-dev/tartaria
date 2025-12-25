@@ -28,13 +28,13 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - Based on CachyOS/Arch with bootc support
 
-- Ease of use whether you're a terminal warrior or GUI master
-
 - Hyprland, a tiling window manager that doesnt sacrifice on looks
 
 - HyprYou, a customizable shell for Hyprland that uses the [Material 3 Design](m3.material.io) language whereever possible
 
 - CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
+
+- Foot terminal for a blazing-fast experience alsong with starship for looks
 
 - Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
 
