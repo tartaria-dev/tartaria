@@ -24,6 +24,9 @@ echo -e 'enable systemd-resolved.service' > /usr/lib/systemd/system-preset/91-re
 echo -e 'L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf' > /usr/lib/tmpfiles.d/resolved-default.conf
 systemctl preset systemd-resolved.service
 
+# refresh font cache
+fc-cache --force --really-force --system-only --verbose
+
 # setup starship prompt
 echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
