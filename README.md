@@ -10,43 +10,46 @@ A custom arch-bootc image built for container usage/development and day-to-day u
 
 <img width="1366" height="768" alt="2025-12-24-221431_hyprshot" src="https://github.com/user-attachments/assets/1a85d767-9b49-489a-8e4c-7ee4a12ff17c" />
 
+
 # How can I use this?
-WIP.
+At the moment, only rebasing is supported. Rebasing has been highly untested, however, so please report any issues rebasing.
+Use the following command on any Fedora or Fedora based system that supports `bootc`:
+```
+sudo bootc switch ghcr.io/nirconium-dev/nirconium
+```
+...and you'll be on your (jolly) way!
+
 
 # Can I customize this?
 Absolutely! Although we've worked to provide good defaults OOTB, you can still customize the looks to your liking.
 
+
 # Features
 
-
-- Linux/Arch Bootc
-
+- Based on CachyOS/Arch with bootc support
 
 - Ease of use whether you're a terminal warrior or GUI master
 
-
 - Hyprland, a tiling window manager that doesnt sacrifice on looks
 
+- HyprYou, a customizable shell for Hyprland that uses the [Material 3 Design](m3.material.io) language whereever possible
 
-- HyprYou, a shell for Hyprland that uses the [Material 3 Design](m3.material.io) language whereever possible
-
-
-- CachyOS Kernel with cpu optimizations (for V3+ cpus) (Bore scheduler)
-
+- CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
 
 - Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
 
 
+# Nirconium is a stupid name. Why Nirconium?
+My hatred for a specific wax baby inspired the name.
+
+
 # Notice
-This OS is only compatible and intended for desktop PCs with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels). NVIDIA graphics are unsupported by this image and will never be supported directly, a custom image fork of this OS would be needed to install NVIDIA graphics drivers as we have no intention whatsoever to provide an image with such drivers.
+This OS is only compatible and intended for desktop PCs with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels). An image with NVIDIA drivers OOTB is in the works.
 
 
-
-# Contact and thx
+# Contact
 Developers can currently most easily be reached in the [Zirconium Discord](https://discord.gg/mmgNQpxwhW) or the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3).
 
-
 Nirconium is headed by certifiedfooliolol/'somebody once told me'/shartmunk.
-
 
 Special thank yous to [Tulip](https://github.com/tulilirockz) and [Xenia Meraki](https://github.com/XeniaMeraki) for general help/support
