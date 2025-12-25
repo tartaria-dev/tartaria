@@ -4,11 +4,11 @@
 
 <h3 align="center">Arch Bootc / Hyprland / HyprYou</h3>
 
+<img width="1366" height="768" alt="2025-12-24-221431_hyprshot" src="https://github.com/user-attachments/assets/1a85d767-9b49-489a-8e4c-7ee4a12ff17c" />
+
 
 # What's Nirconium?
 A custom arch-bootc image built for container usage/development and day-to-day usage, making use of [Hyprland](https://hypr.land) and [HyprYou](https://github.com/koeqaife/hyprland-material-you) to provide a usable OOTB TWM experience without sacrificing on looks.
-
-<img width="1366" height="768" alt="2025-12-24-221431_hyprshot" src="https://github.com/user-attachments/assets/1a85d767-9b49-489a-8e4c-7ee4a12ff17c" />
 
 
 # How can I use this?
