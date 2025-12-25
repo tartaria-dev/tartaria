@@ -3,7 +3,7 @@
 
 echo "::group::===========================> Install Brew"
 
-set -ouex
+set -ouex pipefail
 
 curl -s --variable '%AUTH_HEADER' --expand-header '{{AUTH_HEADER}}' https://api.github.com/repos/ublue-os/packages/releases/latest \
     | jq -r '.assets[] | select(.name | test("homebrew-x86_64.*\\.tar\\.zst")) | .browser_download_url' \
