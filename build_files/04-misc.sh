@@ -46,11 +46,6 @@ s|^SUPPORT_URL=.*|SUPPORT_URL=\"https://github.com/nirconium-dev/nirconium/issue
 s|^CPE_NAME=\".*\"|CPE_NAME=\"cpe:/o:nirconium-dev:nirconium\"|
 s|^DOCUMENTATION_URL=.*|DOCUMENTATION_URL=\"https://github.com/nirconium-dev/nirconium\"|
 s|^DEFAULT_HOSTNAME=.*|DEFAULT_HOSTNAME="nirconium"|
-
-/^REDHAT_BUGZILLA_PRODUCT=/d
-/^REDHAT_BUGZILLA_PRODUCT_VERSION=/d
-/^REDHAT_SUPPORT_PRODUCT=/d
-/^REDHAT_SUPPORT_PRODUCT_VERSION=/d
 EOF
 
 echo "::endgroup::"
