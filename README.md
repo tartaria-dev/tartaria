@@ -34,7 +34,7 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
 
-- Foot terminal for a blazing-fast experience along with Oh-My-Posh for looks
+- Foot terminal for a blazing-fast TUI experience along with Oh-My-Posh for looks
 
 - Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
 
@@ -43,10 +43,6 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 - Zed, a high-performance rust-based IDE for code editing
 
 - ZRAM enabled by default
-
-
-# Literally any other name would've been better. Why?
-My pure, unadulterated hatred for a specific wax baby inspired the name.
 
 
 # Notice
@@ -58,4 +54,8 @@ Developers can currently most easily be reached in the [Zirconium Discord](https
 
 Nirconium is headed by certifiedfooliolol/'somebody once told me'/shartmunk.
 
-Special thank yous to [Tulip](https://github.com/tulilirockz) and [Xenia Meraki](https://github.com/XeniaMeraki) for general help/support
+Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support!
+
+
+# Literally any other name would've been better. Why?
+My pure, unadulterated hatred for a specific wax baby inspired the name. God, I hate that baby.
