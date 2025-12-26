@@ -22,6 +22,9 @@ sudo bootc switch ghcr.io/tartaria-dev/tartaria
 ```
 ...and you'll be on your (jolly) way!
 
+**NOTE:**
+When you login, ensure "Hypryou" is selected on the dropdown in the bottom-left corner of the login screen. Otherwise, the Hypryou shell or Hyprland will not start properly!
+
 
 # Can I customize this?
 Absolutely! Although we've worked to provide good defaults OOTB, you can still customize the looks to your liking.
