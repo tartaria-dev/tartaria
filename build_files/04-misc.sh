@@ -31,7 +31,7 @@ fc-cache --force --really-force --system-only --verbose
 echo 'eval "$(oh-my-posh init bash)"' >> /etc/bash.bashrc
 
 # make jetbrains-mono default Foot font
-sed -i 's/^# font=monospace:size=11/font=monospace:size=11/' /etc/xdg/foot/foot.ini
+sed -i 's/^# font=monospace:size=11/font=FiraCode Nerd Font:size=11/' /etc/xdg/foot/foot.ini
 
 # branding stuffs
 cp -f /usr/share/nirconium/pixmaps/watermark.png /usr/share/plymouth/themes/spinner/watermark.png
