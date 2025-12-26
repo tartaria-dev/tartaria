@@ -57,9 +57,5 @@ Nirconium is headed by me, certifiedfooliolol. You may contact me via my Discord
 Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support!
 
 
-# Why Hyprland?
-I understand there are controversies surrounding the author of the software and the general community, but I still stick with it due to how modern it is, and the fact that these controversies dont seem to affect the end-user experience all that much, which is the only thing I care about. If I switched to a different compositor, particularly Niri, I might as well be a XeniaOS fork. Not that it's a bad thing, but I would like to remain sufficiently different than what's currently available. Also, Hypryou only supports Hyprland, which is unfortunate.
-
-
 # Literally any other name would've been better. Why?
 My pure, unadulterated hatred for a specific wax baby inspired the name. God, I hate that baby.
