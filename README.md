@@ -43,8 +43,8 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 - Zed, a high-performance rust-based IDE for code editing
 
 
-# Nirconium is a stupid name. Why Nirconium?
-My hatred for a specific wax baby inspired the name.
+# Literally any other name would've been better. Why?
+My pure, unadulterated hatred for a specific wax baby inspired the name.
 
 
 # Notice
