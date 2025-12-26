@@ -38,11 +38,13 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
 
-- Distrobox and Podman for containerization, along with DistroShelf
+- Distrobox and Podman for containerization, along with DistroShelf (GUI container manager)
 
-- Zed, a high-performance rust-based IDE for code editing
+- Zed, a high-performance rust-based IDE for code editing, supports Devpod (not included)
 
-- ZRAM enabled by default
+- Zen, a beautiful Firefox-based browser with vertical tabs and a design similar to that of Arc Browser
+
+- ZRAM enabled by default (can't be running out of RAM now, can we)
 
 
 # Notice
