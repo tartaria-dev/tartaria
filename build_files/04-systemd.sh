@@ -27,9 +27,11 @@ systemctl --global enable \
     foot.service \
     opentabletdriver.service \
     flathub-user.service \
+    desktop-shell.service
     
 # user-preset
 systemctl preset --global foot \
-    udiskie
+    udiskie \
+    flathub-user \
 
 echo "::endgroup::"
