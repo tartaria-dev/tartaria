@@ -16,7 +16,7 @@ echo -e '[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' >> /etc/pacm
 
 # setup Heck's bootc repo
 pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
-pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C9604CB
+pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
 echo -e '[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
 
 pacman -Sy --noconfirm
