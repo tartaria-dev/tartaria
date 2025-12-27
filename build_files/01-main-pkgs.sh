@@ -7,7 +7,7 @@ set -ouex pipefail
 
 # media
 pacman -S --noconfirm librsvg libglvnd plymouth acpid ddcutil dmidecode mesa-utils ffmpeg vulkan-tools wayland-utils \
-    playerctl gst-libav gst-plugins-bad gst-plugins-base gst-plugins-good gst-plugins-ugly
+    playerctl gst-libav gst-plugins-bad gst-plugins-base gst-plugins-good gst-plugins-ugly xwayland-satellite
 
 # fonts
 pacman -S --noconfirm noto-fonts noto-fonts-cjk noto-fonts-emoji unicode-emoji noto-fonts-extra \
@@ -48,8 +48,9 @@ pacman -S --noconfirm cups cups-browsed hplip
 pacman -S --noconfirm gpart exfatprogs f2fs-tools jfsutils mtools nilfs-utils ntfs-3g udftools
 
 # interface
-pacman -S --noconfirm greetd hyprland xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome ffmpegthumbs matugen \
-    accountsservice dgop cava brightnessctl ddcutil xdg-utils shared-mime-info glycin  tela-circle-icon-theme-nord \
+pacman -S --noconfirm greetd niri xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome ffmpegthumbs matugen \
+    accountsservice dgop cava brightnessctl ddcutil xdg-utils shared-mime-info glycin papirus-icon-theme \
+    archlinux-xdg-menu
 
 # apps
 # IMPORTANT: keep an eye on https://github.com/andyholmes/valent, extremely viable alternative to KDE Connect

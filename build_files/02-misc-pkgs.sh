@@ -24,8 +24,8 @@ pacman -Sy --noconfirm
 # install Chaotic AUR / bootc packages
 pacman -S --noconfirm \
     chaotic-aur/flatpak-git chaotic-aur/obs-studio-stable chaotic-aur/obs-vkcapture-git chaotic-aur/distroshelf chaotic-aur/zen-browser-bin \
-    chaotic-aur/ttf-symbola chaotic-aur/opentabletdriver chaotic-aur/qt6ct-kde chaotic-aur/ttf-twemoji chaotic-aur/darkly-qt6-git chaotic-aur/bootc \
-    chaotic-aur/iio-hyprland-git chaotic-aur/bibata-cursor-theme chaotic-aur/bazaar-git chaotic-aur/gearlever bootc/uupd
+    chaotic-aur/ttf-symbola chaotic-aur/opentabletdriver chaotic-aur/qt6ct-kde chaotic-aur/ttf-twemoji chaotic-aur/noctalia-shell chaotic-aur/bootc \
+    chaotic-aur/bibata-cursor-theme chaotic-aur/bazaar-git chaotic-aur/gearlever bootc/uupd
 
 ### normal AUR (AUR packages not packaged in Chaotic AUR)
 
@@ -45,7 +45,7 @@ set +oue pipefail
 # install aur pkgs
 # IMPORTANT: chaotic-aur requests to build these pkgs have been submitted, keep an eye on them
 #            so we hopefully dont have to build them ourselves anymore
-su - builder -c "yay -S --noconfirm hypryou hypryou-greeter warehouse-git oh-my-posh"
+su - builder -c "yay -S --noconfirm hypryou-greeter warehouse-git oh-my-posh"
 
 # cleanup
 rm /etc/sudoers.d/10-installer

@@ -36,9 +36,6 @@ sed -i 's/^# font=monospace:size=11/font=FiraCode Nerd Font:size=11/' /etc/xdg/f
 # fix Foot terminal not using login-shell
 sed -i 's/^# login-shell=no/login-shell=yes/' /etc/xdg/foot/foot.ini
 
-# set default wallpaper
-cp -f /usr/share/tartaria/wallpapers/default_wallpaper.jpg /usr/share/hypryou/default_wallpaper.jpg
-
 # apply bootscreen logo
 cp -f /usr/share/tartaria/pixmaps/watermark.png /usr/share/plymouth/themes/spinner/watermark.png
 
