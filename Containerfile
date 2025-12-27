@@ -19,9 +19,8 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     sh /ctx/00-base.sh && \
     sh /ctx/01-main-pkgs.sh && \
     sh /ctx/02-misc-pkgs.sh && \
-    sh /ctx/03-cherries.sh \
-    sh /ctx/04-systemd.sh && \
-    sh /ctx/05-misc.sh
+    sh /ctx/03-systemd.sh && \
+    sh /ctx/04-misc.sh
 
 # Configure systemd and kernel
 RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf && \
