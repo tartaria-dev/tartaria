@@ -1,0 +1,7 @@
+enable flathub-user.service
+enable chezmoi-init.service
+enable chezmoi-update.timer
+enable wl-clip-persist.service
+enable foot.service
+enable iio-niri.service
+enable udiskie.service

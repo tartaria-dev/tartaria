@@ -21,7 +21,7 @@ pacman -S --noconfirm bluez bluez-utils
 # cli
 pacman -S --noconfirm sudo fastfetch jq less lsof nano openssh powertop man-db wget yt-dlp fakeroot debugedit go make \
     gcc tree usbutils vim wl-clip-persist cliphist unzip foot glibc-locales tar udev tuned-ppd tuned patchelf git curl \
-    bash bash-completion
+    bash bash-completion chezmoi
 
 # containerization
 pacman -S --noconfirm distrobox podman docker
@@ -50,7 +50,7 @@ pacman -S --noconfirm gpart exfatprogs f2fs-tools jfsutils mtools nilfs-utils nt
 # interface
 pacman -S --noconfirm greetd niri xdg-desktop-portal xdg-user-dirs xdg-desktop-portal-gnome ffmpegthumbs matugen \
     accountsservice dgop cava brightnessctl ddcutil xdg-utils shared-mime-info glycin papirus-icon-theme \
-    archlinux-xdg-menu
+    archlinux-xdg-menu swww gnome-bluetooth-3.0 adw-gtk-theme dart-sass
 
 # apps
 # IMPORTANT: keep an eye on https://github.com/andyholmes/valent, extremely viable alternative to KDE Connect

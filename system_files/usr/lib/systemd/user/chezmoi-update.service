@@ -1,0 +1,8 @@
+[Unit]
+Description=Chezmoi Update
+
+[Service]
+ExecStart=mkdir -p %h/.config/tartaria/chezmoi
+ExecStart=touch %h/.config/tartaria/chezmoi/chezmoi.toml
+ExecStart=sh -c 'yes s | chezmoi apply --no-tty --keep-going -S /usr/share/tartaria/cherries --verbose --config %h/.config/tartaria/chezmoi/chezmoi.toml'
+Type=oneshot

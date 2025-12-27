@@ -24,7 +24,16 @@ systemctl enable polkit.service \
 systemctl --global enable \
     wl-clip-persist.service \
     udiskie.service \
+    foot.service \
     opentabletdriver.service \
-    flathub-user.service
+    flathub-user.service \
+    chezmoi-init.service \
+    chezmoi-update.timer
+    
+# user-preset
+systemctl preset --global chezmoi-init \
+    chezmoi-update \
+    foot \
+    udiskie
 
 echo "::endgroup::"

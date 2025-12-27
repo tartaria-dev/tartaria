@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize Chezmoi if directory is missing
+ConditionPathExists=!%h/.config/tartaria/chezmoi
+
+[Service]
+ExecStart=mkdir -p %h/.config/tartaria/chezmoi
+ExecStart=touch %h/.config/tartaria/chezmoi/chezmoi.toml
+ExecStart=chezmoi apply -S /usr/share/tartaria/cherries --config %h/.config/tartaria/chezmoi/chezmoi.toml
+Type=oneshot
+
+[Install]
+WantedBy=graphical-session-pre.target
