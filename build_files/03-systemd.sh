@@ -24,7 +24,7 @@ systemctl enable polkit.service \
 systemctl --global enable \
     wl-clip-persist.service \
     udiskie.service \
-    foot.service \
+    foot-server.service \
     opentabletdriver.service \
     flathub-user.service \
     noctalia-shell.service \
