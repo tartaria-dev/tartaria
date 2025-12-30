@@ -3,16 +3,14 @@
 </p>
 
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">Arch Bootc / Hyprland / HyprYou</h3>
-<h3 align="center">UNDERGOING HUGE CHANGES!!!</h3>
+<h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 
 <p align="center">
-  <img width="1366" height="768" alt="2025-12-26-151855_hyprshot" src="https://github.com/user-attachments/assets/3041b85f-3bfb-4f27-9ac9-83f74339948f" />
+  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/c967e9ee-c0d6-40f8-9231-1433f1ba3318" />
 </p>
 
-
 # What's Tartaria?
-A custom arch-bootc image built for container usage, general development, and day-to-day usage, making use of the [Hyprland](https://hypr.land) compositor and the [HyprYou](https://github.com/koeqaife/hyprland-material-you) desktop shell to provide a usable TWM experience OOTB that does not sacrifice on looks.
+A custom arch-bootc image built for container usage, general development, and day-to-day usage, making use of the [Niri](https://github.com/YaLTeR/niri) compositor and the [Noctalia](https://noctalia.dev/) desktop shell to provide a usable TWM experience OOTB that does not sacrifice on looks.
 
 
 # How can I use this?
@@ -23,10 +21,6 @@ sudo bootc switch ghcr.io/tartaria-dev/tartaria
 ```
 ...and you'll be on your (jolly) way!
 
-**NOTE:**
-When you login, ensure "Hypryou" is selected on the dropdown in the bottom-left corner of the login screen. Otherwise, the Hypryou shell or Hyprland will not start properly!
-
-
 # Can I customize this?
 Absolutely! Although we've worked to provide good defaults OOTB, you can still customize the looks to your liking.
 
@@ -35,9 +29,9 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - Based on CachyOS/Arch with bootc support
 
-- Hyprland, a tiling window manager that doesnt sacrifice on looks
+- Niri, a scrollable tiling window manager that doesnt sacrifice on looks
 
-- HyprYou, a customizable shell for Hyprland that uses the [Material 3 Design](m3.material.io) language whereever possible
+- Noctalia, an extremely customizable shell similar to that of [DMS](https://danklinux.com/)
 
 - CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
 
@@ -64,7 +58,3 @@ This OS is only compatible and intended for desktop PCs with AMD/Intel graphics,
 Tartaria is headed by me, certifiedfooliolol. You may contact me via my Discord handle, `shartmunk`. Creative username, I know.
 
 Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support and the developers of Zirconium and XeniaOS for inspiring this project!
-
-
-# Literally any other name would've been better. Why?
-My pure, unadulterated hatred for a specific wax baby inspired the name. God, I hate that baby.
