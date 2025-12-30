@@ -174,7 +174,7 @@ pacman -S --noconfirm \
     niri \
     orchis-theme \
     papirus-icon-theme \
-    polkit-gnome \
+    polkit-kde-agent \
     quickshell \
     shared-mime-info \
     wlsunset \

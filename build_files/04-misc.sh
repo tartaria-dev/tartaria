@@ -41,6 +41,9 @@ sed -i 's/^# font=monospace:size=11/font=Maple Mono:size=11/' /etc/xdg/foot/foot
 # fix Foot terminal not using login-shell
 sed -i 's/^# login-shell=no/login-shell=yes/' /etc/xdg/foot/foot.ini
 
+# set up environment variables
+echo -e "\nQT_QPA_PLATFORM=\"wayland;xcb\"\nQT_WAYLAND_DISABLE_WINDOWDECORATION=\"1\"\nQT_AUTO_SCREEN_SCALE_FACTOR=\"1\"\nQT_QPA_PLATFORMTHEME=\"qt6ct\"\n\nMOZ_ENABLE_WAYLAND=\"1\"\nGDK_SCALE=\"1\"\nSDL_VIDEODRIVER=\"wayland\"\n\nELECTRON_ENABLE_WAYLAND=\"1\"\nELECTRON_OZONE_PLATFORM_HINT=\"wayland\"" | sudo tee -a /etc/environment
+
 # apply bootscreen logo
 cp -f /usr/share/tartaria/pixmaps/watermark.png /usr/share/plymouth/themes/spinner/watermark.png
 
