@@ -1,0 +1,23 @@
+[background]
+path = "/usr/share/tartaria/wallpapers/default_wallpaper.jpg"
+fit = "Fill"
+
+[GTK]
+application_prefer_dark_theme = true
+cursor_theme_name = "Bibata-Original-Ice"
+cursor_blink = true
+font_name = "Maple Mono 16"
+icon_theme_name = "Papirus-Dark"
+theme_name = "Orchis-Teal-Dark"
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "Welcome to the Orchard!~"
+
+[widget.clock]
+format = "%a %H:%M"
+resolution = "500ms"
+label_width = 150

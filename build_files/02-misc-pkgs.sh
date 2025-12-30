@@ -55,7 +55,6 @@ set +oue pipefail
 
 # install aur pkgs
 su - builder -c "yay -S --noconfirm \
-    hypryou-greeter \
     iio-niri \
     oh-my-posh \
     warehouse-git \

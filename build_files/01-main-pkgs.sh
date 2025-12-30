@@ -170,7 +170,9 @@ pacman -S --noconfirm \
     evolution-data-server \
     glycin \
     greetd \
+    greetd-regreet \
     niri \
+    orchis-theme \
     papirus-icon-theme \
     polkit-gnome \
     quickshell \
