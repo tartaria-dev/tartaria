@@ -27,6 +27,7 @@ pacman -S --noconfirm \
     chaotic-aur/bazaar-git \
     chaotic-aur/bibata-cursor-theme \
     chaotic-aur/bootc \
+    chaotic-aur/darkly-qt6-git \
     chaotic-aur/distroshelf \
     chaotic-aur/flatpak-git \
     chaotic-aur/gearlever \

@@ -18,7 +18,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     sh /ctx/00-base.sh && \
     sh /ctx/01-main-pkgs.sh && \
-    sh /ctx/02-misc-pkgs.sh && \
+    sh /ctx/02-aur-pkgs.sh && \
     sh /ctx/03-systemd.sh && \
     sh /ctx/04-misc.sh
 
