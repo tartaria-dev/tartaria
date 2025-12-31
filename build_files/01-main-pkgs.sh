@@ -33,7 +33,7 @@ pacman -S --noconfirm \
     podman \
     powertop \
     python3 \
-    sudo \
+    starship \
     sysprof \
     tar \
     tree \

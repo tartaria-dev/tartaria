@@ -1,2 +1,3 @@
 [org.gnome.desktop.interface]
 icon-theme='Papirus-Dark'
+font-name='Inter 11'

@@ -57,7 +57,6 @@ set +oue pipefail
 # install aur pkgs
 su - builder -c "yay -S --noconfirm \
     iio-niri \
-    oh-my-posh \
     warehouse-git \
     maplemono-otf"
 
