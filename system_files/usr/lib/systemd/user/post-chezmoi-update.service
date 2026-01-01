@@ -6,8 +6,8 @@ ConditionPathExists=%h/.config/qt6ct/qt6ct.conf
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/noctalia/settings.json'
-ExecStart=/bin/bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/qt6ct/qt6ct.conf'
+ExecStart=bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/noctalia/settings.json'
+ExecStart=bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/qt6ct/qt6ct.conf'
 RemainAfterExit=yes
 
 [Install]

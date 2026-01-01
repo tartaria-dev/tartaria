@@ -6,6 +6,7 @@ ConditionPathExists=!%h/.config/tartaria/chezmoi
 ExecStart=mkdir -p %h/.config/tartaria/chezmoi
 ExecStart=touch %h/.config/tartaria/chezmoi/chezmoi.toml
 ExecStart=chezmoi apply -S /usr/share/tartaria/cherries --config %h/.config/tartaria/chezmoi/chezmoi.toml
+ExecStartPost=systemctl --user start post-chezmoi-update.service
 Type=oneshot
 
 [Install]
