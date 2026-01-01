@@ -30,14 +30,16 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     chezmoi-init.service \
-    chezmoi-update.timer
+    chezmoi-update.timer \
+    post-chezmoi-update.service
     
 # user-preset
 systemctl preset --global foot-server \
     udiskie \
     flathub-user \
     chezmoi-init \
-    chezmoi-update
+    chezmoi-update \
+    post-chezmoi-update
 
 # user-wants for Niri
 systemctl add-wants --global niri.service \

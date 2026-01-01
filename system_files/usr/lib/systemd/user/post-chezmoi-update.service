@@ -1,0 +1,14 @@
+[Unit]
+Description=Replace placeholder usernames in config files
+After=chezmoi-update.service
+ConditionPathExists=%h/.config/noctalia/settings.json
+ConditionPathExists=%h/.config/qt6ct/qt6ct.conf
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/noctalia/settings.json'
+ExecStart=/bin/bash -c 'sed -i "s/PLACEHOLDER/$USER/g" %h/.config/qt6ct/qt6ct.conf'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
