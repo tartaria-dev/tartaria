@@ -1,3 +1,4 @@
 [org.gnome.desktop.interface]
+color-scheme='prefer-dark'
 icon-theme='Papirus-Dark'
 font-name='Inter 11'
