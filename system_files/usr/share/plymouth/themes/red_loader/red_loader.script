@@ -2,6 +2,11 @@
 ## Mail : adi1090x@gmail.com
 ## Github : @adi1090x
 ## Reddit : @adi1090x
+##
+## Modified By     : Leeam Ringor-Despi (certifiedfooliolol)
+## Description     : Added Inter font support, Unicode bullets, 
+##                   and watermark layering
+## Date            : Jan 02, 2026
 
 // Screen size
 screen.w = Window.GetWidth(0);
@@ -19,7 +24,7 @@ message = null;
 // Password prompt
 bullets = null;
 prompt = null;
-bullet.image = Image.Text("*", 1, 1, 1);
+bullet.image = Image.Text("●", 1, 1, 1, 1, "Inter Semi-Bold 13");
 
 // Flow
 state.status = "play";
@@ -30,6 +35,8 @@ watermark_image = Image("watermark.png");
 watermark_sprite = Sprite();
 
 watermark_sprite.SetImage(watermark_image);
+
+watermark_sprite.SetZ(1000);
 watermark_sprite.SetX(Window.GetX() + (Window.GetWidth() / 2 - watermark_image.GetWidth() / 2));
 watermark_sprite.SetY(Window.GetHeight() - watermark_image.GetHeight() - 50);
 
@@ -77,10 +84,11 @@ Plymouth.SetDisplayQuestionFunction(DisplayQuestionCallback);
 //------------------------------------- Password prompt -------------------------------
 fun DisplayPasswordCallback(nil, bulletCount) {
     state.status = "pause";
+    watermark_sprite.SetOpacity(0);
     totalWidth = bulletCount * bullet.image.GetWidth();
     startPos = screen.half.w - totalWidth / 2;
 
-    prompt.image = Image.Text("Enter your password to decrypt your disk:", 1, 1, 1);
+    prompt.image = Image.Text("Enter your password to decrypt your disk:", 1, 1, 1, 1, "Inter Black 15");
     prompt.sprite = Sprite(prompt.image);
     prompt.sprite.SetX(screen.half.w - prompt.image.GetWidth() / 2);
     prompt.sprite.SetY(screen.h - 4 * prompt.image.GetHeight());
@@ -97,6 +105,7 @@ Plymouth.SetDisplayPasswordFunction(DisplayPasswordCallback);
 
 //--------------------------- Normal display (unset all text) ----------------------
 fun DisplayNormalCallback() {
+    watermark_sprite.SetOpacity(1);
     state.status = "play";
     bullets = null;
     prompt = null;
