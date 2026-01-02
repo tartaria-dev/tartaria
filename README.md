@@ -6,7 +6,7 @@
 <h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 
 <p align="center">
-  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/c967e9ee-c0d6-40f8-9231-1433f1ba3318" />
+  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/55b44546-2718-4888-928a-88815d9f91f4" />
 </p>
 
 # What's Tartaria?
@@ -29,13 +29,13 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - Based on CachyOS/Arch with bootc support
 
-- Niri, a scrollable tiling window manager that doesnt sacrifice on looks
+- Niri, a scrollable tiling Wayland compositor that blends layout efficiency with high-end aesthetics.
 
-- Noctalia, an extremely customizable shell similar to that of [DMS](https://danklinux.com/)
+- Noctalia: A customizable shell environment designed for deep personalization and theming.
 
 - CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
 
-- The default GNOME app suite for all your basic needs (including OBS for recording stuffs)
+- The default GNOME app suite for all your basic needs
 
 - Foot terminal for a blazing-fast TUI experience along with Oh-My-Posh for looks
 
