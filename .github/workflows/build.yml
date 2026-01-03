@@ -96,6 +96,7 @@ jobs:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          extra-args: --dns=none
           oci: true
 
       - name: Login to GitHub Container Registry
