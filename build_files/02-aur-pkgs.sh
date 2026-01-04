@@ -37,6 +37,7 @@ pacman -S --noconfirm \
     chaotic-aur/qt6ct-kde \
     chaotic-aur/ttf-symbola \
     chaotic-aur/ttf-twemoji \
+    chatoci-aur/valent-git \
     chaotic-aur/zen-browser-bin
 
 ### normal AUR (AUR packages not packaged in Chaotic AUR)

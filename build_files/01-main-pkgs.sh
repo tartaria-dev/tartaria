@@ -150,12 +150,7 @@ pacman -S --noconfirm \
     ttf-croscore \
     ttf-dejavu \
     ttf-droid \
-    ttf-fira-code \
-    ttf-firacode-nerd \
     ttf-ibm-plex \
-    ttf-nerd-fonts-symbols \
-    ttf-nerd-fonts-symbols-common \
-    ttf-nerd-fonts-symbols-mono \
     inter-font \
     unicode-emoji \
     wqy-microhei
@@ -208,7 +203,6 @@ pacman -S --noconfirm \
     gnome-weather \
     gpu-screen-recorder \
     impression \
-    kdeconnect \
     loupe \
     mission-center \
     nautilus \
