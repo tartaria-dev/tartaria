@@ -4,7 +4,7 @@ from fontTools import ttLib
 from fontTools.varLib import instancer
 
 # config
-INPUT_FILE = "/usr/share/fonts/inter/Inter-Variable.ttf"
+INPUT_FILE = "/usr/share/fonts/inter/InterVariable.ttf"
 OUTPUT_DIR = "/usr/share/fonts/inter-static"
 FAMILY_NAME = "Inter Static"
 
