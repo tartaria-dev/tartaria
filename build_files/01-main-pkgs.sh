@@ -33,6 +33,7 @@ pacman -S --noconfirm \
     podman \
     powertop \
     python3 \
+    python-fonttools \
     sysprof \
     tar \
     tree \

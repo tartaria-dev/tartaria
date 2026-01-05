@@ -8,6 +8,10 @@ set -ouex pipefail
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
+# generate static Inter font weights for initramfs
+mkdir -p /usr/share/fonts/inter-static
+python /ctx/extra/generate-static-inter-fonts.py
+
 # enable ntsync
 echo -e 'ntsync' > /etc/modules-load.d/ntsync.conf
 

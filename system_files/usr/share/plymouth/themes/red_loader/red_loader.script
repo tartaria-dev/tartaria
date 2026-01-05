@@ -24,7 +24,7 @@ message = null;
 // Password prompt
 bullets = null;
 prompt = null;
-bullet.image = Image.Text("●", 1, 1, 1, 1, "Inter Semi-Bold 13");
+bullet.image = Image.Text("●", 1, 1, 1, 1, "Inter Static SemiBold 13");
 
 // Flow
 state.status = "play";
@@ -88,7 +88,7 @@ fun DisplayPasswordCallback(nil, bulletCount) {
     totalWidth = bulletCount * bullet.image.GetWidth();
     startPos = screen.half.w - totalWidth / 2;
 
-    prompt.image = Image.Text("Enter your password to decrypt your disk:", 1, 1, 1, 1, "Inter Black 15");
+    prompt.image = Image.Text("Enter your password to decrypt your disk:", 1, 1, 1, 1, "Inter Static Black 15");
     prompt.sprite = Sprite(prompt.image);
     prompt.sprite.SetX(screen.half.w - prompt.image.GetWidth() / 2);
     prompt.sprite.SetY(screen.h - 4 * prompt.image.GetHeight());
