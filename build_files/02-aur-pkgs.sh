@@ -60,6 +60,7 @@ set +oue pipefail
 su - builder -c "yay -S --noconfirm \
     iio-niri \
     warehouse-git \
+    jetbrains-gateway \
     maplemono-otf"
 
 # cleanup
