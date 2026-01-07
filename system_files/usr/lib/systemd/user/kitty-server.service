@@ -1,0 +1,12 @@
+[Unit]
+Description=Start kitty server
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/kitty --single-instance --detach --session /dev/null
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

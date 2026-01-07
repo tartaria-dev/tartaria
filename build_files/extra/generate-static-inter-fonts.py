@@ -39,7 +39,7 @@ def patch_names(font, family, subfamily):
             record.string = ps_name.encode('utf-16-be')
 
 def main():
-    # Ensure output directory exists
+    # ensure output directory exists
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     print(f"Loading variable font: {INPUT_FILE}")
@@ -60,7 +60,7 @@ def main():
         # save to system path
         static_font.save(output_path)
 
-    os.system("fc-cache -fv")
+    os.system("fc-cache --force --really-force --system-only --verbose")
     print(f"All fonts saved to {OUTPUT_DIR}")
 
 if __name__ == "__main__":

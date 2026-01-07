@@ -17,7 +17,6 @@ pacman -S --noconfirm \
     docker \
     fakeroot \
     fastfetch \
-    foot \
     gcc \
     git \
     glibc-locales \
@@ -192,7 +191,6 @@ pacman -S --noconfirm \
     hplip
 
 # apps
-# IMPORTANT: keep an eye on https://github.com/andyholmes/valent, extremely viable alternative to KDE Connect
 pacman -S --noconfirm \
     ark \
     decibels \
@@ -205,6 +203,7 @@ pacman -S --noconfirm \
     gnome-weather \
     gpu-screen-recorder \
     impression \
+    kitty \
     loupe \
     mission-center \
     nautilus \

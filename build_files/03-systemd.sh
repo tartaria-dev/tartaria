@@ -24,7 +24,7 @@ systemctl enable polkit.service \
 systemctl --global enable \
     wl-clip-persist.service \
     udiskie.service \
-    foot-server.service \
+    kitty-server.service \
     opentabletdriver.service \
     flathub-user.service \
     noctalia-shell.service \
@@ -33,7 +33,7 @@ systemctl --global enable \
     post-chezmoi-update.service
     
 # user-preset
-systemctl preset --global foot-server \
+systemctl preset --global kitty-server \
     udiskie \
     flathub-user \
     chezmoi-init \
@@ -44,6 +44,6 @@ systemctl preset --global foot-server \
 systemctl add-wants --global niri.service \
     noctalia-shell.service \
     udiskie.service \
-    foot-server.service
+    kitty-server.service
 
 echo "::endgroup::"
