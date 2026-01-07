@@ -6,7 +6,8 @@ echo "::group::===========================> Configure systemd services"
 set -ouex pipefail
 
 # system
-systemctl enable polkit.service \
+systemctl enable \
+    polkit.service \
     NetworkManager.service \
     tuned.service \
     tuned-ppd.service \
@@ -33,7 +34,7 @@ systemctl --global enable \
     post-chezmoi-update.service
     
 # user-preset
-systemctl preset --global kitty-server \
+systemctl preset --global \
     udiskie \
     flathub-user \
     chezmoi-init \
@@ -41,9 +42,9 @@ systemctl preset --global kitty-server \
     post-chezmoi-update
 
 # user-wants for Niri
-systemctl add-wants --global niri.service \
+systemctl add-wants --global \
+    niri.service \
     noctalia-shell.service \
     udiskie.service \
-    kitty-server.service
 
 echo "::endgroup::"
