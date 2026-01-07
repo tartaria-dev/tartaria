@@ -31,6 +31,7 @@ pacman -S --noconfirm \
     chaotic-aur/distroshelf \
     chaotic-aur/flatpak-git \
     chaotic-aur/gearlever \
+    chaotic-aur/jetbrains-toolbox \
     chaotic-aur/matugen-git \
     chaotic-aur/noctalia-shell \
     chaotic-aur/opentabletdriver \

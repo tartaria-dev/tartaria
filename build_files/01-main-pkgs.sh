@@ -205,7 +205,6 @@ pacman -S --noconfirm \
     gnome-weather \
     gpu-screen-recorder \
     impression \
-    jetbrains-toolbox \
     loupe \
     mission-center \
     nautilus \
