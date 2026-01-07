@@ -63,6 +63,7 @@ su - builder -c "yay -S --noconfirm \
     maplemono-otf"
 
 # cleanup
+pacman -Rns --noconfirm yay
 rm /etc/sudoers.d/10-installer
 pkill -u builder
 userdel -r builder
