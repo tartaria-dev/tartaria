@@ -59,7 +59,6 @@ set +oue pipefail
 su - builder -c "yay -S --noconfirm \
     iio-niri \
     warehouse-git \
-    oh-my-posh \
     maplemono-otf"
 
 # cleanup

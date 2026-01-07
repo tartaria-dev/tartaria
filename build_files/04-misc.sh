@@ -33,7 +33,7 @@ systemctl preset systemd-resolved.service
 fc-cache --force --really-force --system-only --verbose
 
 # setup oh-my-posh prompt
-echo 'eval "$(oh-my-posh init bash)"' >> /etc/bash.bashrc
+echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
 # install Cherries
 git clone "https://github.com/tartaria-dev/cherries.git" /usr/share/tartaria/cherries

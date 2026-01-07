@@ -14,15 +14,12 @@ A custom arch-bootc image built for container usage, general development, and da
 
 
 # How can I use this?
-At the moment, only rebasing is supported. Fair warning, rebasing has been highly untested, although stock Fedora Silverblue has worked best in my experience as a base.
-Use the following command on any Fedora based system that supports `bootc`:
+At the moment, only rebasing is supported. Rebasing from XeniaOS or Zirconium is highly encouraged.
+To rebase, use the following command:
 ```
 sudo bootc switch ghcr.io/tartaria-dev/tartaria
 ```
 ...and you'll be on your (jolly) way!
-
-# Can I customize this?
-Absolutely! Although we've worked to provide good defaults OOTB, you can still customize the looks to your liking.
 
 
 # Features
@@ -37,21 +34,21 @@ Absolutely! Although we've worked to provide good defaults OOTB, you can still c
 
 - The default GNOME app suite for all your basic needs
 
-- Foot terminal for a blazing-fast TUI experience along with Oh-My-Posh for looks
+- Foot terminal for a blazing-fast TUI experience along with Starship for looks
 
 - Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
 
 - Distrobox and Podman for containerization, along with DistroShelf (GUI container manager)
 
-- Zed, a high-performance rust-based IDE for code editing, supports Devpod (not included)
+- JetBrains Toolbox, the official manager for all JetBrains IDE's
 
-- Zen, a beautiful Firefox-based browser with vertical tabs and a design similar to that of Arc Browser
+- Zen, a beautiful Firefox-based browser with vertical tabs focused on productivity
 
 - ZRAM enabled by default (can't be running out of RAM now, can we)
 
 
 # Notice
-This OS is only compatible and intended for desktop PCs with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels). An image with NVIDIA drivers OOTB is in the works.
+This OS is only compatible and intended for desktop PCs with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).
 
 
 # Contact

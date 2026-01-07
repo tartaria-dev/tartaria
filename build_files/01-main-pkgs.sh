@@ -34,6 +34,7 @@ pacman -S --noconfirm \
     powertop \
     python3 \
     python-fonttools \
+    starship \
     sysprof \
     tar \
     tree \
@@ -204,6 +205,7 @@ pacman -S --noconfirm \
     gnome-weather \
     gpu-screen-recorder \
     impression \
+    jetbrains-toolbox \
     loupe \
     mission-center \
     nautilus \
@@ -211,7 +213,6 @@ pacman -S --noconfirm \
     scx-manager \
     scx-scheds \
     secrets \
-    showtime \
-    zed
+    showtime
 
 echo "::endgroup::"
