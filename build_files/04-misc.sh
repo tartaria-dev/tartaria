@@ -42,4 +42,7 @@ cp -f /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.k
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
+# package cleanup
+rm -rf /packages
+
 echo "::endgroup::"
