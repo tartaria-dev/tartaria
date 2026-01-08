@@ -25,7 +25,6 @@ systemctl enable \
 systemctl --global enable \
     wl-clip-persist.service \
     udiskie.service \
-    kitty-server.service \
     opentabletdriver.service \
     flathub-user.service \
     noctalia-shell.service \
