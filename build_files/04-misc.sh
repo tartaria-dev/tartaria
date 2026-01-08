@@ -35,8 +35,7 @@ fc-cache --force --really-force --system-only --verbose
 # setup oh-my-posh prompt
 echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
-# install Cherries
-git clone "https://github.com/tartaria-dev/cherries.git" /usr/share/tartaria/cherries
+# set default niri config
 install -d /etc/niri/
 cp -f /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 

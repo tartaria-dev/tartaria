@@ -42,6 +42,9 @@ pacman -S --noconfirm \
     chaotic-aur/zen-browser-bin
 
 ### normal AUR (AUR packages not packaged in Chaotic AUR)
+for pkg in /packages; do
+    pacman -U --noconfirm /packages/$pkg
+done
 
 # setup user
 useradd -m -G wheel builder

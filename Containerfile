@@ -3,9 +3,13 @@ COPY build_files /
 
 FROM docker.io/cachyos/cachyos-v3:latest
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
+COPY --from=ghcr.io/tartaria-dev/cherries:latest-amd64 /system_files /
 COPY system_files /
 
 ENV DRACUT_NO_XATTR=1
+
+# testing
+RUN ls /
 
 # Move everything from `/var` to `/usr/lib/sysimage` so behavior around pacman remains the same on `bootc usroverlay`'d systems
 RUN echo "::group::===========================> Prepare image build" && grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | xargs -n1 sh -c 'mkdir -p "/usr/lib/sysimage/$(dirname $(echo $1 | sed "s@/var/@@"))" && mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' '' && \
@@ -43,6 +47,6 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
     printf "d /var/roothome 0700 root root -\nd /run/media 0755 root root -" | tee -a "/usr/lib/tmpfiles.d/bootc-base-dirs.conf"
 
 # Proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
-LABEL containers.bootc 1
+LABEL containers.bootc=1
 
 RUN bootc container lint
