@@ -21,6 +21,7 @@ pacman -S --noconfirm \
     git \
     glibc-locales \
     go \
+    java-runtime-common \
     jq \
     less \
     lsof \
