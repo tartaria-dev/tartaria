@@ -43,7 +43,4 @@ cp -f /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.k
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
-# apply bootscreen logo
-cp -f /usr/share/tartaria/pixmaps/watermark.png /usr/share/plymouth/themes/spinner/watermark.png
-
 echo "::endgroup::"

@@ -56,13 +56,6 @@ su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
 # disable safety
 set +oue pipefail
 
-# install aur pkgs
-su - builder -c "yay -S --noconfirm \
-    iio-niri \
-    warehouse-git \
-    jetbrains-gateway \
-    maplemono-otf"
-
 # cleanup
 pacman -Rns --noconfirm yay
 rm /etc/sudoers.d/10-installer
