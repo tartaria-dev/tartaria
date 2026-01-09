@@ -12,15 +12,12 @@ pacman -S --noconfirm \
     chezmoi \
     cliphist \
     curl \
-    debugedit \
     distrobox \
     docker \
-    fakeroot \
     fastfetch \
     gcc \
     git \
     glibc-locales \
-    go \
     java-runtime-common \
     jq \
     less \
@@ -34,6 +31,7 @@ pacman -S --noconfirm \
     powertop \
     python3 \
     python-fonttools \
+    rsync \
     starship \
     sysprof \
     tar \

@@ -1,0 +1,13 @@
+[Unit]
+Description=Sync /usr/opt and /var/opt
+Requires=var.mount
+BindsTo=var.mount
+After=var.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rsync -aHAXS --ignore-existing --numeric-ids /usr/opt/ /var/opt/
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
