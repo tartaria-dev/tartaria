@@ -5,8 +5,6 @@ echo "::group::===========================> Install misc packages"
 
 set -ouex pipefail
 
-### Chaotic AUR / bootc
-
 # setup Chaotic AUR
 pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
 pacman-key --init && pacman-key --lsign-key 3056513887B78AEB
@@ -21,7 +19,7 @@ echo -e '[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-boo
 
 pacman -Sy --noconfirm
 
-# install Chaotic AUR / bootc packages
+# install Chaotic AUR / bootc / local packages
 pacman -S --noconfirm \
     bootc/uupd \
     chaotic-aur/bazaar-git \
@@ -41,28 +39,8 @@ pacman -S --noconfirm \
     chaotic-aur/valent-git \
     chaotic-aur/zen-browser-bin
 
-### normal AUR (AUR packages not packaged in Chaotic AUR)
 for pkg in /packages/*; do
     pacman -U --noconfirm "$pkg"
 done
-
-# setup user
-useradd -m -G wheel builder
-echo "builder:1234" | chpasswd
-echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-installer
-
-# build yay
-su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
-                cd ~/yay && \
-                makepkg -si --noconfirm"
-
-# disable safety
-set +oue pipefail
-
-# cleanup
-pacman -Rns --noconfirm yay
-rm /etc/sudoers.d/10-installer
-pkill -u builder
-userdel -r builder
 
 echo "::endgroup::"
