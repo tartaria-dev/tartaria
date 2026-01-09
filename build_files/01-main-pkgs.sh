@@ -168,6 +168,7 @@ pacman -S --noconfirm \
     glycin \
     greetd \
     greetd-regreet \
+    libappindicator \
     niri \
     orchis-theme \
     papirus-icon-theme \

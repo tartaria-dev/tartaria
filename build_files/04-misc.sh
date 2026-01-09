@@ -12,6 +12,12 @@ useradd -M -G video,input -s /usr/bin/nologin greeter || true
 mkdir -p /usr/share/fonts/inter-static
 python /ctx/extra/generate-static-inter-fonts.py
 
+# install Maple Mono
+mkdir -p "/usr/share/fonts/Maple Mono"
+curl --retry 5 --retry-all-errors -fsSL https://github.com/subframe7536/maple-font/releases/download/v7.9/MapleMono-Variable.zip -o /tmp/maple.zip
+unzip -q /tmp/maple.zip -d "/usr/share/fonts/Maple Mono"
+rm -f /tmp/maple.zip
+
 # enable ntsync
 echo -e 'ntsync' > /etc/modules-load.d/ntsync.conf
 
