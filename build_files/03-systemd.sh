@@ -15,7 +15,6 @@ systemctl enable \
     greetd.service \
     rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
-    sync-opt.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \
