@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare opt.mount
+After=var.mount ostree-remount.service prepare-opt-mount.service
+BindsTo=var.mount ostree-remount.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mkdir -p /var/lib/opt-overlay/work
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target

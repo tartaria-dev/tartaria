@@ -3,10 +3,10 @@ Description=Initialize Chezmoi if directory is missing
 ConditionPathExists=!%h/.config/tartaria/chezmoi
 
 [Service]
-ExecStart=mkdir -p %h/.config/tartaria/chezmoi
-ExecStart=touch %h/.config/tartaria/chezmoi/chezmoi.toml
-ExecStart=chezmoi apply -S /usr/share/tartaria/cherries --config %h/.config/tartaria/chezmoi/chezmoi.toml
-ExecStartPost=systemctl --user start post-chezmoi-update.service
+ExecStart=/usr/bin/mkdir -p %h/.config/tartaria/chezmoi
+ExecStart=/usr/bin/touch %h/.config/tartaria/chezmoi/chezmoi.toml
+ExecStart=/usr/bin/chezmoi apply -S /usr/share/tartaria/cherries --config %h/.config/tartaria/chezmoi/chezmoi.toml
+ExecStartPost=/usr/bin/systemctl --user start post-chezmoi-update.service
 Type=oneshot
 
 [Install]
