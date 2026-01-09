@@ -3,7 +3,7 @@
 </p>
 
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">Arch Bootc / Niri / Noctalia</h3>
+<h3 align="center">Arch/CachyOS Bootc / Niri / Noctalia</h3>
 
 <p align="center">
   <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/55b44546-2718-4888-928a-88815d9f91f4" />
