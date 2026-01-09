@@ -1,5 +1,5 @@
 #!/bin/sh
-# prepare base image, DO NOT MODIFY
+# prepare image and install base packages
 
 set -ouex pipefail
 
