@@ -3,13 +3,10 @@ COPY build_files /
 
 FROM docker.io/cachyos/cachyos-v3:latest
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
-COPY --from=ghcr.io/tartaria-dev/cherries:latest-amd64 /system_files /
+COPY --from=ghcr.io/tartaria-dev/cherries:latest-amd64 /system_files/ /
 COPY system_files /
 
 ENV DRACUT_NO_XATTR=1
-
-# testing
-RUN ls /
 
 # Move everything from `/var` to `/usr/lib/sysimage` so behavior around pacman remains the same on `bootc usroverlay`'d systems
 RUN echo "::group::===========================> Prepare image build" && grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | xargs -n1 sh -c 'mkdir -p "/usr/lib/sysimage/$(dirname $(echo $1 | sed "s@/var/@@"))" && mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' '' && \
