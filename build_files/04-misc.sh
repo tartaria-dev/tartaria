@@ -18,21 +18,7 @@ curl --retry 5 --retry-all-errors -fsSL https://github.com/subframe7536/maple-fo
 unzip -q /tmp/maple.zip -d "/usr/share/fonts/Maple Mono"
 rm -f /tmp/maple.zip
 
-# enable ntsync
-echo -e 'ntsync' > /etc/modules-load.d/ntsync.conf
-
-# enable bbr3
-echo -e 'net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr' > /etc/sysctl.d/99-bbr3.conf
-
-# setup zram
-echo -e '[zram0]\nzram-size = min(ram, 8192)\ncompression-algorithm = zstd\nswap-priority = 100' > /usr/lib/systemd/zram-generator.conf
-echo "vm.swappiness=10" > /etc/sysctl.d/99-zram-mem.conf
-echo 'w /sys/module/zswap/parameters/enabled - - - - 0' > /etc/tmpfiles.d/disable-zswap.conf
-
 # setup systemd-resolved
-echo -e 'enable systemd-resolved.service' > /usr/lib/systemd/system-preset/91-resolved-default.preset
-echo -e 'L+ /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf' > /usr/lib/tmpfiles.d/resolved-default.conf
 systemctl preset systemd-resolved.service
 
 # refresh font cache
