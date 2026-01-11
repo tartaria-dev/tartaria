@@ -7,6 +7,8 @@ Wants=network-online.target
 Type=oneshot
 ExecStart=/usr/bin/firewall-cmd --permanent --zone=public --add-service=kdeconnect
 ExecStart=/usr/bin/firewall-cmd --reload
+ExecStartPost=/usr/bin/systemctl disable kdeconnect-firewalld-bypass.service
+ExecStartPost=/usr/bin/systemctl mask kdeconnect-firewalld-bypass.service
 RemainAfterExit=false
 
 [Install]
