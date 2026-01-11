@@ -50,6 +50,6 @@ sudo bootc switch ghcr.io/tartaria-dev/tartaria
 # Notice
 This OS is only compatible and intended for desktop PCs with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels), meaning this custom image will only work on V3 cpus. Support for V2 cpus will be looked into.
 
-Tartaria is headed by me, certifiedfooliolol. You may contact me via my Discord handle, `shartmunk`. Creative username, I know.
+Tartaria is headed by me, certifiedfoolio. You may contact me via my Discord handle, `shartmunk`. Creative username, I know.
 
 Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support and the developers of Zirconium and XeniaOS for inspiring this project!
