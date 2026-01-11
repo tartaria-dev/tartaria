@@ -37,8 +37,8 @@ RUN rm -rf /home/build/.cache/* && \
 
 # Necessary for general behavior expected by image-based systems
 RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
-    mv /opt /usr/ && rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg && \
-    mkdir -p /sysroot /boot /usr/lib/ostree /var && \
+    rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg && \
+    mv /opt /usr/ && mkdir -p /sysroot /boot /usr/lib/ostree /var && \
     ln -sT sysroot/ostree /ostree && ln -sT var/roothome /root && ln -sT var/srv /srv && ln -sT var/mnt /mnt && ln -sT var/opt /opt && ln -sT var/home /home &&  ln -sT ../var/usrlocal /usr/local
 
 # Proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
