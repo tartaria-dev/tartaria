@@ -152,7 +152,7 @@ pacman -S --noconfirm \
     ttf-dejavu \
     ttf-droid \
     ttf-ibm-plex \
-    inter-font \
+    ttf-overpass \
     unicode-emoji \
     wqy-microhei
 
@@ -170,7 +170,6 @@ pacman -S --noconfirm \
     libappindicator \
     niri \
     orchis-theme \
-    papirus-icon-theme \
     polkit-kde-agent \
     quickshell \
     shared-mime-info \
