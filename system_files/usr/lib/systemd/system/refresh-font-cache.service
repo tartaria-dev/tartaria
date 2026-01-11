@@ -6,7 +6,7 @@ Requires=var.mount
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/fc-cache -rsfv
-ExecStart=/usr/bin/bash -c "for user in /var/home/*; do su -c "fc-cache -rfv" - $(basename $user)"
+ExecStart=/usr/libexec/run-as-all-human-users "fc-cache -rfv"
 ExecStartPost=/usr/bin/systemctl disable refresh-font-cache.service
 RemainAfterExit=false
 

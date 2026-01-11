@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 'command to run'"
+    exit 1
+fi
+
+for user_path in /var/home/*; do
+    [ ! -d "$user_path" ] && continue
+
+    USER_NAME=$(basename "$user_path")
+    USER_INFO=$(getent passwd "$USER_NAME")
+
+    if [ -n "$USER_INFO" ]; then
+        USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
+
+        if [ "$USER_UID" -ge 1000 ]; then
+            echo "Executing for $USER_NAME (UID: $USER_UID)..."
+            su -c "$1" - "$USER_NAME"
+        fi
+    fi
+done
