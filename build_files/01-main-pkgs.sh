@@ -15,6 +15,7 @@ pacman -S --noconfirm \
     distrobox \
     docker \
     fastfetch \
+    flatpak \
     gcc \
     git \
     glibc-locales \
