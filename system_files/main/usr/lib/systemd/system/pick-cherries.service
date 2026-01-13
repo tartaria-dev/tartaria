@@ -1,0 +1,14 @@
+[Unit]
+Description=Update global chezmoi repository
+After=var.mount
+BindsTo=var.mount network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/podman pull ghcr.io/tartaria-dev/cherries:latest
+ExecStart=/usr/bin/podman create --name cherries ghcr.io/tartaria-dev/cherries:latest
+ExecStart=/usr/bin/mkdir -p /var/lib/cherries/
+ExecStart=/usr/bin/rm -rf /var/lib/cherries/*
+ExecStart=/usr/bin/podman cp cherries:/system_files/system_dots/. /var/lib/cherries/
+ExecStart=/usr/bin/podman rm cherries
+RemainAfterExit=false

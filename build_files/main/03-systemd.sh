@@ -21,6 +21,10 @@ systemctl enable \
     bluetooth.service \
     uupd.timer
 
+# system-preset
+systemctl preset \
+    systemd-resolved.service
+
 # user
 systemctl --global enable \
     wl-clip-persist.service \

@@ -1,0 +1,14 @@
+[Unit]
+Description=Bind mount for cherries
+ConditionPathExists=/etc/.cherries-are-picked
+After=var.mount
+BindsTo=var.mount
+
+[Mount]
+What=/var/lib/cherries
+Where=/usr/share/tartaria/cherries
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

@@ -5,47 +5,44 @@ echo "::group::===========================> Install main packages"
 
 set -ouex pipefail
 
-# cli
+# cli essentials
 pacman -S --noconfirm \
     bash \
     bash-completion \
-    chezmoi \
-    cliphist \
     curl \
-    distrobox \
-    docker \
-    fastfetch \
     flatpak \
     gcc \
-    git \
     glibc-locales \
-    java-runtime-common \
     jq \
     less \
     lsof \
-    make \
     man-db \
     nano \
     openssh \
     patchelf \
-    podman \
-    powertop \
-    python3 \
-    python-fonttools \
     rsync \
-    starship \
-    sysprof \
     tar \
     tree \
-    tuned \
-    tuned-ppd \
     udev \
     unzip \
     usbutils \
+    wget
+
+# cli extras
+pacman -S --noconfirm \
+    atuin \
+    cava \
+    chezmoi \
+    fastfetch \
+    git \
+    java-runtime-common \
+    nvim \
+    powertop \
+    python3 \
+    starship \
     vim \
-    wget \
-    wl-clip-persist \
     yt-dlp
+
 
 # filesystems
 pacman -S --noconfirm \
@@ -144,8 +141,6 @@ pacman -S --noconfirm \
     noto-fonts-cjk \
     noto-fonts-emoji \
     noto-fonts-extra \
-    otf-font-awesome \
-    otf-monaspace \
     ttf-arphic-uming \
     ttf-baekmuk \
     ttf-croscore \
@@ -161,7 +156,7 @@ pacman -S --noconfirm \
     accountsservice \
     archlinux-xdg-menu \
     brightnessctl \
-    cava \
+    cliphist \
     dgop \
     evolution-data-server \
     glycin \
@@ -173,6 +168,9 @@ pacman -S --noconfirm \
     polkit-kde-agent \
     quickshell \
     shared-mime-info \
+    tuned \
+    tuned-ppd \
+    wl-clip-persist \
     wlsunset \
     xdg-desktop-portal \
     xdg-desktop-portal-gnome \
@@ -211,6 +209,7 @@ pacman -S --noconfirm \
     scx-manager \
     scx-scheds \
     secrets \
-    showtime
+    showtime \
+    sysprof
 
 echo "::endgroup::"
