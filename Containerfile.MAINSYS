@@ -1,14 +1,16 @@
 # base image
 FROM docker.io/cachyos/cachyos-v3:latest
 
-# setup root directory
-COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
-COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/packages /
-COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/system_dots/ /usr/share/tartaria/cherries/
-COPY system_files /
+# load in main build/system files
+COPY system_files/main /
+COPY build_files/main /build/
 
-# load build files
-COPY build_files/main /ctx/
+# fetch Brew
+COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
+
+# fetch Cherries and fetch precompiled AUR packages
+COPY --from:ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
+COPY --from:ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 
 # import the subsystem image
 COPY subsystem.local /usr/share/subsystem/image/
@@ -24,14 +26,14 @@ RUN echo "::group::===========================> Prepare image build" && grep "= 
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    sh /ctx/00-base.sh && \
-    sh /ctx/01-main-pkgs.sh && \
-    sh /ctx/02-aur-pkgs.sh && \
-    sh /ctx/03-systemd.sh && \
-    sh /ctx/04-misc.sh
+    sh /build/00-base.sh && \
+    sh /build/01-main-pkgs.sh && \
+    sh /build/02-aur-pkgs.sh && \
+    sh /build/03-systemd.sh && \
+    sh /build/04-misc.sh
 
-# clean up build scripts
-RUN rm -rf /ctx
+# clean up build files
+RUN rm -rf /build /packages
 
 # configure systemd and kernel
 RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf && \
