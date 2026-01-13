@@ -3,14 +3,14 @@
 </p>
 
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">Arch/CachyOS Bootc / Niri / Noctalia</h3>
+<h3 align="center">CachyOS Bootc / Niri / Noctalia</h3>
 
 <p align="center">
   <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/55b44546-2718-4888-928a-88815d9f91f4" />
 </p>
 
 # What's Tartaria?
-A custom arch-bootc image built for container usage, general development, and day-to-day usage, making use of the [Niri](https://github.com/YaLTeR/niri) compositor and the [Noctalia](https://noctalia.dev/) desktop shell to provide a usable TWM experience OOTB that does not sacrifice on looks.
+A custom CachyOS-bootc image built for container usage, general development, and day-to-day usage, making use of the [Niri](https://github.com/YaLTeR/niri) compositor and the [Noctalia](https://noctalia.dev/) desktop shell to provide a usable TWM experience OOTB that does not sacrifice on looks.
 
 
 # How can I use this?
@@ -38,7 +38,7 @@ sudo bootc switch ghcr.io/tartaria-dev/tartaria
 
 - Kitty terminal for a blazing-fast, gpu-powered terminal experience along with Starship for looks
 
-- Flatpak/AppImage support OOTB with Bazaar/Warehouse (software store, flatpak manager) and Gear Lever (AppImage manager)
+- Flatpak support OOTB with Bazaar/Warehouse (software store, flatpak manager)
 
 - Distrobox/Podman/Docker for containerization, along with DistroShelf (GUI container manager) and DevPod (devcontainers!)
 
