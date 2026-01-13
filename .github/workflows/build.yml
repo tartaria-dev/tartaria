@@ -15,8 +15,8 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "Arch-bootc image with Hyprland spices"
-  IMAGE_KEYWORDS: "bootc,archlinux,arch"
+  IMAGE_DESC: "CachyOS-bootc image with tasteful spices"
+  IMAGE_KEYWORDS: "bootc,archlinux,arch,cachyos,cachy"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/230667510?s=400&u=cb912a5db49aee164a609a0fb4967d2d8170feb9&v=4"
   IMAGE_NAME: "${{ github.event.repository.name }}"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
@@ -86,16 +86,17 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Build Subsystem
+      - name: Build subsystem
         id: build_subsystem
         run: |
           podman build -f ./Containerfile.SUBSYS -t subsystem:latest .
           podman save -o subsystem.local subsystem:latest
           podman rmi subsystem:latest
 
-      - name: Load subsystem image into main build
+      - name: Ensure subsystem image exists
         run: |
           ls -lh subsystem.local
+          [ -f subsystem.local ] || exit 1
 
       - name: Build main system
         id: build_main_system
