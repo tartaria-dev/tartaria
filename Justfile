@@ -6,10 +6,10 @@ container_runtime := env("CONTAINER_RUNTIME", `command -v podman >/dev/null 2>&1
 
 build-containerfile $image_name=image_name:
     sudo {{container_runtime}} build -f Containerfile.SUBSYS -t "subsystem:latest" .
-    sudo {{container_runtime}} save -o subsystem.local subsystem:latest
-    sudo {{container_runtime}} rmi subsystem:latest
-    sudo {{container_runtime}} build -f Containerfile -t "${image_name}:latest" .
-    sudo rm -f subsystem.local
+    mkfifo data.pipe
+    (sudo podman save -o data.pipe ghcr.io/tartaria-dev/subsystem:latest && sudo podman rmi ghcr.io/tartaria-dev/subsystem:latest) > /dev/null 2>&1 &
+    sudo {{container_runtime}} build -f Containerfile.MAINSYS -t "${image_name}:latest" .
+    rm -f data.pipe
 
 bootc *ARGS:
     sudo {{container_runtime}} run \
@@ -27,6 +27,6 @@ bootc *ARGS:
 generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
     if [ ! -e "${base_dir}/bootable.img" ] ; then
-        fallocate -l 20G "${base_dir}/bootable.img"
+        fallocate -l 50G "${base_dir}/bootable.img"
     fi
     just bootc install to-disk --composefs-backend --via-loopback /data/bootable.img --filesystem "${filesystem}" --wipe --bootloader systemd

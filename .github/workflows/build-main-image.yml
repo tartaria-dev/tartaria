@@ -12,6 +12,9 @@ on:
     paths-ignore:
       - "**/README.md"
       - "**/.devcontainer.json"
+      - "**/cleanup.yml"
+      - "**/dependabot.yml"
+      - "**/renovate.json5"
       - "build_files/subsystem/**"
       - "system_files/subsystem/**"
       - "Containerfile.SUBSYS"
