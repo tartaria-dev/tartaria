@@ -102,33 +102,6 @@ jobs:
           ls -lh subsystem.local
           [ -f subsystem.local ] || exit 1
 
-      - name: Sync subsystem image with remote
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
-          BUCKET: ${{ secrets.R2_BUCKET }}
-          FILE: subsystem.local
-        run: |
-          aws configure set default.s3.multipart_threshold 10GB
-
-          LOCAL_MD5=$(md5sum "$FILE" | awk '{ print $1 }')
-          REMOTE_ETAG=$(aws s3api head-object \
-            --endpoint-url $ENDPOINT \
-            --bucket $BUCKET \
-            --key images/$FILE \
-            --query 'ETag' \
-            --output text 2>/dev/null | tr -d '"') || REMOTE_ETAG=""
-
-          if [ "$LOCAL_MD5" = "$REMOTE_ETAG" ]; then
-            echo "Local image has no changes."
-          else
-            echo "Local and remote image differ. Starting upload."
-            aws s3 cp "$FILE" s3://$BUCKET/images/$FILE \
-              --endpoint-url $ENDPOINT \
-              --region auto
-          fi
-
       - name: Build main system
         id: build_main_system
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
