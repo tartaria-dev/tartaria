@@ -23,7 +23,7 @@ echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
 # set default niri config
 install -d /etc/niri/
-cp -f /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
+ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
