@@ -13,7 +13,7 @@ on:
       - "**/README.md"
       - "**/.devcontainer.json"
       - "**/cleanup.yml"
-      - "**/dependsbot.yml"
+      - "**/dependabot.yml"
       - "**/renovate.json5"
       - "build_files/main/**"
       - "system_files/main/**"
