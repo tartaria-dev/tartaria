@@ -91,13 +91,7 @@ jobs:
         run: |
           podman build -f ./Containerfile.SUBSYS -t subsystem:latest .
           mkfifo subsystem.pipe
-          podman save -o subsystem.local subsystem:latest
-          podman rmi subsystem:latest
-
-      - name: Ensure subsystem image exists
-        run: |
-          ls -lh subsystem.local
-          [ -f subsystem.local ] || exit 1
+          podman save -o subsystem.pipe subsystem:latest &
 
       - name: Build main system
         id: build_main_system
@@ -111,7 +105,9 @@ jobs:
           oci: true
 
       - name: Clean up artifacts
-        run: rm -f subsystem.local
+        run: |
+          podman rmi subsystem:latest
+          rm -f subsystem.pipe
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
