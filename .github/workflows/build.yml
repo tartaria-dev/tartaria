@@ -48,9 +48,6 @@ jobs:
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.1
-        with:
-          exclude: |
-            /usr/local/aws-cli
 
       - name: Get current date
         id: date
