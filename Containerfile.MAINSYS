@@ -13,7 +13,7 @@ COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 
 # import the subsystem image
-COPY subsystem.local /usr/share/subsystem/image/
+COPY subsystem.pipe /usr/share/subsystem/image/
 
 # tell dracut to not preserve xattrs for initramfs creation
 ENV DRACUT_NO_XATTR=1
