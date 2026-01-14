@@ -7,7 +7,7 @@ container_runtime := env("CONTAINER_RUNTIME", `command -v podman >/dev/null 2>&1
 build-containerfile $image_name=image_name:
     sudo {{container_runtime}} build -f Containerfile.SUBSYS -t "subsystem:latest" .
     mkfifo data.pipe
-    (sudo podman save -o data.pipe ghcr.io/tartaria-dev/subsystem:latest && sudo podman rmi ghcr.io/tartaria-dev/subsystem:latest) > /dev/null 2>&1 &
+    (sudo podman save -o data.pipe subsystem:latest && sudo podman rmi subsystem:latest) > /dev/null 2>&1 &
     sudo {{container_runtime}} build -f Containerfile.MAINSYS -t "${image_name}:latest" .
     rm -f data.pipe
 
