@@ -29,7 +29,7 @@ env:
   DEFAULT_TAG: "latest"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name }}-${{ inputs.stream_name }}
   cancel-in-progress: true
 
 jobs:
@@ -100,7 +100,7 @@ jobs:
           # incredibly dogwater workaround so gigabytes of disk space isnt taken up
           # by the tar file that will otherwise be sitting here in the working directory
           mkfifo data.pipe
-          (podman save -o data.pipe ghcr.io/tartaria-dev/subsystem:latest && podman rmi ghcr.io/tartaria-dev/subsystem:latest) > /dev/null 2>&1 &
+          (podman save -o data.pipe ghcr.io/tartaria-dev/subsystem:latest && podman rmi ghcr.io/tartaria-dev/subsystem:latest) &
 
       - name: Build main image
         id: build_main_image
