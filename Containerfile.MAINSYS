@@ -14,8 +14,9 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tarta
 
 # import the subsystem image via data pipe
 # again, dogwater workaround but it saves space :DD
+RUN mkdir -p /usr/share/subsystem
 RUN --mount=type=bind,source=./data.pipe,target=/tmp/data \
-    cat /tmp/data > /usr/share/subsystem/images/subsystem.container
+    cat /tmp/data > /usr/share/subsystem/subsystem.container
 
 # tell dracut to not preserve xattrs for initramfs creation
 ENV DRACUT_NO_XATTR=1
