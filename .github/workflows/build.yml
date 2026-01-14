@@ -46,8 +46,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
-      - name: Free disk space
+      - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.1
+        with:
+          exclude: |
+            /usr/local/aws-cli
 
       - name: Get current date
         id: date
@@ -99,6 +102,32 @@ jobs:
           ls -lh subsystem.local
           [ -f subsystem.local ] || exit 1
 
+      - name: Sync subsystem image with remote
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BUCKET }}
+          FILE: subsystem.local
+        run: |
+          LOCAL_MD5=$(md5sum "$FILE" | awk '{ print $1 }')
+          REMOTE_ETAG=$(aws s3api head-object \
+            --endpoint-url $ENDPOINT \
+            --bucket $BUCKET \
+            --key images/$FILE \
+            --query 'ETag' \
+            --output text 2>/dev/null | tr -d '"') || REMOTE_ETAG=""
+
+          if [ "$LOCAL_MD5" = "$REMOTE_ETAG" ]; then
+            echo "Local image has no changes."
+          else
+            echo "Local and remote image differ. Starting upload."
+            aws s3 cp "$FILE" s3://$BUCKET/images/$FILE \
+              --endpoint-url $ENDPOINT \
+              --region auto \
+              --multipart-threshold 10GB
+          fi
+
       - name: Build main system
         id: build_main_system
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
@@ -109,6 +138,9 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           oci: true
+
+      - name: Clean up artifacts
+        run: rm -f subsystem.local
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
