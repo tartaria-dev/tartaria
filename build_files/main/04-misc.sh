@@ -18,9 +18,6 @@ rm -rf Colloid-icon-theme
 # setup systemd-resolved
 systemctl preset systemd-resolved.service
 
-# refresh font cache
-fc-cache --force --really-force --system-only --verbose
-
 # setup oh-my-posh prompt
 echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
 
