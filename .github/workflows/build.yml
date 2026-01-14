@@ -110,6 +110,8 @@ jobs:
           BUCKET: ${{ secrets.R2_BUCKET }}
           FILE: subsystem.local
         run: |
+          aws configure set default.s3.multipart_threshold 10GB
+
           LOCAL_MD5=$(md5sum "$FILE" | awk '{ print $1 }')
           REMOTE_ETAG=$(aws s3api head-object \
             --endpoint-url $ENDPOINT \
@@ -124,8 +126,7 @@ jobs:
             echo "Local and remote image differ. Starting upload."
             aws s3 cp "$FILE" s3://$BUCKET/images/$FILE \
               --endpoint-url $ENDPOINT \
-              --region auto \
-              --multipart-threshold 10GB
+              --region auto
           fi
 
       - name: Build main system
