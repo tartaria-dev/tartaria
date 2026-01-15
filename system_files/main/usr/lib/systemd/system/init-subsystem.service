@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize subsystem
+Wants=local-fs.target
+After=local-fs.target
+
+[Service]
+User=subsystem
+Type=oneshot
+ExecStart=/usr/libexec/init-subsystem
+
+[Install]
+WantedBy=default.target multi-user.target

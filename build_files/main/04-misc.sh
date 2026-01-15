@@ -5,6 +5,9 @@ echo "::group::===========================> Miscellaneous tasks"
 
 set -ouex pipefail
 
+# add subsystem user
+useradd --system --no-create-home --shell /usr/sbin/nologin subsystem
+
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
