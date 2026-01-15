@@ -1,5 +1,5 @@
 [org.gnome.desktop.interface]
 color-scheme='prefer-dark'
-icon-theme='collolid-icons-Grey-Catppuccin-Dark'
+icon-theme='default-icons-grey-dark'
 font-name='Overpass 11'
 monospace-font-name='Maple Mono 11'

@@ -7,10 +7,11 @@ application_prefer_dark_theme = true
 cursor_theme_name = "Bibata-Original-Ice"
 cursor_blink = true
 font_name = "Maple Mono 16"
-icon_theme_name = "Papirus-Dark"
+icon_theme_name = "default-icons-grey-dark"
 theme_name = "Orchis-Dark"
 
 [commands]
+suspend = ["systemctl", "suspend"]
 reboot = ["systemctl", "reboot"]
 poweroff = ["systemctl", "poweroff"]
 

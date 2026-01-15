@@ -11,12 +11,12 @@ useradd --system --no-create-home --shell /usr/sbin/nologin subsystem
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
-# install Colloid icon theme
-git clone https://github.com/vinceliuice/Colloid-icon-theme
-cd Colloid-icon-theme
-bash ./install.sh -s catppuccin -t grey -n colloid-icons -d /usr/share/icons
+# install default icon theme
+git clone https://github.com/vinceliuice/WhiteSur-icon-theme
+cd WhiteSur-icon-theme
+bash ./install.sh -t grey -n default-icons -d /usr/share/icons
 cd ..
-rm -rf Colloid-icon-theme
+rm -rf WhiteSur-icon-theme
 
 # setup systemd-resolved
 systemctl preset systemd-resolved.service
