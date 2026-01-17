@@ -4,6 +4,12 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "**/README.md"
+      - "**/.devcontainer.json"
+      - "**/cleanup.yml"
+      - "**/dependabot.yml"
+      - "**/renovate.json5"
   schedule:
     - cron: "05 10 * * *" # 10:05am UTC everyday
   push:
@@ -15,9 +21,6 @@ on:
       - "**/cleanup.yml"
       - "**/dependabot.yml"
       - "**/renovate.json5"
-      - "build_files/subsystem/**"
-      - "system_files/subsystem/**"
-      - "Containerfile.SUBSYS"
   workflow_dispatch:
 
 env:
@@ -92,29 +95,16 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Pull subsystem image
-        run: podman pull ghcr.io/tartaria-dev/subsystem:latest
-
-      - name: Create data pipe
-        run: |
-          # incredibly dogwater workaround so gigabytes of disk space isnt taken up
-          # by the tar file that will otherwise be sitting here in the working directory
-          mkfifo data.pipe
-          (podman save -o data.pipe ghcr.io/tartaria-dev/subsystem:latest && podman rmi ghcr.io/tartaria-dev/subsystem:latest) &
-
       - name: Build main image
         id: build_main_image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
-            ./Containerfile.MAINSYS
+            ./Containerfile
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           oci: true
-
-      - name: Remove data pipe
-        run: rm -f data.pipe
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3

@@ -2,8 +2,8 @@
 FROM docker.io/cachyos/cachyos-v3:latest
 
 # load in main build/system files
-COPY system_files/main /
-COPY build_files/main /build/
+COPY system_files /
+COPY build_files /build/
 
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
@@ -11,12 +11,6 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 # fetch Cherries and fetch precompiled AUR packages
 COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
-
-# import the subsystem image via data pipe
-# again, dogwater workaround but it saves space :DD
-RUN mkdir -p /usr/share/subsystem
-RUN --mount=type=bind,source=./data.pipe,target=/tmp/data \
-    cat /tmp/data > /usr/share/subsystem/subsystem.container
 
 # tell dracut to not preserve xattrs for initramfs creation
 ENV DRACUT_NO_XATTR=1
@@ -33,7 +27,7 @@ RUN --mount=type=cache,dst=/var/cache \
     sh /build/01-main-pkgs.sh && \
     sh /build/02-aur-pkgs.sh && \
     sh /build/03-systemd.sh && \
-    sh /build/04-misc.sh
+    sh /build/04-extras.sh
 
 # clean up build files
 RUN rm -rf /build /packages

@@ -5,11 +5,7 @@ filesystem := env("BUILD_FILESYSTEM", "ext4")
 container_runtime := env("CONTAINER_RUNTIME", `command -v podman >/dev/null 2>&1 && echo podman || echo docker`)
 
 build-containerfile $image_name=image_name:
-    sudo {{container_runtime}} build -f Containerfile.SUBSYS -t "subsystem:latest" .
-    mkfifo data.pipe
-    (sudo podman save -o data.pipe subsystem:latest && sudo podman rmi subsystem:latest) > /dev/null 2>&1 &
-    sudo {{container_runtime}} build -f Containerfile.MAINSYS -t "${image_name}:latest" .
-    rm -f data.pipe
+    sudo {{container_runtime}} build -f Containerfile -t "{{image_name}}:{{image_tag}}" .
 
 bootc *ARGS:
     sudo {{container_runtime}} run \

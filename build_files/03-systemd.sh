@@ -15,11 +15,14 @@ systemctl enable \
     greetd.service \
     rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
+    refresh-font-cache.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \
     bluetooth.service \
-    uupd.timer
+    uupd.timer \
+    pick-cherries.timer \
+    usr-share-tartaria-cherries.mount
 
 # system-preset
 systemctl preset \
@@ -45,8 +48,7 @@ systemctl preset --global \
     post-chezmoi-update
 
 # user-wants for Niri
-systemctl add-wants --global \
-    niri.service \
+systemctl add-wants --global niri.service \
     noctalia-shell.service \
     udiskie.service \
 
