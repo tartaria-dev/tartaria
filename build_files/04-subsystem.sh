@@ -5,9 +5,6 @@ echo "::group::===========================> Subsystem creation"
 
 set -ouex pipefail
 
-# get fakeroot
-pacman -S --noconfirm fakeroot
-
 # configure environment
 LIBFAKEROOT=$(find /usr/lib -name "libfakeroot.so" | head -n 1)
 
@@ -77,7 +74,6 @@ echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/e
 LD_PRELOAD="$LIBFAKEROOT" fakeroot mkfs.erofs -zlz4hc,12 -L "subsystem" /usr/lib/subsystem/subsystem.dsk /rootfs
 
 # cleanup
-pacman -Rns --noconfirm fakeroot
 rm -rf /rootfs
 
 echo "::endgroup::"
