@@ -9,6 +9,7 @@ set -ouex pipefail
 pacman -S --noconfirm \
     bash \
     bash-completion \
+    binutils \
     curl \
     gcc \
     glibc-locales \
@@ -43,6 +44,7 @@ pacman -S --noconfirm \
 
 # filesystems
 pacman -S --noconfirm \
+    erofs-utils \
     exfatprogs \
     f2fs-tools \
     gpart \

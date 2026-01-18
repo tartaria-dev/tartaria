@@ -101,11 +101,6 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
-          extra-args: | # build needs "god mode" to run standard mount commands for pacstrap and such, unfortunately
-            --cap-add=SYS_ADMIN
-            --cap-add=MKNOD
-            --security-opt seccomp=unconfined
-            --security-opt apparmor=unconfined
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
