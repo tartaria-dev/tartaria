@@ -1,0 +1,17 @@
+[Exec]
+Boot=on
+
+[Files]
+# The setup here for the subsystem is incredibly simple.
+# All we need to do is create an OverlayFS with the base
+# image created during build, and then mount /var/home
+# from the host over the subsystem OverlayFS, so changes
+# to /var/home are properly redirected to the host - not
+# the nspawn container.
+
+# First, we define /
+Overlay=/usr/lib/subsystem/rootfs:/var/lib/subsystem/rootfs:/
+
+# Second, we define /home
+# Then we're done! Easy.
+Bind=/var/home:/home

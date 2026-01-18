@@ -10,7 +10,6 @@ pacman -S --noconfirm \
     bash \
     bash-completion \
     curl \
-    flatpak \
     gcc \
     glibc-locales \
     jq \
@@ -36,12 +35,10 @@ pacman -S --noconfirm \
     fastfetch \
     git \
     java-runtime-common \
-    nvim \
     powertop \
     python3 \
     starship \
     vim \
-    yt-dlp
 
 
 # filesystems
@@ -112,6 +109,7 @@ pacman -S --noconfirm \
 
 # containerization
 pacman -S --noconfirm \
+    flatpak \
     distrobox \
     docker \
     podman

@@ -1,0 +1,12 @@
+[Unit]
+Description=Create subsystem overlay directories
+After=var.mount
+BindsTo=var.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mkdir -p /var/lib/machines/subsystem /var/lib/subsystem /var/lib/subsystem/rootfs
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -27,7 +27,8 @@ RUN --mount=type=cache,dst=/var/cache \
     sh /build/01-main-pkgs.sh && \
     sh /build/02-aur-pkgs.sh && \
     sh /build/03-systemd.sh && \
-    sh /build/04-extras.sh
+    sh /build/04-subsystem.sh && \
+    sh /build/05-extras.sh
 
 # clean up build files
 RUN rm -rf /build /packages
