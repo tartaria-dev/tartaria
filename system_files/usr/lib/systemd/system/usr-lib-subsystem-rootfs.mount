@@ -6,7 +6,7 @@ BindsTo=local-fs.target
 [Mount]
 What=/usr/lib/subsystem/subsystem.dsk
 Where=/usr/lib/subsystem/rootfs
-Type=auto
+Type=erofs
 Options=loop,ro,acl,user_xattr
 
 [Install]

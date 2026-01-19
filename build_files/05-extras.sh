@@ -15,8 +15,8 @@ bash ./install.sh -t grey -n default-icons -d /usr/share/icons
 cd ..
 rm -rf WhiteSur-icon-theme
 
-# setup oh-my-posh prompt
-echo 'eval "$(starship init bash)"' >> /etc/bash.bashrc
+# setup bash prompt
+echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /etc/bash.bashrc
 
 # set default niri config
 install -d /etc/niri/

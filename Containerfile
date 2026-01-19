@@ -30,26 +30,17 @@ RUN --mount=type=cache,dst=/var/cache \
     sh /build/04-subsystem.sh && \
     sh /build/05-extras.sh
 
-# clean up build files
-RUN rm -rf /build /packages
-
-# configure systemd and kernel
+# generate initramfs with dracut
 RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf && \
     printf 'hostonly=no\nadd_dracutmodules+=" ostree bootc "' | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-bootc-modules.conf && \
     sh -c 'export KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" && \
     dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION"  "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"'
 
-# remove package caches
-RUN rm -rf /home/build/.cache/* && \
-    rm -rf \
-        /tmp/* \
-        /var/cache/pacman/pkg/*
-
-# necessary for general behavior expected by image-based systems
+# arrange filesystem into a format expected by bootc and image-based systems, see https://bootc-dev.github.io/bootc/filesystem.html
 RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
-    rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg && \
+    rm -rf /boot /tmp/* /home /root /usr/local /srv /mnt /var /usr/opt /build /packages /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg && \
     mv /opt /usr/ && mkdir -p /sysroot /boot /usr/lib/ostree /var && \
-    ln -sT sysroot/ostree /ostree && ln -sT var/roothome /root && ln -sT var/srv /srv && ln -sT var/mnt /mnt && ln -sT var/opt /opt && ln -sT var/home /home &&  ln -sT ../var/usrlocal /usr/local
+    ln -sT sysroot/ostree /ostree && ln -sT var/roothome /root && ln -sT var/srv /srv && ln -sT var/mnt /mnt && ln -sT var/opt /opt && ln -sT var/home /home && ln -sT ../var/usrlocal /usr/local
 
 # proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
 LABEL containers.bootc=1
