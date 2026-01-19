@@ -10,7 +10,7 @@ set -ouex pipefail
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst.sig
 
-# verify arch rootfs tarball signature
+# verify arch rootfs tarball signature with arch key
 gpg --keyserver keyserver.ubuntu.com --recv-keys 9741E8AC
 gpg --verify "archlinux-bootstrap-x86_64.tar.zst.sig" "archlinux-bootstrap-x86_64.tar.zst"
 
