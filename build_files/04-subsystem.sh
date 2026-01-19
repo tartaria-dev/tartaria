@@ -23,20 +23,26 @@ FAKEROOTLIB=$(find /usr/lib -name "libfakeroot.so" | head -n 1)
 mkdir -p "/rootfs$(dirname "$FAKEROOTLIB")"
 cp -f "$FAKEROOTLIB" "/rootfs$FAKEROOTLIB"
 
-# initialize pacman keys/mirrors in rootfs
+# initialize pacman keys/mirrors
 echo "Server = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" > /rootfs/etc/pacman.d/mirrorlist
 fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg --init
 fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
                     --config /rootfs/etc/pacman.conf \
                     --populate archlinux
 
-# update rootfs and install base packages
+# update and install core system packages
 fakeroot pacman -r /rootfs -Sy --noconfirm
 fakeroot pacman -r /rootfs -S --noconfirm \
     base \
-    base-devel
+    base-devel \
+    systemd \
+    dbus \
+    util-linux \
+    glibc \
+    libseccomp \
+    shadow \
 
-# install needed cli packages into the rootfs
+# install essential cli packages
 fakeroot pacman -r /rootfs -S --noconfirm \
     bash \
     bash-completion \
@@ -74,9 +80,12 @@ fakeroot pacman -r /rootfs -Scc --noconfirm
 rm -rf /rootfs/var/cache/pacman/pkg/*
 rm -rf /rootfs/var/lib/pacman/sync/*
 
-# set locale to en_US by default
+# generate locale
 echo "en_US.UTF-8 UTF-8" > /rootfs/etc/locale.gen
 fakeroot chroot /rootfs locale-gen
+
+# update dynamic linker cache
+fakeroot chroot /rootfs ldconfig
 
 # extra subsystem configuration
 echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/etc/bash.bashrc
