@@ -15,7 +15,7 @@ for user_path in /var/home/*; do
         USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
 
         if [ "$USER_UID" -ge 1000 ]; then
-            echo "Executing for $USER_NAME (UID: $USER_UID)..."
+            echo "Executing "$1" as $USER_NAME (UID: $USER_UID)..."
             su -c "$1" - "$USER_NAME"
         fi
     fi
