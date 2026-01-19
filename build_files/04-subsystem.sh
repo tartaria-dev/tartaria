@@ -80,6 +80,8 @@ fakeroot chroot /rootfs locale-gen
 
 # extra subsystem configuration
 echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/etc/bash.bashrc
+cp -f /usr/lib/os-release /rootfs/usr/lib/os-release
+cp -f /etc/os-release /rootfs/etc/os-release
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
