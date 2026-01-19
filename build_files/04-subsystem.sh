@@ -6,8 +6,15 @@ echo "::group::===========================> Subsystem creation"
 
 set -ouex pipefail
 
-# download and extract arch rootfs tarball
+# download arch rootfs tarball and signature
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst
+curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst.sig
+
+# verify arch rootfs tarball signature
+gpg --keyserver keyserver.ubuntu.com --recv-keys 9741E8AC
+gpg --verify "archlinux-bootstrap-x86_64.tar.zst.sig" "archlinux-bootstrap-x86_64.tar.zst"
+
+# extract and prepare rootfs
 fakeroot tar --numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
 mv root.x86_64 /rootfs
 
@@ -77,7 +84,7 @@ echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/e
 rm -f "/rootfs$FAKEROOTLIB"
 
 # finalize subsystem build and create disk image
-fakeroot mkfs.erofs -q -zlz4hc,12 -L "subsystem" /usr/lib/subsystem/subsystem.dsk /rootfs
+fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs
 
 # post build cleanup
 rm -rf /rootfs
