@@ -12,7 +12,7 @@ curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_6
 
 # verify arch rootfs tarball signature with arch key
 gpg --keyserver keyserver.ubuntu.com --recv-keys 9741E8AC
-gpg --verify "archlinux-bootstrap-x86_64.tar.zst.sig" "archlinux-bootstrap-x86_64.tar.zst"
+gpg --verify --keyserver keyserver.ubuntu.com --keyserver-options auto-key-retrieve archlinux-bootstrap-x86_64.tar.zst.sig archlinux-bootstrap-x86_64.tar.zst
 
 # extract and prepare rootfs
 fakeroot tar --numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
@@ -40,6 +40,7 @@ fakeroot pacman -r /rootfs -S --noconfirm \
 fakeroot pacman -r /rootfs -S --noconfirm \
     bash \
     bash-completion \
+    binutils \
     curl \
     gcc \
     glibc-locales \
