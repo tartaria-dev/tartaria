@@ -1,7 +1,5 @@
 [Unit]
 Description=Mount subsystem disk image
-After=local-fs.target
-BindsTo=local-fs.target
 
 [Mount]
 What=/usr/lib/subsystem/subsystem.dsk
