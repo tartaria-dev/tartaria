@@ -17,7 +17,7 @@ useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
 chown -R subsys:subsys /etc/subsystem-conf
 
 # enable subsystem service
-su - subsys -c "podman system install subsystem.container"
+su - subsys -c "podman quadlet install subsystem.container"
 su - subsys -c "systemctl --user enable subsystem.service"
 
 # download arch rootfs tarball and signature
