@@ -12,7 +12,7 @@ cd /workdir
 # create subsystem directory
 mkdir -p /subsys
 
-# create subsystem user (debug!)
+# create subsystem user
 useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
 chown -R subsys:subsys /etc/subsystem-conf
 echo "subsys:200000:65536" | tee -a /etc/subuid
