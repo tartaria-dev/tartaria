@@ -19,14 +19,12 @@ echo "subsys:957:1" | tee -a /etc/subuid
 echo "subsys:957:1" | tee -a /etc/subgid
 echo "subsys:200000:65536" | tee -a /etc/subuid
 echo "subsys:200000:65536" | tee -a /etc/subgid
-sudo ausearch -m avc -ts recent | grep newuidmap
-sudo dmesg | grep -i apparmor | grep newuidmap
-
-exit 1
 
 # enable subsystem service
 su - subsys -c "podman quadlet install subsystem.container"
 su - subsys -c "systemctl --user enable subsystem.service"
+
+exit 1
 
 # download arch rootfs tarball and signature
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst
