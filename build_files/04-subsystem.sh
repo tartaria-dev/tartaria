@@ -50,7 +50,6 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
 fakeroot pacman $PACARGS -Sy --noconfirm
 fakeroot pacman $PACARGS -S --noconfirm \
     base \
-    base-devel \
     systemd \
     dbus \
     util-linux \
