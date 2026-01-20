@@ -23,7 +23,7 @@ mv root.x86_64 /rootfs
 
 # configure environment
 FAKEROOTLIB=$(find /usr/lib -name "libfakeroot.so" | head -n 1)
-PACARGS="--root /rootfs --config /rootfs/etc/pacman.conf"
+PACARGS="--root /rootfs --config /rootfs/etc/pacman.conf --disable-sandbox"
 
 # temporarily add fakeroot library to rootfs
 mkdir -p "/rootfs$(dirname "$FAKEROOTLIB")"
