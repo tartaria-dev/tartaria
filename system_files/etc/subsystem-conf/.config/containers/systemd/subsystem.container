@@ -1,12 +1,11 @@
 [Unit]
 Description=Subsystem container
-After=local-fs.target subsys-home.mount subsys.mount
-BindsTo=subsys-home.mount subsys.mount
+After=local-fs.target subsys.mount subsys-home.mount
+BindsTo=subsys.mount subsys-home.mount
 
 [Container]
 ContainerName=subsystem
 HostName=subsystem
-WorkingDir=$HOME
 EnvironmentHost=true
 LogDriver=journald
 Rootfs=/subsys

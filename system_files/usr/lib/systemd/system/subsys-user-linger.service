@@ -1,0 +1,11 @@
+[Unit]
+Description=Enable linger for subsys user
+Before=systemd-user-sessions.service
+After=systemd-logind.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/loginctl enable-linger subsys
+
+[Install]
+WantedBy=multi-user.target

@@ -24,7 +24,9 @@ systemctl enable \
     uupd.timer \
     pick-cherries.timer \
     usr-share-tartaria-cherries.mount \
-    usr-lib-subsystem-rootfs.mount
+    usr-lib-subsystem-rootfs.mount \
+    subsys-home.mount \
+    subsys.mount
 
 # system-preset
 systemctl preset \
