@@ -17,7 +17,7 @@ useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
 chown -R subsys:subsys /etc/subsystem-conf
 
 # enable subsystem service
-su -c podman systemd install subsystem.container -- subsys
+su - subsys -c "podman system install subsystem.container"
 
 # download arch rootfs tarball and signature
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst
