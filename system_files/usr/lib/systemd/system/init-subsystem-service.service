@@ -1,0 +1,15 @@
+[Unit]
+Description=Initialize subsystem service
+ConditionPathExists=!/etc/subsystem-conf/.initialized
+After=local-fs.target subsys-user-linger.service
+
+[Service]
+Type=oneshot
+User=subsys
+Group=subsys
+ExecStart=/usr/bin/podman quadlet install subsystem.container
+ExecStart=/usr/bin/systemctl --user enable --now subsystem.service
+ExecStart=/usr/bin/touch /etc/subsystem-conf/.initialized
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -17,6 +17,7 @@ systemctl enable \
     kdeconnect-firewalld-bypass.service \
     create-subsystem-overlay-dirs.service \
     refresh-font-cache.service \
+    init-subsystem-service.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \
