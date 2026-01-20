@@ -23,12 +23,7 @@ RUN echo "::group::===========================> Prepare image build" && grep "= 
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    sh /build/00-base.sh && \
-    sh /build/01-main-pkgs.sh && \
-    sh /build/02-aur-pkgs.sh && \
-    sh /build/03-systemd.sh && \
-    sh /build/04-subsystem.sh && \
-    sh /build/05-extras.sh
+    sh /build/04-subsystem.sh
 
 # generate initramfs with dracut
 RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf && \

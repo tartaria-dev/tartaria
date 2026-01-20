@@ -12,11 +12,17 @@ cd /workdir
 # create subsystem directory
 mkdir -p /subsys
 
-# create subsystem user
+# create subsystem user (debug!)
 useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
 chown -R subsys:subsys /etc/subsystem-conf
+echo "subsys:957:1" | tee -a /etc/subuid
+echo "subsys:957:1" | tee -a /etc/subgid
 echo "subsys:200000:65536" | tee -a /etc/subuid
 echo "subsys:200000:65536" | tee -a /etc/subgid
+sudo ausearch -m avc -ts recent | grep newuidmap
+sudo dmesg | grep -i apparmor | grep newuidmap
+
+exit 1
 
 # enable subsystem service
 su - subsys -c "podman quadlet install subsystem.container"
