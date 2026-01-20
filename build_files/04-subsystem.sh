@@ -15,6 +15,8 @@ mkdir -p /subsys
 # create subsystem user
 useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
 chown -R subsys:subsys /etc/subsystem-conf
+echo "subsys:200000:65536" | tee -a /etc/subuid
+echo "subsys:200000:65536" | tee -a /etc/subgid
 
 # enable subsystem service
 su - subsys -c "podman quadlet install subsystem.container"
