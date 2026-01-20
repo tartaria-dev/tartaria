@@ -19,6 +19,9 @@ mv root.x86_64 /rootfs
 
 # configure environment
 FAKEROOTLIB=$(find /usr/lib -name "libfakeroot.so" | head -n 1)
+PACARGS="--root /rootfs --config /rootfs/etc/pacman.conf"
+
+# temporarily add fakeroot library to rootfs
 mkdir -p "/rootfs$(dirname "$FAKEROOTLIB")"
 cp -f "$FAKEROOTLIB" "/rootfs$FAKEROOTLIB"
 
@@ -30,8 +33,8 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
                     --populate archlinux
 
 # update and install core system packages
-fakeroot pacman -r /rootfs -Sy --noconfirm
-fakeroot pacman -r /rootfs -S --noconfirm \
+fakeroot pacman $PACARGS -Sy --noconfirm
+fakeroot pacman $PACARGS -S --noconfirm \
     base \
     base-devel \
     systemd \
@@ -42,7 +45,7 @@ fakeroot pacman -r /rootfs -S --noconfirm \
     shadow \
 
 # install essential cli packages
-fakeroot pacman -r /rootfs -S --noconfirm \
+fakeroot pacman $PACARGS -S --noconfirm \
     bash \
     bash-completion \
     binutils \
@@ -75,7 +78,7 @@ fakeroot pacman -r /rootfs -S --noconfirm \
     yt-dlp
 
 # cleanup pacman cache
-fakeroot pacman -r /rootfs -Scc --noconfirm
+fakeroot pacman $PACARGS -Scc --noconfirm
 rm -rf /rootfs/var/cache/pacman/pkg/*
 rm -rf /rootfs/var/lib/pacman/sync/*
 
@@ -94,7 +97,7 @@ cp -f /usr/lib/os-release /rootfs/usr/lib/os-release
 cp -f /etc/os-release /rootfs/etc/os-release
 
 # compatibility with host's homedir config
-fakeroot ln -sT /rootfs/var/home /rootfs/home
+fakeroot ln -sT /rootfs/home /rootfs/var/home
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
