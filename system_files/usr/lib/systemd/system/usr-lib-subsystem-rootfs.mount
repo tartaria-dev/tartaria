@@ -8,4 +8,4 @@ Type=erofs
 Options=loop,ro,acl,user_xattr
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target default.target

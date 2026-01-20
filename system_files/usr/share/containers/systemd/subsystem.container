@@ -1,0 +1,22 @@
+[Unit]
+Description=Subsystem container
+After=local-fs.target subsys-home.mount subsys.mount
+BindsTo=subsys-home.mount subsys.mount
+
+[Container]
+ContainerName=subsystem
+HostName=subsystem
+WorkingDir=$HOME
+EnvironmentHost=true
+LogDriver=journald
+Rootfs=/subsys
+Network=host
+RunInit=yes
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=900
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target default.target

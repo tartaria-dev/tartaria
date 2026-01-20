@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount subsystem home directory
+After=subsys.mount var.mount
+BindsTo=subsys.mount var.mount
+RequiresMountsFor=/subsys /usr/lib/subsystem/rootfs
+
+[Mount]
+What=/var/home
+Where=/subsys/home
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target default.target

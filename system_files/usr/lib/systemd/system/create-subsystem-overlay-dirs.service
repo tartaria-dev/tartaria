@@ -5,8 +5,7 @@ BindsTo=var.mount
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/mkdir -p /var/lib/machines/subsystem /var/lib/subsystem /var/lib/subsystem/rootfs
-RemainAfterExit=false
+ExecStart=/usr/bin/bash -c "mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}"
 
 [Install]
 WantedBy=multi-user.target default.target

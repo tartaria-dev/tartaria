@@ -1,6 +1,5 @@
 #!/bin/sh
 # setup subsystem rootfs
-# ts took 3 hours to make bro im genuinely gonna crash out
 
 echo "::group::===========================> Subsystem creation"
 
@@ -87,16 +86,21 @@ fakeroot chroot /rootfs locale-gen
 # update dynamic linker cache
 fakeroot chroot /rootfs ldconfig
 
-# extra subsystem configuration
+# configure bash prompt
 echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/etc/bash.bashrc
+
+# set os-release
 cp -f /usr/lib/os-release /rootfs/usr/lib/os-release
 cp -f /etc/os-release /rootfs/etc/os-release
-echo "subsystem" > /rootfs/etc/hostname
+
+# compatibility with host's homedir config
+fakeroot ln -sT /rootfs/var/home /rootfs/home
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
+rm -rf /rootfs/home/*
 
-# finalize subsystem build and create disk image
+# create disk image of rootfs
 fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs
 
 # post build cleanup

@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount subsystem rootfs
+After=usr-lib-subsystem-rootfs.mount create-subsystem-overlay-dirs.service
+BindsTo=usr-lib-subsystem-rootfs.mount create-subsystem-overlay-dirs.service
+RequiresMountsFor=/subsys /usr/lib/subsystem/rootfs
+
+[Mount]
+What=overlay
+Where=/subsys
+Type=overlay
+Options=lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work
+
+[Install]
+WantedBy=multi-user.target default.target
