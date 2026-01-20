@@ -5,6 +5,10 @@ echo "::group::===========================> Subsystem creation"
 
 set -ouex pipefail
 
+# enter workdir
+mkdir -p /workdir
+cd /workdir
+
 # download arch rootfs tarball and signature
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst
 curl -JLO https://archive.archlinux.org/iso/2026.01.01/archlinux-bootstrap-x86_64.tar.zst.sig
@@ -107,6 +111,8 @@ rm -rf /rootfs/home/*
 fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs
 
 # post build cleanup
-rm -rf /rootfs
+cd ..
+rm -rf workdir
+rm -rf rootfs
 
 echo "::endgroup::"
