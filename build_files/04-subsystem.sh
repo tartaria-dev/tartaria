@@ -37,8 +37,8 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
                     --populate archlinux
 
 # update and install core system packages
-fakeroot pacman $PACARGS -Sy --noconfirm
-fakeroot pacman $PACARGS -S --noconfirm \
+fakeroot pacman $PACARGS -Syqq --noconfirm
+fakeroot pacman $PACARGS -Sqq --noconfirm \
     base \
     systemd \
     dbus \
@@ -48,7 +48,7 @@ fakeroot pacman $PACARGS -S --noconfirm \
     shadow \
 
 # install essential cli packages
-fakeroot pacman $PACARGS -S --noconfirm \
+fakeroot pacman $PACARGS -Sqq --noconfirm \
     bash \
     bash-completion \
     binutils \
@@ -112,7 +112,7 @@ fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /u
 # create subsystem directory and setup subsys home
 mkdir -p /subsys
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
-chown -R subsys:subsys /etc/subsystem-conf
+chown -R subsys /etc/subsystem-conf
 
 # create subsystem user
 useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys

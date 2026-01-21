@@ -6,7 +6,7 @@ echo "::group::===========================> Install main packages"
 set -ouex pipefail
 
 # cli essentials
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     bash \
     bash-completion \
     binutils \
@@ -29,7 +29,7 @@ pacman -S --noconfirm \
     wget
 
 # cli extras
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     atuin \
     cava \
     chezmoi \
@@ -43,7 +43,7 @@ pacman -S --noconfirm \
 
 
 # filesystems
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     erofs-utils \
     exfatprogs \
     f2fs-tools \
@@ -56,7 +56,7 @@ pacman -S --noconfirm \
     udftools
 
 # drivers
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     acpid \
     amd-ucode \
     apparmor \
@@ -80,7 +80,7 @@ pacman -S --noconfirm \
     zram-generator
 
 # pipewire
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     alsa-firmware \
     lib32-pipewire \
     linux-firmware-intel \
@@ -94,7 +94,7 @@ pacman -S --noconfirm \
     wireplumber
 
 # network
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     firewalld \
     libmtp \
     networkmanager \
@@ -105,19 +105,19 @@ pacman -S --noconfirm \
     udisks2
 
 # bluetooth
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     bluez \
     bluez-utils
 
 # containerization
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     flatpak \
     distrobox \
     docker \
     podman
 
 # media
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     ffmpeg \
     ffmpegthumbs \
     gst-libav \
@@ -134,7 +134,7 @@ pacman -S --noconfirm \
     xwayland-satellite
 
 # fonts
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     gnu-free-fonts \
     gsfonts \
     noto-fonts \
@@ -152,7 +152,7 @@ pacman -S --noconfirm \
     wqy-microhei
 
 # interface
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     accountsservice \
     archlinux-xdg-menu \
     brightnessctl \
@@ -178,18 +178,18 @@ pacman -S --noconfirm \
     xdg-utils
 
 # accessibility
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     espeak-ng \
     orca
 
 # printer
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     cups \
     cups-browsed \
     hplip
 
 # apps
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     ark \
     decibels \
     frameworkintegration \

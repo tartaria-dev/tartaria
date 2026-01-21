@@ -17,10 +17,10 @@ pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyse
 pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
 echo -e '[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
 
-pacman -Sy --noconfirm
+pacman -Syqq --noconfirm
 
 # install Chaotic AUR / bootc / local packages
-pacman -S --noconfirm \
+pacman -Sqq --noconfirm \
     bootc/uupd \
     chaotic-aur/bazaar-git \
     chaotic-aur/bibata-cursor-theme \
@@ -38,7 +38,7 @@ pacman -S --noconfirm \
     chaotic-aur/zen-browser-bin
 
 for pkg in /packages/*; do
-    pacman -U --noconfirm "$pkg"
+    pacman -Uqq --noconfirm "$pkg"
 done
 
 echo "::endgroup::"
