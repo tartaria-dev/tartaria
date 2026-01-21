@@ -1,7 +1,7 @@
 #!/bin/sh
 # extra important stuff
 
-echo "::group::===========================> Miscellaneous tasks"
+echo "::group::===========================> Perform final tasks"
 
 set -ouex pipefail
 
