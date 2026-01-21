@@ -119,4 +119,5 @@ mkdir -p /subsys
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
 chown -R subsys:subsys /etc/subsystem-conf
 
+set +x
 echo "::endgroup::"
