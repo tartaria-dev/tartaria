@@ -28,8 +28,8 @@ RUN --mount=type=cache,dst=/var/cache \
     sh /build/00-base.sh && \
     sh /build/01-main-pkgs.sh && \
     sh /build/02-aur-pkgs.sh && \
-    sh /build/03-systemd.sh && \
-    sh /build/04-subsystem.sh && \
+    sh /build/03-subsystem.sh && \
+    sh /build/04-systemd.sh && \
     sh /build/05-extras.sh
 
 # generate initramfs with dracut
@@ -37,7 +37,7 @@ RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/
     printf 'hostonly=no\nadd_dracutmodules+=" ostree bootc "' | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-bootc-modules.conf && \
     sh -c 'export KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" && \
     dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION"  "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"' && \
-    echo "::endgroup::" && echo "::group::===========================> Perform fs organization"
+    echo "::endgroup::" && echo "::group::===========================> Perform filesystem organization"
 
 # arrange filesystem into a format expected by bootc and image-based systems, see https://bootc-dev.github.io/bootc/filesystem.html
 RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
