@@ -1,6 +1,8 @@
 # base image
 FROM docker.io/cachyos/cachyos-v3:latest
 
+RUN echo "::group::===========================> Perform image build preperation"
+
 # load in main build/system files
 COPY system_files /
 COPY build_files /build/
@@ -16,7 +18,7 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tarta
 ENV DRACUT_NO_XATTR=1
 
 # move everything from `/var` to `/usr/lib/sysimage` so behavior around pacman remains the same on `bootc usroverlay`'d systems
-RUN echo "::group::===========================> Prepare image build" && grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | xargs -n1 sh -c 'mkdir -p "/usr/lib/sysimage/$(dirname $(echo $1 | sed "s@/var/@@"))" && mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' '' && \
+RUN grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | xargs -n1 sh -c 'mkdir -p "/usr/lib/sysimage/$(dirname $(echo $1 | sed "s@/var/@@"))" && mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' '' && \
     sed -i -e "/= *\/var/ s/^#//" -e "s@= */var@= /usr/lib/sysimage@g" -e "/DownloadUser/d" /etc/pacman.conf
 
 # run main build scripts
@@ -45,5 +47,7 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd" && \
 # proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
 LABEL containers.bootc=1
 
-# verify container with bootc, do not remove
+RUN echo "::endgroup::"
+
+# lint bootc image, don't remove
 RUN bootc container lint

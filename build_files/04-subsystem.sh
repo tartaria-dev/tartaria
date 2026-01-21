@@ -1,7 +1,7 @@
 #!/bin/sh
 # setup subsystem rootfs
 
-echo "::group::===========================> Install subsystem rootfs"
+echo "::group::===========================> Perform subsystem installation"
 
 set -ouex pipefail
 

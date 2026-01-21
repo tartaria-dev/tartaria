@@ -1,7 +1,7 @@
 #!/bin/sh
 # configure important system services
 
-echo "::group::===========================> Configure systemd services"
+echo "::group::===========================> Perform systemd service configuration"
 
 set -ouex pipefail
 

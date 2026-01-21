@@ -1,7 +1,7 @@
 #!/bin/sh
 # commands for installing misc packages (AUR, Chaotic AUR, bootc)
 
-echo "::group::===========================> Install AUR packages"
+echo "::group::===========================> Perform AUR package installations"
 
 set -ouex pipefail
 
@@ -38,7 +38,7 @@ pacman -Sqq --noconfirm \
     chaotic-aur/zen-browser-bin
 
 for pkg in /packages/*; do
-    pacman -Uqq --noconfirm "$pkg"
+    pacman -U --noconfirm "$pkg"
 done
 
 echo "::endgroup::"

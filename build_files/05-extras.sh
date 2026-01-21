@@ -1,7 +1,7 @@
 #!/bin/sh
 # extra important stuff
 
-echo "::group::===========================> Perform final tasks"
+echo "::group::===========================> Perform extra tasks"
 
 set -ouex pipefail
 
@@ -26,3 +26,5 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
 echo "::endgroup::"
+
+echo "::group::===========================> Perform final build operations"
