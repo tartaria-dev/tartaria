@@ -107,7 +107,7 @@ rm -f "/rootfs$FAKEROOTLIB"
 rm -rf /rootfs/home/*
 
 # create disk image of rootfs
-fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs
+fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 
 # create subsystem directory and setup subsys home
 mkdir -p /subsys
