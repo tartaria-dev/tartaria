@@ -5,9 +5,6 @@ echo "::group::===========================> Install subsystem rootfs"
 
 set -ouex pipefail
 
-# install erofs-utils
-pacman -S --noconfirm erofs-utils
-
 # enter workdir
 mkdir -p /workdir
 cd /workdir
