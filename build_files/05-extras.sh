@@ -1,8 +1,6 @@
 #!/bin/sh
 # extra important stuff
 
-echo "::group::===========================> Perform extra tasks"
-
 set -ouex pipefail
 
 # manually add greetd user due to rebase issues
@@ -27,4 +25,4 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 
 echo "::endgroup::"
 
-echo "::group::===========================> Perform final build operations"
+echo "::group::===========================> Perform kernel generation"

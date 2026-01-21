@@ -1,7 +1,7 @@
 #!/bin/sh
 # commands for installing main arch packages
 
-echo "::group::===========================> Perform main package installations"
+echo "::group::===========================> Perform system package installation"
 
 set -ouex pipefail
 
@@ -211,5 +211,3 @@ pacman -Sqq --noconfirm \
     secrets \
     showtime \
     sysprof
-
-echo "::endgroup::"

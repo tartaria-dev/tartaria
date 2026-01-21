@@ -1,8 +1,6 @@
 #!/bin/sh
 # commands for installing misc packages (AUR, Chaotic AUR, bootc)
 
-echo "::group::===========================> Perform AUR package installations"
-
 set -ouex pipefail
 
 # setup Chaotic AUR

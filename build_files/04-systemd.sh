@@ -1,7 +1,7 @@
 #!/bin/sh
 # configure important system services
 
-echo "::group::===========================> Perform systemd service configuration"
+echo "::group::===========================> Perform system configuration"
 
 set -ouex pipefail
 
@@ -52,5 +52,3 @@ systemctl preset --global \
 systemctl add-wants --global niri.service \
     noctalia-shell.service \
     udiskie.service \
-
-echo "::endgroup::"
