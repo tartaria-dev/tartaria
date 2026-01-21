@@ -15,19 +15,15 @@ systemctl enable \
     greetd.service \
     rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
-    create-subsystem-overlay-dirs.service \
     refresh-font-cache.service \
-    init-subsystem-service.service \
+    init-subsystem.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \
     bluetooth.service \
     uupd.timer \
     pick-cherries.timer \
-    usr-share-tartaria-cherries.mount \
-    usr-lib-subsystem-rootfs.mount \
-    subsys-home.mount \
-    subsys.mount
+    usr-share-tartaria-cherries.mount
 
 # system-preset
 systemctl preset \

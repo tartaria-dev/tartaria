@@ -1,0 +1,13 @@
+[Unit]
+Description=Subsystem container manager
+After=systemd-logind.service var.mount
+BindsTo=systemd-logind.service var.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/subsystem-mgr poweron
+ExecStop=/usr/libexec/subsystem-mgr poweroff
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target default.target

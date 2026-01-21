@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# if not root, exit
+[[ "$EUID" -ne 0 ]] && echo "Not root, abort." && exit 1
+
+set -ouex pipefail
+
+case $1 in
+    poweron)
+        if [[ ! -f /etc/subsystem-conf/.initialized ]]; then
+            # create rootfs dirs
+            mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
+
+            # enable subsys linger
+            loginctl enable-linger subsys
+
+            # make sure subsystem service is generated
+            su - subsys -c "systemctl --user daemon-reload"
+
+            # finish up
+            touch /etc/subsystem-conf/.initalized
+        fi
+
+        # prepare subsystem root
+        mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs # mount ro base rootfs
+        mount -t overlay overlay -o lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys # mount overlay with base rootfs
+        mount -o bind /var/home /subsys/home # mount homedirs
+
+        # start subsystem container
+        su - subsys -c "systemctl --user start subsystem.service"
+        ;;
+    poweroff)
+        # power off subsystem container
+        su - subsys -c "systemctl --user stop subsystem.service"
+
+        # unmount subsystem rootfs
+        umount /subsys/home
+        umount /subsys
+        umount /usr/lib/subsystem/rootfs
+        ;;
+    *)
+        echo "Usage: $0 poweron|poweroff"
+        exit 1
+        ;;
+esac

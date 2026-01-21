@@ -1,7 +1,7 @@
 [Unit]
 Description=Subsystem container
-After=local-fs.target subsys.mount subsys-home.mount
-BindsTo=subsys.mount subsys-home.mount
+RequiresMountsFor=/usr/lib/subsystem/rootfs /subsys/home /subsys
+After=local-fs.target
 
 [Container]
 ContainerName=subsystem
