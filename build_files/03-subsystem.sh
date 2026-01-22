@@ -109,11 +109,9 @@ rm -rf /rootfs/home/*
 fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 
 # create subsystem user
-useradd -r -m -d /etc/subsystem-conf -s /bin/bash subsys
-echo "subsys:100000:65536" | tee -a /etc/subuid
-echo "subsys:100000:65536" | tee -a /etc/subgid
+useradd -m -d /etc/subsystem-conf -s /bin/bash subsys
 
-# create subsystem directory and setup subsystem user home
+# create subsystem directory and subsystem config
 mkdir -p /subsys
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
 chown -R subsys:subsys /etc/subsystem-conf
