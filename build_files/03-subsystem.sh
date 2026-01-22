@@ -108,13 +108,8 @@ rm -rf /rootfs/home/*
 # create disk image of rootfs
 fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 
-# create subsystem user
-useradd -m -d /etc/subsystem-conf -s /bin/bash subsys
-
-# create subsystem directory and subsystem config
-mkdir -p /subsys
+# setup subsystem conf dir
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
-chown -R subsys:subsys /etc/subsystem-conf
 
 set +x
 echo "::endgroup::"

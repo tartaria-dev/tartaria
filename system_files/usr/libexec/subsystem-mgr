@@ -3,6 +3,12 @@
 # if not root, exit
 [[ "$EUID" -ne 0 ]] && echo "Not root, abort." && exit 1
 
+# create subsystem user if it doesn't exist
+if ! id "subsys" >/dev/null 2>&1; then
+    useradd -rmd /etc/subsystem-conf -s /bin/bash subsys
+    chown -R subsys:subsys /etc/subsystem-conf
+fi
+
 case $1 in
     poweron)
         # create rootfs dirs if they don't already exist
