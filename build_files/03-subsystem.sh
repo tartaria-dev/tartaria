@@ -37,18 +37,17 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
                     --populate archlinux
 
 # update and install core system packages
-fakeroot pacman $PACARGS -Syqq --noconfirm
-fakeroot pacman $PACARGS -Sqq --noconfirm \
+fakeroot pacman $PACARGS -Syq --noconfirm
+fakeroot pacman $PACARGS -Sq --noconfirm \
     base \
     systemd \
     dbus \
     util-linux \
     glibc \
-    libseccomp \
     shadow \
 
 # install essential cli packages
-fakeroot pacman $PACARGS -Sqq --noconfirm \
+fakeroot pacman $PACARGS -Sq --noconfirm \
     bash \
     bash-completion \
     binutils \
