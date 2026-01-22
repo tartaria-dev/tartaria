@@ -85,7 +85,7 @@ rm -rf /rootfs/var/cache/pacman/pkg/*
 rm -rf /rootfs/var/lib/pacman/sync/*
 
 # generate locale
-echo "en_US.UTF-8 UTF-8" > /rootfs/etc/locale.gen
+echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /rootfs/etc/locale.gen
 fakeroot chroot /rootfs locale-gen
 
 # update dynamic linker cache
