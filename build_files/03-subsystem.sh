@@ -18,7 +18,7 @@ gpg --keyserver keyserver.ubuntu.com --recv-keys 9741E8AC
 gpg --verify --keyserver keyserver.ubuntu.com --keyserver-options auto-key-retrieve archlinux-bootstrap-x86_64.tar.zst.sig archlinux-bootstrap-x86_64.tar.zst
 
 # extract and prepare rootfs
-fakeroot tar -numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
+fakeroot tar --numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
 mv root.x86_64 /rootfs
 
 # configure environment
