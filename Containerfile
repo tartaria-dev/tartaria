@@ -1,7 +1,7 @@
 # base image
 FROM docker.io/cachyos/cachyos-v3:latest
 
-RUN echo "::group::===========================> Perform image build preperation"
+RUN echo "::group::===========================> Perform image build preparation"
 
 # load in main build/system files
 COPY system_files /
