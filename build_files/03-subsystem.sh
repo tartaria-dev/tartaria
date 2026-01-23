@@ -111,6 +111,9 @@ fakeroot sh -c '
 # setup subsystem conf dir
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
 
+# set correct ownership of subsystem dirs
+chown -R 767:767 /usr/lib/subsystem /etc/subsystem-conf
+
 # cleanup
 cd /
 rm -rf /workdir /rootfs

@@ -7,7 +7,6 @@
 if ! id "subsys" >/dev/null 2>&1; then
     groupadd -rg 767 subsys
     useradd -rmd /etc/subsystem-conf -s /bin/bash -u 767 -g 767 subsys
-    chown -R subsys:subsys /etc/subsystem-conf
     loginctl enable-linger subsys
 fi
 
@@ -15,6 +14,7 @@ case $1 in
     poweron)
         # create rootfs dirs if they don't already exist
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
+        chown -R 767:767 /var/lib/subsystem{,rootfs,.rootfs-work}
 
         # make sure subsystem service is generated
         machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
