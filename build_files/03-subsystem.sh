@@ -5,8 +5,8 @@ echo "::group::===========================> Perform subsystem installation"
 
 set -ouex pipefail
 
-# enter workdir
-mkdir -p /workdir
+# enter workdir and create subsys dir
+mkdir -p /workdir /subsys
 cd /workdir
 
 # download arch rootfs tarball and signature
@@ -72,19 +72,16 @@ fakeroot pacman $PACARGS -Sq --noconfirm \
     cava \
     fastfetch \
     git \
-    java-runtime-common \
     nvim \
-    python3 \
     starship \
     vim \
-    yt-dlp
 
 # cleanup pacman cache
 fakeroot pacman $PACARGS -Scc --noconfirm
 rm -rf /rootfs/var/cache/pacman/pkg/*
 rm -rf /rootfs/var/lib/pacman/sync/*
 
-# generate locale
+# generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /rootfs/etc/locale.gen
 fakeroot chroot /rootfs locale-gen
 
@@ -110,6 +107,10 @@ fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /u
 
 # setup subsystem conf dir
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
+
+# cleanup
+cd /
+rm -rf /workdir /rootfs
 
 set +x
 echo "::endgroup::"

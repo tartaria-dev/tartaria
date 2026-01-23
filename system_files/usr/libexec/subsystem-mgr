@@ -7,6 +7,7 @@
 if ! id "subsys" >/dev/null 2>&1; then
     useradd -rmd /etc/subsystem-conf -s /bin/bash subsys
     chown -R subsys:subsys /etc/subsystem-conf
+    loginctl enable-linger subsys
 fi
 
 case $1 in
@@ -15,7 +16,7 @@ case $1 in
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
 
         # make sure subsystem service is generated
-        su - subsys -c "systemctl --user daemon-reload"
+        machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
 
         # setup subsystem root
         mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
@@ -23,11 +24,11 @@ case $1 in
         mount -o bind /var/home /subsys/home
 
         # start subsystem container
-        su - subsys -c "systemctl --user start subsystem.service"
+        machinectl shell subsys@.host /usr/bin/systemctl --user start subsystem.service
         ;;
     poweroff)
         # power off subsystem container
-        su - subsys -c "systemctl --user stop subsystem.service"
+        machinectl shell subsys@.host /usr/bin/systemctl --user stop subsystem.service
 
         # unmount subsystem rootfs
         umount /subsys/home
