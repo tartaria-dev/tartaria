@@ -97,16 +97,16 @@ cp -f /etc/os-release /rootfs/etc/os-release
 # compatibility with host's homedir config
 fakeroot ln -sT /rootfs/home /rootfs/var/home
 
-# fix ownership to allow rootless
-fakeroot find /rootfs -user 0 -exec chown 767 {} +
-fakeroot find /rootfs -group 0 -exec chgrp 767 {} +
-
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
 rm -rf /rootfs/home/* /rootfs/var/log/* /rootfs/tmp/* /rootfs/var/tmp/*
 
 # create disk image of rootfs
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
+fakeroot sh -c '
+  find /rootfs -user 0 -exec chown -h 767 {} +
+  find /rootfs -group 0 -exec chgrp -h 767 {} +
+  mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
+'
 
 # setup subsystem conf dir
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
