@@ -5,7 +5,8 @@
 
 # create subsystem user if it doesn't exist
 if ! id "subsys" >/dev/null 2>&1; then
-    useradd -rmd /etc/subsystem-conf -s /bin/bash subsys
+    groupadd -rg 767 subsys
+    useradd -rmd /etc/subsystem-conf -s /bin/bash -u 767 -g 767 subsys
     chown -R subsys:subsys /etc/subsystem-conf
     loginctl enable-linger subsys
 fi

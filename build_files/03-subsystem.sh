@@ -18,7 +18,7 @@ gpg --keyserver keyserver.ubuntu.com --recv-keys 9741E8AC
 gpg --verify --keyserver keyserver.ubuntu.com --keyserver-options auto-key-retrieve archlinux-bootstrap-x86_64.tar.zst.sig archlinux-bootstrap-x86_64.tar.zst
 
 # extract and prepare rootfs
-fakeroot tar --numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
+fakeroot tar -numeric-owner -xpf archlinux-bootstrap-x86_64.tar.zst
 mv root.x86_64 /rootfs
 
 # configure environment
@@ -40,7 +40,6 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
 fakeroot pacman $PACARGS -Syq --noconfirm
 fakeroot pacman $PACARGS -Sq --noconfirm \
     base \
-    systemd \
     dbus \
     util-linux \
     glibc \
@@ -98,12 +97,16 @@ cp -f /etc/os-release /rootfs/etc/os-release
 # compatibility with host's homedir config
 fakeroot ln -sT /rootfs/home /rootfs/var/home
 
+# fix ownership to allow rootless
+fakeroot find /rootfs -user 0 -exec chown 767 {} +
+fakeroot find /rootfs -group 0 -exec chgrp 767 {} +
+
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
-rm -rf /rootfs/home/*
+rm -rf /rootfs/home/* /rootfs/var/log/* /rootfs/tmp/* /rootfs/var/tmp/*
 
 # create disk image of rootfs
-fakeroot mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
+mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 
 # setup subsystem conf dir
 ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
