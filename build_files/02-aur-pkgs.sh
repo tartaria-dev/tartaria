@@ -25,7 +25,6 @@ pacman -Sq --noconfirm \
     chaotic-aur/bootc \
     chaotic-aur/darkly-qt6-git \
     chaotic-aur/distroshelf \
-    chaotic-aur/jetbrains-toolbox \
     chaotic-aur/matugen-git \
     chaotic-aur/noctalia-shell \
     chaotic-aur/opentabletdriver \
@@ -35,8 +34,6 @@ pacman -Sq --noconfirm \
     chaotic-aur/valent-git \
     chaotic-aur/zen-browser-bin
 
-for pkg in /packages/*; do
-    pacman -U --noconfirm "$pkg"
-done
+pacman -U --noconfirm /packages/*.pkg.tar.zst
 
 echo "::endgroup::"
