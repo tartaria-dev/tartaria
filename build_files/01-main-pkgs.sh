@@ -111,10 +111,13 @@ pacman -Sq --noconfirm \
 
 # containerization
 pacman -Sq --noconfirm \
-    flatpak \
     distrobox \
     docker \
-    podman
+    docker-buildx \
+    docker-compose \
+    flatpak \
+    podman \
+    podman-compose
 
 # media
 pacman -Sq --noconfirm \

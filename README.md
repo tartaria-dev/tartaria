@@ -9,42 +9,25 @@
   <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/55b44546-2718-4888-928a-88815d9f91f4" />
 </p>
 
+
 # What's Tartaria?
-A custom CachyOS-bootc image built for container usage, general development, and day-to-day usage, making use of the [Niri](https://github.com/YaLTeR/niri) compositor and the [Noctalia](https://noctalia.dev/) desktop shell to provide a usable TWM experience OOTB that does not sacrifice on looks.
+A custom CachyOS-bootc image built for general day-to-day usage, bundled with an opinionated, mostly GTK-based app suite, the Niri scrollable tiling wayland compositor, and the featureful Noctalia desktop shell.
 
 
-# How can I use this?
+# What inspired the name?
+My favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
+
+
+# How can I switch?
 At the moment, only rebasing is supported. Rebasing from XeniaOS or Zirconium is highly encouraged.
+
+ISO support will come soon.
+
 To rebase, use the following command:
 ```
 sudo bootc switch ghcr.io/tartaria-dev/tartaria
 ```
 ...and you'll be on your (jolly) way!
-
-
-# Features
-
-- Based on CachyOS/Arch with bootc support
-
-- CachyOS-v3 kernel with v3 cpu optimizations and the Bore scheduler
-
-- The default GNOME app suite for all your basic needs
-
-- ZRAM enabled by default (can't be running out of RAM now, can we)
-
-- Niri, a simple scrollable tiling Wayland compositor designed for productivity and efficiency in your workflow
-
-- Noctalia, a quickshell desktop shell with amazing looks by default and all the functionality you need
-
-- Kitty terminal for a blazing-fast, gpu-powered terminal experience along with Starship for looks
-
-- Flatpak support OOTB with Bazaar/Warehouse (software store, flatpak manager)
-
-- Distrobox/Podman/Docker for containerization, along with DistroShelf (GUI container manager) and DevPod (devcontainers!)
-
-- JetBrains Toolbox, the official manager for all JetBrains IDE's along with JetBrains Gateway for DevPod/ssh compatibility
-
-- Zen, a beautiful Firefox-based browser with vertical tabs focused on productivity and zero AI features
 
 
 # Notice
