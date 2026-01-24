@@ -7,11 +7,11 @@ After=local-fs.target
 ContainerName=subsystem
 HostName=subsystem
 EnvironmentHost=true
-RunInit=yes
+Entrypoint=/usr/lib/systemd/systemd
+Exec=--unit=multi-user.target
 LogDriver=journald
 Rootfs=/subsys
 Mount=type=tmpfs,tmpfs-size=64M,dest=/run,tmpcopyup=false
-Mount=type=tmpfs,tmpfs-size=64M,dest=/var/log,tmpcopyup=false
 Mount=type=tmpfs,tmpfs-size=64M,dest=/tmp,tmpcopyup=false
 Network=host
 

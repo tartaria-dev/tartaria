@@ -3,10 +3,25 @@
 # if not root, exit
 [[ "$EUID" -ne 0 ]] && echo "Not root, abort." && exit 1
 
-# create subsystem user if it doesn't exist
 if ! id "subsys" >/dev/null 2>&1; then
+    # assemble homedir manually
+    mkdir -p /var/home/.subsystem
+    mv /etc/subsystem-conf/.config /var/home/.subsystem/.config
+    cp -af /etc/skel/ /var/home/.subsystem/
+    ln -sT /var/home/.subsystem/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
+    chown -R 767:767 /var/home/.subsystem
+    chmod 700 /var/home/.subsystem
+
+    # create subsys user
     groupadd -rg 767 subsys
-    useradd -rmd /etc/subsystem-conf -s /bin/bash -u 767 -g 767 subsys
+    useradd -rmd /var/home/.subsystem -u 767 -g 767 subsys
+
+    # calculate and assign sub{uid,gid} range for subsys user
+    next_uid=$(awk -F: '{print $2 + $3}' /etc/subuid 2>/dev/null | sort -n | tail -1)
+    next_gid=$(awk -F: '{print $2 + $3}' /etc/subgid 2>/dev/null | sort -n | tail -1)
+    usermod --add-subuids ${next_uid:-100000}-$((${next_uid:-100000}+65535)) --add-subgids ${next_gid:-100000}-$((${next_gid:-100000}+65535)) subsys
+
+    # enable linger for subsys user
     loginctl enable-linger subsys
 fi
 
@@ -14,9 +29,10 @@ case $1 in
     poweron)
         # create rootfs dirs if they don't already exist
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
-        chown -R 767:767 /var/lib/subsystem{,rootfs,.rootfs-work}
+        chown -R 767:767 /var/lib/subsystem/
+        chmod 700 /var/lib/subsystem/
 
-        # make sure subsystem service is generated
+        # ensure subsystem service is generated
         machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
 
         # setup subsystem root

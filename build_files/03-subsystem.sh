@@ -103,16 +103,14 @@ rm -rf /rootfs/home/* /rootfs/var/log/* /rootfs/tmp/* /rootfs/var/tmp/*
 
 # create disk image of rootfs
 fakeroot sh -c '
-  find /rootfs -user 0 -exec chown -h 767 {} +
-  find /rootfs -group 0 -exec chgrp -h 767 {} +
-  mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
+    find /rootfs -user 0 -exec chown -h 767 {} +
+    find /rootfs -group 0 -exec chgrp -h 767 {} +
+    mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 '
 
-# setup subsystem conf dir
-ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
-
 # set correct ownership of subsystem dirs
-chown -R 767:767 /usr/lib/subsystem /etc/subsystem-conf
+chown -R 767:767 /usr/lib/subsystem/
+chmod 700 /usr/lib/subsystem/
 
 # cleanup
 cd /
