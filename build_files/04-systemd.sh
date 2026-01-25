@@ -16,7 +16,7 @@ systemctl enable \
     rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
     refresh-font-cache.service \
-    init-subsystem.service \
+    subsystem.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \

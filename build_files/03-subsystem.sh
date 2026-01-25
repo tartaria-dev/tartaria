@@ -108,9 +108,12 @@ fakeroot sh -c '
     mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk /rootfs > /dev/null
 '
 
+# finish subsys conf setup
+ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
+
 # set correct ownership of subsystem dirs
-chown -R 767:767 /usr/lib/subsystem/
-chmod 700 /usr/lib/subsystem/
+chown -R 767:767 /usr/lib/subsystem/ /etc/subsystem-conf/
+chmod -R 700 /usr/lib/subsystem/ /etc/subsystem-conf/
 
 # cleanup
 cd /

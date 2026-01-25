@@ -3,18 +3,12 @@
 # if not root, exit
 [[ "$EUID" -ne 0 ]] && echo "Not root, abort." && exit 1
 
-if ! id "subsys" >/dev/null 2>&1; then
-    # assemble homedir manually
-    mkdir -p /var/home/.subsystem
-    mv /etc/subsystem-conf/.config /var/home/.subsystem/.config
-    cp -af /etc/skel/ /var/home/.subsystem/
-    ln -sT /var/home/.subsystem/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
-    chown -R 767:767 /var/home/.subsystem
-    chmod 700 /var/home/.subsystem
+set -e
 
+if ! id "subsys" >/dev/null 2>&1; then
     # create subsys user
     groupadd -rg 767 subsys
-    useradd -rmd /var/home/.subsystem -u 767 -g 767 subsys
+    useradd -rmd /etc/subsystem-conf -u 767 -g 767 subsys
 
     # calculate and assign sub{uid,gid} range for subsys user
     next_uid=$(awk -F: '{print $2 + $3}' /etc/subuid 2>/dev/null | sort -n | tail -1)
@@ -30,7 +24,7 @@ case $1 in
         # create rootfs dirs if they don't already exist
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
         chown -R 767:767 /var/lib/subsystem/
-        chmod 700 /var/lib/subsystem/
+        chmod -R 700 /var/lib/subsystem/
 
         # ensure subsystem service is generated
         machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
