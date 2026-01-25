@@ -1,7 +1,7 @@
 #!/bin/sh
 # commands for installing main arch packages
 
-echo "::group::========>========>========>========>===> Perform system package installations"
+echo "::group::===========================> Perform system package installations"
 
 set -ouex pipefail
 
