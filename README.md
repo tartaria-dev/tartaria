@@ -31,7 +31,7 @@ sudo bootc switch ghcr.io/tartaria-dev/tartaria
 
 
 # Notice
-This OS is only compatible and intended for devices with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels), meaning this custom image will only work on V3 cpus. NVidia support will be looked into if I have the time, and someone is willing to test the support.
+This OS is only compatible and intended for devices with AMD/Intel graphics, and has optimizations for [V3 cpus](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels), meaning this custom image will only work on V3 cpus. NVidia support will be looked into if I have the time, and if someone is willing to test the support.
 
 Tartaria is headed by me, certifiedfoolio. You may contact me via my Discord handle, `shartmunk`. Creative username, I know.
 
