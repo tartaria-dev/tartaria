@@ -1,12 +1,12 @@
 #!/bin/sh
 # commands for installing main arch packages
 
-echo "::group::===========================> Perform system package installations"
+echo "::group::========>========>========>========>===> Perform system package installations"
 
 set -ouex pipefail
 
 declare -a packages=(
-    # cli essentials
+    # ========> cli essentials
     bash
     bash-completion
     binutils
@@ -27,18 +27,19 @@ declare -a packages=(
     unzip
     usbutils
     wget
-    # cli extras
+
+    # ========> cli extras
     atuin
     cava
     chezmoi
     fastfetch
     git
-    java-runtime-common
     powertop
     python3
     starship
     vim
-    # filesystems
+
+    # ========> filesystems
     erofs-utils
     exfatprogs
     f2fs-tools
@@ -49,7 +50,8 @@ declare -a packages=(
     nilfs-utils
     ntfs-3g
     udftools
-    # drivers
+
+    # ========> drivers
     acpid
     amd-ucode
     apparmor
@@ -71,7 +73,8 @@ declare -a packages=(
     vulkan-radeon
     xf86-video-amdgpu
     zram-generator
-    # pipewire
+
+    # ========> pipewire
     alsa-firmware
     lib32-pipewire
     linux-firmware-intel
@@ -83,7 +86,8 @@ declare -a packages=(
     pipewire-zeroconf
     sof-firmware
     wireplumber
-    # network
+
+    # ========> network
     firewalld
     libmtp
     networkmanager
@@ -92,10 +96,12 @@ declare -a packages=(
     smbclient
     udiskie
     udisks2
-    # bluetooth
+
+    # ========> bluetooth
     bluez
     bluez-utils
-    # containerization
+
+    # ========> containerization
     distrobox
     docker
     docker-buildx
@@ -103,7 +109,8 @@ declare -a packages=(
     flatpak
     podman
     podman-compose
-    # media
+
+    # ========> media
     ffmpeg
     ffmpegthumbs
     gst-libav
@@ -118,7 +125,8 @@ declare -a packages=(
     plymouth
     wayland-utils
     xwayland-satellite
-    # fonts
+
+    # ========> fonts
     gnu-free-fonts
     gsfonts
     noto-fonts
@@ -134,7 +142,8 @@ declare -a packages=(
     ttf-overpass
     unicode-emoji
     wqy-microhei
-    # interface
+
+    # ========> interface
     accountsservice
     archlinux-xdg-menu
     brightnessctl
@@ -158,14 +167,17 @@ declare -a packages=(
     xdg-desktop-portal-gnome
     xdg-user-dirs
     xdg-utils
-    # accessibility
+
+    # ========> accessibility
     espeak-ng
     orca
-    # printer
+
+    # ========> printers
     cups
     cups-browsed
     hplip
-    # apps
+
+    # ========> apps
     ark
     decibels
     frameworkintegration
