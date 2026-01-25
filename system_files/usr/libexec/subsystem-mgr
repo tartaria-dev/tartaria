@@ -24,7 +24,7 @@ case $1 in
         # create rootfs dirs if they don't already exist
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
         chown -R 767:767 /var/lib/subsystem/
-        chmod -R 700 /var/lib/subsystem/
+        chmod -R 744 /var/lib/subsystem/
 
         # ensure subsystem service is generated
         machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
