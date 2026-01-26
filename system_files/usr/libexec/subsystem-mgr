@@ -30,9 +30,9 @@ case $1 in
         machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
 
         # setup subsystem root
-        mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
-        mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
-        mount -o bind /var/home /subsys/home
+        ! findmnt /usr/lib/subsystem/rootfs && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
+        ! findmnt /subsys && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
+        ! findmnt /subsys/home && mount -o bind /var/home /subsys/home
 
         # start subsystem container
         machinectl shell subsys@.host /usr/bin/systemctl --user start subsystem.service
@@ -42,9 +42,9 @@ case $1 in
         machinectl shell subsys@.host /usr/bin/systemctl --user stop subsystem.service
 
         # unmount subsystem rootfs
-        umount /subsys/home
-        umount /subsys
-        umount /usr/lib/subsystem/rootfs
+        findmnt /subsys/home && umount /subsys/home
+        findmnt /subsys && umount /subsys
+        findmnt /usr/lib/subsystem/rootfs && umount /usr/lib/subsystem/rootfs
         ;;
     *)
         echo "Usage: $0 poweron|poweroff"
