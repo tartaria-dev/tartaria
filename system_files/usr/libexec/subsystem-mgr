@@ -5,6 +5,12 @@
 
 set -e
 
+check_exit() {
+    if [[ "$(cat /etc/subsystem-conf/.exit-code)" != "0" ]]; then
+        exit "$(cat /etc/subsystem-conf/.exit-code)"
+    fi
+}
+
 if ! id "subsys" >/dev/null 2>&1; then
     # create subsys user
     groupadd -rg 767 subsys
@@ -27,7 +33,8 @@ case $1 in
         chmod -R 744 /var/lib/subsystem/
 
         # ensure subsystem service is generated
-        machinectl shell subsys@.host /usr/bin/systemctl --user daemon-reload
+        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user daemon-reload; echo $? > /etc/subsystem-conf/.exit-code'
+        check_exit
 
         # setup subsystem root
         ! findmnt /usr/lib/subsystem/rootfs && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
@@ -35,11 +42,31 @@ case $1 in
         ! findmnt /subsys/home && mount -o bind /var/home /subsys/home
 
         # start subsystem container
-        machinectl shell subsys@.host /usr/bin/systemctl --user start subsystem.service
+        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user start subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
+        check_exit
+        
+        # ensure all human users on the host exist in subsystem
+        for user_path in /var/home/*; do
+
+            if [[ ! -d "$user_path" ]]; then
+            USER_NAME=$(basename "$user_path")
+            USER_INFO=$(getent passwd "$USER_NAME")
+
+                if [[ -n "$USER_INFO" ]]; then
+                    USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
+
+                    if [[ "$USER_UID" -ge 1000 ]]; then
+                        machinectl shell subsys@.host /usr/bin/bash -c 'podman exec -it subsystem /bin/bash -c "! id $USER_NAME 2>/dev/null && useradd -d \"/home/$USER_NAME\" -u \"$USER_UID\" \"$USER_NAME\""; echo $? > /etc/subsystem-conf/.exit-code'
+                        check_exit
+                    fi
+                fi
+            fi
+        done
         ;;
     poweroff)
         # power off subsystem container
-        machinectl shell subsys@.host /usr/bin/systemctl --user stop subsystem.service
+        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user stop subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
+        check_exit
 
         # unmount subsystem rootfs
         findmnt /subsys/home && umount /subsys/home
