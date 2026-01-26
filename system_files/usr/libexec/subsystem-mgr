@@ -28,24 +28,28 @@ fi
 case $1 in
     poweron)
         # create rootfs dirs if they don't already exist
+        echo "Preparing."
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
         chown -R 767:767 /var/lib/subsystem/
         chmod -R 744 /var/lib/subsystem/
 
         # ensure subsystem service is generated
-        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user daemon-reload; echo $? > /etc/subsystem-conf/.exit-code'
+        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user daemon-reload; echo $? > /etc/subsystem-conf/.exit-code'
         check_exit
 
         # setup subsystem root
+        echo "Mounting subsystem rootfs."
         ! findmnt /usr/lib/subsystem/rootfs && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
         ! findmnt /subsys && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
         ! findmnt /subsys/home && mount -o bind /var/home /subsys/home
 
         # start subsystem container
-        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user start subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
+        echo "Starting subsystem."
+        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user start subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
         check_exit
         
         # ensure all human users on the host exist in subsystem
+        echo "Creating users."
         for user_path in /var/home/*; do
 
             if [[ ! -d "$user_path" ]]; then
@@ -56,7 +60,7 @@ case $1 in
                     USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
 
                     if [[ "$USER_UID" -ge 1000 ]]; then
-                        machinectl shell subsys@.host /usr/bin/bash -c 'podman exec -it subsystem /bin/bash -c "! id $USER_NAME 2>/dev/null && useradd -d \"/home/$USER_NAME\" -u \"$USER_UID\" \"$USER_NAME\""; echo $? > /etc/subsystem-conf/.exit-code'
+                        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -it subsystem /bin/bash -c 'if ! id \"\$USER_NAME\" &>/dev/null; then useradd -d \"/home/\$USER_NAME\" -u \"\$USER_UID\" \"\$USER_NAME\"; fi'; echo \$? > /etc/subsystem-conf/.exit-code"
                         check_exit
                     fi
                 fi
@@ -65,16 +69,31 @@ case $1 in
         ;;
     poweroff)
         # power off subsystem container
-        machinectl shell subsys@.host /usr/bin/bash -c 'systemctl --user stop subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
+        echo "Stopping subsystem."
+        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user stop subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
         check_exit
 
-        # unmount subsystem rootfs
+        # unmount subsystem rootfs (if mounted)
+        echo "Unmounting subsystem rootfs."
         findmnt /subsys/home && umount /subsys/home
         findmnt /subsys && umount /subsys
         findmnt /usr/lib/subsystem/rootfs && umount /usr/lib/subsystem/rootfs
         ;;
+    enter-subsystem-as)
+        shift
+
+        # check if an arg was passed
+        [[ -z "$1" ]] && echo "Usage: $0 enter-subsystem-as <username>" && exit 1
+
+        # disallow logging in as subsys/root
+        [[ "$1" == "subsys" || "$1" == "root" ]] && echo "Cannot log in as root." && exit 1
+
+        # open shell in subsystem as provided user
+        echo "Opening shell."
+        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -it subsystem -u $1 /bin/bash; echo \$? > /etc/subsystem-conf/.exit-code"
+        ;;
     *)
-        echo "Usage: $0 poweron|poweroff"
+        echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"
         exit 1
         ;;
 esac
