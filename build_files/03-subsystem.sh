@@ -94,8 +94,8 @@ echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /rootfs/e
 cp -f /usr/lib/os-release /rootfs/usr/lib/os-release
 cp -f /etc/os-release /rootfs/etc/os-release
 
-# compatibility with host's homedir config
-fakeroot ln -sT /rootfs/home /rootfs/var/home
+# fix roothome
+fakeroot ln -sT /rootfs/root /rootfs/etc/subsystem-conf
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
