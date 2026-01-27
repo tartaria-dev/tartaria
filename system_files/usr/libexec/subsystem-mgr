@@ -5,13 +5,6 @@
 
 set -e
 
-check_exit() {
-    if [[ "$(cat /etc/subsystem-conf/.exit-code)" != "0" ]]; then
-        exit "$(cat /etc/subsystem-conf/.exit-code)"
-    fi
-    rm -f /etc/subsystem-conf/.exit-code
-}
-
 if ! id "subsys" >/dev/null 2>&1; then
     # create subsys user
     groupadd -rg 767 subsys
@@ -35,8 +28,7 @@ case $1 in
         chmod -R 744 /var/lib/subsystem/
 
         # ensure subsystem service is generated
-        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user daemon-reload; echo $? > /etc/subsystem-conf/.exit-code'
-        check_exit
+        systemctl --user -M subsys@.host daemon-reload
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
@@ -46,23 +38,21 @@ case $1 in
 
         # start subsystem container
         echo "Starting subsystem."
-        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user start subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
-        check_exit
+        systemctl --user -M subsys@.host start subsystem.service
         
         # ensure all human users on the host exist in subsystem
         echo "Creating users."
-        for user_path in /var/home/*; do
+        for user in /var/home/*; do
+            username=$(basename "$user")
+            user_uid=$(id -u "$user")
+            user_gid=$(id -g "$user")
 
-            if [[ ! -d "$user_path" ]]; then
-            USER_NAME=$(basename "$user_path")
-            USER_INFO=$(getent passwd "$USER_NAME")
-
-                if [[ -n "$USER_INFO" ]]; then
-                    USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
-
-                    if [[ "$USER_UID" -ge 1000 ]]; then
-                        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -it subsystem /bin/bash -c 'if ! id \"\$USER_NAME\" &>/dev/null; then useradd -d \"/home/\$USER_NAME\" -u \"\$USER_UID\" \"\$USER_NAME\"; fi'; echo \$? > /etc/subsystem-conf/.exit-code"
-                        check_exit
+            if getent passwd "$username" >/dev/null 2>&1; then
+                if [[ $user_uid -ge 1000 ]]; then
+                    if ! chroot /subsys getent passwd "$username" >/dev/null 2>&1; then
+                        chroot /subsys groupadd -g "$user_gid" "$username"
+                        chroot /subsys useradd -md "/home/$username" -u "$user_uid" -g "$user_gid" "$username"
+                        echo "Created user $username, uid $user_uid, gid $user_gid"
                     fi
                 fi
             fi
@@ -71,8 +61,7 @@ case $1 in
     poweroff)
         # power off subsystem container
         echo "Stopping subsystem."
-        machinectl shell -q subsys@.host /usr/bin/bash -c 'systemctl --user stop subsystem.service; echo $? > /etc/subsystem-conf/.exit-code'
-        check_exit
+        systemctl --user -M subsys@.host stop subsystem.service
 
         # unmount subsystem rootfs (if mounted)
         echo "Unmounting subsystem rootfs."
@@ -91,8 +80,7 @@ case $1 in
 
         # open shell in subsystem as provided user
         echo "Opening shell."
-        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -u $1 -it subsystem /bin/bash; echo \$? > /etc/subsystem-conf/.exit-code"
-        check_exit
+        machinectl shell -q subsys@.host /usr/bin/podman exec -u $1 -it subsystem /bin/bash
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"
