@@ -95,7 +95,7 @@ cp -f /usr/lib/os-release /rootfs/usr/lib/os-release
 cp -f /etc/os-release /rootfs/etc/os-release
 
 # fix roothome
-fakeroot ln -sT /rootfs/root /rootfs/etc/subsystem-conf
+fakeroot chroot /rootfs ln -sT /root /etc/subsystem-conf
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
