@@ -3,6 +3,9 @@
 
 set -ouex pipefail
 
+# remove base-devel
+pacman -Rns --noconfirm base-devel
+
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
