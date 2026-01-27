@@ -5,18 +5,14 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-for user_path in /var/home/*; do
-    [ ! -d "$user_path" ] && continue
+for user in /var/home/*; do
+    username=$(basename "$user")
+    user_uid=$(id -u "$username")
 
-    USER_NAME=$(basename "$user_path")
-    USER_INFO=$(getent passwd "$USER_NAME")
-
-    if [ -n "$USER_INFO" ]; then
-        USER_UID=$(echo "$USER_INFO" | cut -d: -f3)
-
-        if [ "$USER_UID" -ge 1000 ]; then
-            echo "Executing "$1" as $USER_NAME (UID: $USER_UID)..."
-            su -c "$1" - "$USER_NAME"
+    if getent passwd "$username" >/dev/null 2>&1; then
+        if [[ $user_uid -ge 1000 ]]; then
+            echo "Executing '$1' as $username, uid $user_uid"
+            su - "$username" -c "$1"
         fi
     fi
 done
