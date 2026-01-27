@@ -151,6 +151,7 @@ declare -a packages=(
     dgop
     evolution-data-server
     glycin
+    gnome-keyring
     greetd
     greetd-regreet
     libappindicator
