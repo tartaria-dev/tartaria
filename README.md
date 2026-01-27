@@ -11,7 +11,7 @@
 
 
 # What's Tartaria?
-A custom CachyOS-bootc image built for general day-to-day usage, bundled with an opinionated, mostly GTK-based app suite, the Niri scrollable tiling wayland compositor, and the featureful Noctalia desktop shell.
+A custom CachyOS-bootc image built for general day-to-day usage, bundled with an opinionated, mostly GTK-based app suite, a containerized shell powered by a minimal Arch container, the Niri scrollable tiling wayland compositor, and the featureful Noctalia desktop shell.
 
 
 # What inspired the name?
