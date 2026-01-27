@@ -12,9 +12,6 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 
-# tell dracut to not preserve xattrs for initramfs creation
-ENV DRACUT_NO_XATTR=1
-
 # run main build scripts
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
