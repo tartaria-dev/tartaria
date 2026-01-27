@@ -9,6 +9,7 @@ ExecStart=/usr/libexec/subsystem-mgr poweron
 ExecStop=/usr/libexec/subsystem-mgr poweroff
 RemainAfterExit=yes
 Restart=on-failure
+RestartSec=1s
 
 [Install]
 WantedBy=multi-user.target default.target
