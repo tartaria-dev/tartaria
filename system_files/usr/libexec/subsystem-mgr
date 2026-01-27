@@ -40,9 +40,9 @@ case $1 in
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
-        ! findmnt /usr/lib/subsystem/rootfs && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
-        ! findmnt /subsys && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
-        ! findmnt /subsys/home && mount -o bind /var/home /subsys/home
+        ! findmnt /usr/lib/subsystem/rootfs > /dev/null && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
+        ! findmnt /subsys > /dev/null && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
+        ! findmnt /subsys/home > /dev/null && mount -o bind /var/home /subsys/home
 
         # start subsystem container
         echo "Starting subsystem."
@@ -76,9 +76,9 @@ case $1 in
 
         # unmount subsystem rootfs (if mounted)
         echo "Unmounting subsystem rootfs."
-        findmnt /subsys/home && umount /subsys/home
-        findmnt /subsys && umount /subsys
-        findmnt /usr/lib/subsystem/rootfs && umount /usr/lib/subsystem/rootfs
+        findmnt /subsys/home > /dev/null && umount /subsys/home
+        findmnt /subsys > /dev/null && umount /subsys
+        findmnt /usr/lib/subsystem/rootfs > /dev/null && umount /usr/lib/subsystem/rootfs
         ;;
     enter-subsystem-as)
         shift
@@ -86,8 +86,8 @@ case $1 in
         # check if an arg was passed
         [[ -z "$1" ]] && echo "Usage: $0 enter-subsystem-as <username>" && exit 1
 
-        # disallow logging in as subsys/root
-        [[ "$1" == "subsys" || "$1" == "root" ]] && echo "Cannot log in as root." && exit 1
+        # disallow logging in as root
+        [[ "$1" == "root" ]] && echo "Cannot log in as root." && exit 1
 
         # open shell in subsystem as provided user
         echo "Opening shell."
