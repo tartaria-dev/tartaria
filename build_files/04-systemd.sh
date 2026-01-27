@@ -7,6 +7,7 @@ set -ouex pipefail
 
 # system
 systemctl enable \
+    apparmor.service \
     polkit.service \
     NetworkManager.service \
     tuned.service \
