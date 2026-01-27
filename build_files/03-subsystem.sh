@@ -119,5 +119,4 @@ chmod -R 744 /usr/lib/subsystem/ /etc/subsystem-conf/
 cd /
 rm -rf /workdir /rootfs
 
-set +x
 echo "::endgroup::"
