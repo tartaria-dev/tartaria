@@ -9,6 +9,7 @@ check_exit() {
     if [[ "$(cat /etc/subsystem-conf/.exit-code)" != "0" ]]; then
         exit "$(cat /etc/subsystem-conf/.exit-code)"
     fi
+    rm -f /etc/subsystem-conf/.exit-code
 }
 
 if ! id "subsys" >/dev/null 2>&1; then
@@ -90,7 +91,8 @@ case $1 in
 
         # open shell in subsystem as provided user
         echo "Opening shell."
-        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -it subsystem -u $1 /bin/bash; echo \$? > /etc/subsystem-conf/.exit-code"
+        machinectl shell -q subsys@.host /usr/bin/bash -c "podman exec -u $1 -it subsystem /bin/bash; echo \$? > /etc/subsystem-conf/.exit-code"
+        check_exit
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"
