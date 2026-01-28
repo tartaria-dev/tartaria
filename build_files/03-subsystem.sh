@@ -117,7 +117,6 @@ ln -sT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/s
 
 # set correct ownership of subsystem dirs
 chown -R 767:767 /usr/lib/subsystem/ /etc/subsystem-conf/
-chmod -R 744 /usr/lib/subsystem/ /etc/subsystem-conf/
 
 # cleanup
 cd /

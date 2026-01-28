@@ -25,7 +25,6 @@ case $1 in
         echo "Preparing."
         mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
         chown -R 767:767 /var/lib/subsystem/
-        chmod -R 744 /var/lib/subsystem/
 
         # ensure subsystem service is generated
         systemctl --user -M subsys@.host daemon-reload
