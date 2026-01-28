@@ -32,9 +32,8 @@ case $1 in
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
-        ! findmnt /usr/lib/subsystem/rootfs > /dev/null && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs
-        ! findmnt /subsys > /dev/null && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys
-        ! findmnt /subsys/home > /dev/null && mount -o bind /var/home /subsys/home
+        ! findmnt /usr/lib/subsystem/rootfs > /dev/null && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs || true
+        ! findmnt /subsys > /dev/null && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys || true
 
         # start subsystem container
         echo "Starting subsystem."
@@ -48,9 +47,11 @@ case $1 in
             if getent passwd "$username" >/dev/null 2>&1; then
                 user_uid=$(id -u "$username")
                 user_gid=$(id -g "$username")
-                
+
                 if [[ $user_uid -ge 1000 ]]; then
                     if ! chroot /subsys getent passwd "$username" >/dev/null 2>&1; then
+                        mkdir -p "/subsys/home/$username"
+                        ! findmnt "/subsys/home/$username" && mount --bind "/var/home/$username" "/subsys/home/$username" || true
                         chroot /subsys groupadd -g "$user_gid" "$username"
                         chroot /subsys useradd -md "/home/$username" -u "$user_uid" -g "$user_gid" "$username"
                         echo "Created user $username, uid $user_uid, gid $user_gid"
@@ -66,9 +67,9 @@ case $1 in
 
         # unmount subsystem rootfs (if mounted)
         echo "Unmounting subsystem rootfs."
-        findmnt /subsys/home > /dev/null && umount /subsys/home
-        findmnt /subsys > /dev/null && umount /subsys
-        findmnt /usr/lib/subsystem/rootfs > /dev/null && umount /usr/lib/subsystem/rootfs
+        for dir in /subsys/home/*; do findmnt "$dir" && umount "$dir" || true; done
+        findmnt /subsys > /dev/null && umount /subsys || true
+        findmnt /usr/lib/subsystem/rootfs > /dev/null && umount /usr/lib/subsystem/rootfs || true
         ;;
     enter-subsystem-as)
         shift

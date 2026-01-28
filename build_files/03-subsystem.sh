@@ -37,9 +37,10 @@ fakeroot pacman-key --gpgdir /rootfs/etc/pacman.d/gnupg \
                     --populate archlinux
 
 # update and install core system packages
-fakeroot pacman $PACARGS -Syq --noconfirm
+fakeroot pacman $PACARGS -Syuq --noconfirm
 fakeroot pacman $PACARGS -Sq --noconfirm \
     base \
+    sudo \
     dbus \
     util-linux \
     glibc \
@@ -96,6 +97,9 @@ cp -f /etc/os-release /rootfs/etc/os-release
 
 # fix roothome
 fakeroot chroot /rootfs ln -sT /root /etc/subsystem-conf
+
+# disable pacman sandboxing
+sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
 # build cleanup
 rm -f "/rootfs$FAKEROOTLIB"
