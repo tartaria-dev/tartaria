@@ -11,8 +11,7 @@ Entrypoint=/usr/lib/systemd/systemd
 Exec=--unit=multi-user.target
 LogDriver=journald
 Rootfs=/subsys
-Mount=type=tmpfs,tmpfs-size=64M,dest=/run,tmpcopyup=false
-Mount=type=tmpfs,tmpfs-size=64M,dest=/tmp,tmpcopyup=false
+Mount=type=tmpfs,dest=/tmp,tmpcopyup=false
 Network=host
 
 [Install]
