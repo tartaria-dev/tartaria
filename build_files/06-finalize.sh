@@ -16,6 +16,7 @@ rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt
 rm -rf /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg
 rm -rf /build /packages
 mkdir -p /sysroot /boot /usr/lib/ostree /var
+mv /opt /usr/
 ln -sT sysroot/ostree /ostree
 ln -sT var/roothome /root
 ln -sT var/srv /srv
@@ -23,6 +24,5 @@ ln -sT var/mnt /mnt
 ln -sT var/opt /opt
 ln -sT var/home /home
 ln -sT ../var/usrlocal /usr/local
-mv /opt /usr/
 
 echo "::endgroup::"
