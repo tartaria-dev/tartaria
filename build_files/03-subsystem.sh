@@ -1,5 +1,5 @@
 #!/bin/sh
-# setup subsystem rootfs
+# install subsystem container
 
 echo "::group::===========================> Perform subsystem installation"
 
