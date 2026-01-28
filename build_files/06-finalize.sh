@@ -14,7 +14,9 @@ DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose -
 # Arrange filesystem for bootc and image-based systems
 # See https://bootc-dev.github.io/bootc/filesystem.html
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
-rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt /build /packages /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg
+rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt
+rm -rf /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg
+rm -rf /build /packages
 mkdir -p /sysroot /boot /usr/lib/ostree /var
 ln -sT sysroot/ostree /ostree
 ln -sT var/roothome /root
