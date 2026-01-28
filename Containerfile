@@ -13,9 +13,7 @@ COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 
 # run main build scripts
-RUN --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
+RUN --mount=type=tmpfs,dst=/tmp \
     sh /build/00-base.sh && \
     sh /build/01-main-pkgs.sh && \
     sh /build/02-aur-pkgs.sh && \
