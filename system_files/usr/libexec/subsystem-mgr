@@ -44,10 +44,11 @@ case $1 in
         echo "Creating users."
         for user in /var/home/*; do
             username=$(basename "$user")
-            user_uid=$(id -u "$user")
-            user_gid=$(id -g "$user")
 
             if getent passwd "$username" >/dev/null 2>&1; then
+                user_uid=$(id -u "$username")
+                user_gid=$(id -g "$username")
+                
                 if [[ $user_uid -ge 1000 ]]; then
                     if ! chroot /subsys getent passwd "$username" >/dev/null 2>&1; then
                         chroot /subsys groupadd -g "$user_gid" "$username"
