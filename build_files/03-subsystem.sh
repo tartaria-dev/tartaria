@@ -11,17 +11,17 @@ cd /workdir
 cp -f /build/extra/mkosi.conf ./mkosi.conf
 
 # set rootfs path
-ROOTFS="/workdir/output/image"
+ROOTFS="/workdir/output"
 
 # build arch rootfs
 mkosi build
 
 # generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > "$ROOTFS/etc/locale.gen"
-unshare --user --map-root-user --mount-proc --pid --fork chroot "$ROOTFS" locale-gen
+fakeroot chroot "$ROOTFS" locale-gen
 
 # update dynamic linker cache
-unshare --user --map-root-user --mount-proc --pid --fork chroot "$ROOTFS" ldconfig
+fakeroot chroot "$ROOTFS" ldconfig
 
 # configure bash prompt
 echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> "$ROOTFS/etc/bash.bashrc"
