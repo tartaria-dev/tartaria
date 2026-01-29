@@ -40,6 +40,7 @@ declare -a packages=(
     vim
 
     # ========> filesystems
+    mkosi
     erofs-utils
     exfatprogs
     f2fs-tools
