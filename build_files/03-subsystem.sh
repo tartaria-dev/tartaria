@@ -11,7 +11,7 @@ cd /workdir
 cp -f /build/extra/mkosi.conf ./mkosi.conf
 
 # set rootfs path
-ROOTFS="/workdir/output"
+ROOTFS="/workdir/output/subsystem"
 
 # build arch rootfs
 mkosi build
