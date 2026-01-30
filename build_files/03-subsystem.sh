@@ -37,7 +37,7 @@ ln -sfT /root "$ROOTFS/etc/subsystem-conf"
 sed -i 's/^#DisableSandbox/DisableSandbox/' "$ROOTFS/etc/pacman.conf"
 
 # cleanup rootfs before rootfs image generation
-rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* "$ROOTFS/boot" "$ROOTFS/efi" "$ROOTFS/init"
+rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* "$ROOTFS/boot" "$ROOTFS/efi" "$ROOTFS/init" "$ROOTFS/.gnupg"
 
 # set correct file ownership in rootfs
 find "$ROOTFS" -user 0 -exec chown -h 767:767 {} +
