@@ -42,6 +42,9 @@ rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* 
 # set correct file ownership in rootfs
 find "$ROOTFS" -user 0 -exec chown -h 767:767 {} +
 
+# set correct library permissions in rootfs
+chmod -R a+rX "$ROOTFS/usr/lib" "$ROOTFS/usr/lib32"
+
 # create disk image of rootfs
 mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk "$ROOTFS" > /dev/null
 
