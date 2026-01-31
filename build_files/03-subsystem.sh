@@ -6,7 +6,7 @@ echo "::group::===========================> Perform subsystem installation"
 set -ouex pipefail
 
 # generate work directory and rootfs mountpoint
-mkdir -p /workdir /subsys
+mkdir -p /workdir
 cd /workdir
 cp -f /build/extra/mkosi.conf ./mkosi.conf
 
@@ -30,29 +30,17 @@ echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> "$ROOTFS/
 cp -f /usr/lib/os-release "$ROOTFS/usr/lib/os-release"
 cp -f /etc/os-release "$ROOTFS/etc/os-release"
 
-# fix root home in rootfs
-ln -sfT /root "$ROOTFS/etc/subsystem-conf"
-
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' "$ROOTFS/etc/pacman.conf"
 
 # cleanup rootfs before rootfs image generation
 rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* "$ROOTFS/boot" "$ROOTFS/efi" "$ROOTFS/init" "$ROOTFS/.gnupg"
 
-# set correct file ownership in rootfs
-find "$ROOTFS" -user 0 -exec chown -h 767:767 {} +
-
 # set correct library permissions in rootfs
 chmod -R a+rX "$ROOTFS/usr/lib" "$ROOTFS/usr/lib32"
 
 # create disk image of rootfs
 mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L subsystem /usr/lib/subsystem/subsystem.dsk "$ROOTFS" > /dev/null
-
-# create config symlink for ease of access
-ln -sfT /etc/subsystem-conf/.config/containers/systemd/subsystem.container /etc/subsystem-conf/subsystem.container
-
-# set correct ownership of subsystem dirs
-chown -R 767:767 /usr/lib/subsystem/ /etc/subsystem-conf/
 
 # cleanup
 cd /
