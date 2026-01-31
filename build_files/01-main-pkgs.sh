@@ -40,16 +40,18 @@ declare -a packages=(
     vim
 
     # ========> filesystems
-    mkosi
-    erofs-utils
     exfatprogs
     f2fs-tools
+    fuse-overlayfs
     gpart
     gparted
     jfsutils
+    mkosi
     mtools
     nilfs-utils
     ntfs-3g
+    squashfs-tools
+    squashfuse
     udftools
 
     # ========> drivers
