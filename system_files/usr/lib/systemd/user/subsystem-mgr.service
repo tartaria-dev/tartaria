@@ -1,13 +1,12 @@
 [Unit]
-Description=Subsystem
+Description=Subsystem manager
 After=local-fs.target
-BindsTo=local-fs.target
+Requires=local-fs.target
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/usr/libexec/subsystem-mgr poweron
 ExecStop=/usr/libexec/subsystem-mgr poweroff
-RemainAfterExit=yes
 Restart=on-failure
 RestartSec=1s
 
