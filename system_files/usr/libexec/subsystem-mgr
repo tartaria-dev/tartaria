@@ -11,6 +11,9 @@ readonly STORE="/var/lib/subsystem/$USER"
 readonly USER_UID=$(id -u)
 readonly USER_GID=$(id -g)
 
+# safety check
+[[ ! -d "$STORE" ]] && echo "Subsystem data store doesn't exist. Creating, please authorize." && pkexec /usr/libexec/subsystem-store-create
+
 case $1 in
     poweron)
         # ensure rootfs dirs exist
@@ -54,6 +57,7 @@ case $1 in
         findmnt "$STORE"/base > /dev/null && fusermount3 -u "$STORE"/base || true
         ;;
     enter-subsystem)
+        # open subsystem shell
         echo "Opening shell."
         podman exec -u "$USER" -it subsystem /bin/bash
         ;;
