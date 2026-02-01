@@ -20,6 +20,9 @@ ROOTFS="/workdir/output/subsystem"
 # build arch rootfs
 mkosi build
 
+# disable pacman sandboxing
+sed -i 's/^#DisableSandbox/DisableSandbox/' "$ROOTFS/etc/pacman.conf"
+
 # install additional packages in rootfs
 fakeroot chroot "$ROOTFS" pacman -U --noconfirm /packages/*.pkg.tar.zst
 fakeroot chroot "$ROOTFS" rm -rf /packages
@@ -37,9 +40,6 @@ echo -e '\nsource -- /usr/share/blesh/ble.sh\n\neval "$(starship init bash)"\nev
 # copy os-release files from host
 cp -f /usr/lib/os-release "$ROOTFS/usr/lib/os-release"
 cp -f /etc/os-release "$ROOTFS/etc/os-release"
-
-# disable pacman sandboxing
-sed -i 's/^#DisableSandbox/DisableSandbox/' "$ROOTFS/etc/pacman.conf"
 
 # cleanup rootfs before rootfs image generation
 rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* "$ROOTFS/boot" "$ROOTFS/efi" "$ROOTFS/init" "$ROOTFS/.gnupg"
