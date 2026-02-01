@@ -1,5 +1,11 @@
 #!/bin/bash
 # subsystem postinstall script
 
+# make pacman cache dir
+mkdir -p /tmp/pacman-cache
+
 # install packages from host
-pacman -U /packages/*.pkg.tar.zst --noconfirm
+pacman -U /packages/*.pkg.tar.zst --cachedir /tmp/pacman-cache --noconfirm
+
+# clean cache
+rm -rf /tmp/pacman-cache
