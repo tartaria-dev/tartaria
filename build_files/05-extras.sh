@@ -12,6 +12,9 @@ useradd -M -G video,input -s /usr/bin/nologin greeter || true
 # add incrond entries
 echo "/etc/passwd IN_MODIFY /usr/libexec/subsystem-store-create" | incrontab -
 
+# disable uupd distrobox updates
+sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
+
 # install default icon theme
 git clone https://github.com/vinceliuice/WhiteSur-icon-theme
 cd WhiteSur-icon-theme
