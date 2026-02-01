@@ -8,24 +8,25 @@ set -ouex pipefail
 # system
 systemctl enable \
     apparmor.service \
-    polkit.service \
-    NetworkManager.service \
-    tuned.service \
-    tuned-ppd.service \
+    bluetooth.service \
+    bootc-fetch-apply-updates.timer \
+    brew-setup.service \
+    cups-browsed.service \
+    cups.socket \
     firewalld.service \
     greetd.service \
     incrond.service \
-    rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
+    NetworkManager.service \
+    polkit.service \
+    rechunker-group-fix.service \
     refresh-font-cache.service \
     subsystem-store-creator.service \
-    cups.socket \
-    cups-browsed.service \
-    brew-setup.service \
-    bluetooth.service \
+    tuned-ppd.service \
+    tuned.service \
+    usr-share-tartaria-cherries.mount \
     uupd.timer \
-    pick-cherries.timer \
-    usr-share-tartaria-cherries.mount
+    pick-cherries.timer
 
 # system-preset
 systemctl preset \
@@ -33,24 +34,24 @@ systemctl preset \
 
 # user
 systemctl --global enable \
-    wl-clip-persist.service \
-    udiskie.service \
-    opentabletdriver.service \
-    flathub-user.service \
-    noctalia-shell.service \
     chezmoi-init.service \
     chezmoi-update.timer \
-    post-chezmoi-update.service
+    flathub-user.service \
+    noctalia-shell.service \
+    opentabletdriver.service \
+    post-chezmoi-update.service \
+    udiskie.service \
+    wl-clip-persist.service
     
 # user-preset
 systemctl preset --global \
-    udiskie \
-    flathub-user \
     chezmoi-init \
     chezmoi-update \
-    post-chezmoi-update
+    flathub-user \
+    post-chezmoi-update \
+    udiskie
 
 # user-wants for Niri
 systemctl add-wants --global niri.service \
     noctalia-shell.service \
-    udiskie.service \
+    udiskie.service

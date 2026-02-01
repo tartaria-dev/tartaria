@@ -15,6 +15,10 @@ echo "/etc/passwd IN_MODIFY /usr/libexec/subsystem-store-create" | incrontab -
 # disable uupd distrobox updates
 sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
 
+# reconfigure bootc auto update
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
 # install default icon theme
 git clone https://github.com/vinceliuice/WhiteSur-icon-theme
 cd WhiteSur-icon-theme
