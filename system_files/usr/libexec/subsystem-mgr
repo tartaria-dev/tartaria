@@ -57,6 +57,7 @@ case $1 in
         # ensure quadlet exists
         echo "Loading services."
         if [[ ! -f "$HOME"/.config/containers/systemd/subsystem.container ]]; then
+            mkdir -p "$HOME"/.config/containers/systemd
             cp -f /etc/skel/.config/containers/systemd/subsystem.container "$HOME"/.config/containers/systemd/subsystem.container
         fi
 
