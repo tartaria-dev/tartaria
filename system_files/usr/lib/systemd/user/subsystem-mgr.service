@@ -11,4 +11,4 @@ Restart=on-failure
 RestartSec=1s
 
 [Install]
-WantedBy=multi-user.target default.target
+WantedBy=default.target
