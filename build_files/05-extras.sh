@@ -12,6 +12,9 @@ useradd -M -G video,input -s /usr/bin/nologin greeter || true
 # add incrond entries
 echo "/etc/passwd IN_MODIFY /usr/libexec/subsystem-store-create" | incrontab -
 
+# set plymouth theme
+sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
+
 # disable uupd distrobox updates
 sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
 
