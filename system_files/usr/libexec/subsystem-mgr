@@ -42,9 +42,9 @@ case $1 in
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
-        ! findmnt "$STORE"/.data/home/"$USER" > /dev/null && bindfs "$HOME" "$STORE"/data/home/"$USER" || true
+        ! findmnt "$STORE"/data/home/"$USER" > /dev/null && bindfs "$HOME" "$STORE"/data/home/"$USER" || true
         ! findmnt "$STORE"/base > /dev/null && squashfuse -o uid="$USER_UID",gid="$USER_GID" /usr/lib/subsystem/base.dsk "$STORE"/base || true
-        ! findmnt "$STORE"/rootfs > /dev/null && fuse-overlayfs -o lowerdir="$STORE"/base,upperdir="$STORE"/.data -o workdir="$STORE"/.work "$STORE"/rootfs || true
+        ! findmnt "$STORE"/rootfs > /dev/null && fuse-overlayfs -o lowerdir="$STORE"/base,upperdir="$STORE"/data -o workdir="$STORE"/.work "$STORE"/rootfs || true
         
         # ensure executing user exists in rootfs
         if ! proot -0 -r "$STORE/rootfs" getent passwd "$USER" >/dev/null 2>&1; then
@@ -57,7 +57,10 @@ case $1 in
 
         # ensure quadlet exists and is loaded
         echo "Loading services."
-        [[ -f "$HOME"/.config/containers/systemd/subsystem.container ]] && cp -f /etc/skel/.config/containers/systemd/subsystem.container
+        if [[ ! -f "$HOME"/.config/containers/systemd/subsystem.container ]]; then
+            cp -f /etc/skel/.config/containers/systemd/subsystem.container "$HOME"/.config/containers/systemd/subsystem.container
+        fi
+        sed -i "s/USER/$USER/g" "$HOME"/.config/containers/systemd/subsystem.container
         systemctl --user daemon-reload
 
         # start subsystem
