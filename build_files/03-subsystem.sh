@@ -8,7 +8,7 @@ set -ouex pipefail
 # generate work directory and rootfs mountpoint
 mkdir -p /workdir
 cd /workdir
-cp -f /build/extra/mkosi.conf ./mkosi.conf
+cp -f /build/extra/mkosi/* .
 
 # add packages to be installed in rootfs
 mkdir -p mkosi.extra/packages
