@@ -35,7 +35,7 @@ systemctl preset \
 
 # user
 systemctl --global enable \
-    subsystem.service \
+    subsystem-mgr.service \
     chezmoi-init.service \
     chezmoi-update.timer \
     flathub-user.service \
