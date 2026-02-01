@@ -157,6 +157,7 @@ declare -a packages=(
     gnome-keyring
     greetd
     greetd-regreet
+    incron
     libappindicator
     niri
     orchis-theme

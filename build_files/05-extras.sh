@@ -9,6 +9,9 @@ pacman -Rns --noconfirm base-devel
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
+# add incrond entries
+echo "/etc/passwd IN_MODIFY /usr/libexec/subsystem-store-create" | incrontab -
+
 # install default icon theme
 git clone https://github.com/vinceliuice/WhiteSur-icon-theme
 cd WhiteSur-icon-theme

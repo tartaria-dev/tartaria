@@ -40,7 +40,8 @@ rm -rf "$ROOTFS/home/"* "$ROOTFS/var/log/"* "$ROOTFS/tmp/"* "$ROOTFS/var/tmp/"* 
 chmod -R a+rX "$ROOTFS/usr/lib" "$ROOTFS/usr/lib32"
 
 # create disk image of rootfs
-mksquashfs "$ROOTFS" /usr/lib/subsystem/subsystem.dsk -comp lz4 -Xhc -b 128K -no-xattrs -noappend -always-use-fragments > /dev/null
+mkdir -p /usr/lib/subsystem
+mksquashfs "$ROOTFS" /usr/lib/subsystem/base.dsk -comp lz4 -Xhc -b 128K -no-xattrs -noappend -always-use-fragments > /dev/null
 
 # cleanup
 cd /

@@ -14,9 +14,11 @@ systemctl enable \
     tuned-ppd.service \
     firewalld.service \
     greetd.service \
+    incrond.service \
     rechunker-group-fix.service \
     kdeconnect-firewalld-bypass.service \
     refresh-font-cache.service \
+    subsystem-store-creator.service \
     cups.socket \
     cups-browsed.service \
     brew-setup.service \

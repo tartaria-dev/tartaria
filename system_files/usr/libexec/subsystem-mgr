@@ -1,95 +1,61 @@
 #!/bin/bash
 
-# if not root, exit
-[[ "$EUID" -ne 0 ]] && echo "Not root, abort." && exit 1
+# if root, exit
+[[ "$EUID" == "0" ]] && echo "This tool is not meant to be run as root." && exit 1
 
+# set errexit
 set -e
 
-if ! id "subsys" >/dev/null 2>&1; then
-    # create subsys user
-    groupadd -rg 767 subsys
-    useradd -rmd /etc/subsystem-conf -u 767 -g 767 subsys
-
-    # calculate and assign sub{uid,gid} range for subsys user
-    next_uid=$(awk -F: '{print $2 + $3}' /etc/subuid 2>/dev/null | sort -n | tail -1)
-    next_gid=$(awk -F: '{print $2 + $3}' /etc/subgid 2>/dev/null | sort -n | tail -1)
-    usermod --add-subuids ${next_uid:-100000}-$((${next_uid:-100000}+65535)) --add-subgids ${next_gid:-100000}-$((${next_gid:-100000}+65535)) subsys
-
-    # enable linger for subsys user
-    loginctl enable-linger subsys
-fi
+# set relevant variables
+readonly STORE="/var/lib/subsystem/$USER"
+readonly USER_UID=$(id -u)
+readonly USER_GID=$(id -g)
 
 case $1 in
     poweron)
-        # create rootfs dirs if they don't already exist
+        # ensure rootfs dirs exist
         echo "Preparing."
-        mkdir -p /var/lib/subsystem/{,rootfs,.rootfs-work}
-        chown -R 767:767 /var/lib/subsystem/
-
-        # ensure subsystem service is generated
-        systemctl --user -M subsys@.host daemon-reload
+        mkdir -p "$STORE"/{rootfs,base,data/home/"$USER",.work}
+        mkdir -p "$HOME"/.config/containers/systemd
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
-        ! findmnt /usr/lib/subsystem/rootfs > /dev/null && mount -t erofs -o loop,ro,acl,user_xattr /usr/lib/subsystem/subsystem.dsk /usr/lib/subsystem/rootfs || true
-        ! findmnt /subsys > /dev/null && mount -t overlay overlay -o index=off,metacopy=off,lowerdir=/usr/lib/subsystem/rootfs,upperdir=/var/lib/subsystem/rootfs,workdir=/var/lib/subsystem/.rootfs-work /subsys || true
-
-        # start subsystem container
-        echo "Starting subsystem."
-        systemctl --user -M subsys@.host start subsystem.service
+        ! findmnt "$STORE"/.data/home/"$USER" > /dev/null && bindfs "$HOME" "$STORE"/data/home/"$USER" || true
+        ! findmnt "$STORE"/base > /dev/null && squashfuse -o uid="$USER_UID",gid="$USER_GID" /usr/lib/subsystem/base.dsk "$STORE"/base || true
+        ! findmnt "$STORE"/rootfs > /dev/null && fuse-overlayfs -o lowerdir="$STORE"/base,upperdir="$STORE"/.data -o workdir="$STORE"/.work "$STORE"/rootfs || true
         
-        # ensure all human users on the host exist in subsystem
-        echo "Creating users."
-        for user in /var/home/*; do
-            username=$(basename "$user")
-            if getent passwd "$username" >/dev/null 2>&1; then
-                user_uid=$(id -u "$username")
-                user_gid=$(id -g "$username")
-                if [[ $user_uid -ge 1000 ]]; then
-                    if ! chroot /subsys getent passwd "$username" >/dev/null 2>&1; then
-                        mkdir -p "/subsys/home/$username" && chown -R "$user_uid":"$user_gid" "/subsys/home/$username"
-                        ! findmnt "/subsys/home/$username" && mount --bind "/var/home/$username" "/subsys/home/$username" || true
-                        chroot /subsys groupadd -g "$user_gid" "$username"
-                        chroot /subsys useradd -md "/home/$username" -u "$user_uid" -g "$user_gid" "$username"
-                        echo "Created user $username, uid $user_uid, gid $user_gid"
-                    elif chroot /subsys getent passwd "$username" >/dev/null 2>&1; then
-                        if [[ -d "/subsys/home/$username" ]]; then
-                            echo "Mounting user $username."
-                            ! findmnt "/subsys/home/$username" && mount --bind "/var/home/$username" "/subsys/home/$username" || true
-                        else
-                            echo "User $username exists in subsystem, but home mountpoint does not. Creating mountpoint."
-                            mkdir -p "/subsys/home/$username" && chown -R "$user_uid":"$user_gid" "/subsys/home/$username"
-                            echo "Mounting user $username."
-                            ! findmnt "/subsys/home/$username" && mount --bind "/var/home/$username" "/subsys/home/$username" || true
-                        fi
-                    fi
-                fi
-            fi
-        done
+        # ensure executing user exists in rootfs
+        if ! proot -0 -r "$STORE/rootfs" getent passwd "$USER" >/dev/null 2>&1; then
+            echo "Creating user $USER."
+            proot -0 -r "$STORE/rootfs" groupadd -g "$USER_GID" "$USER"
+            proot -0 -r "$STORE/rootfs" useradd -md "/home/$USER" -u "$USER_UID" -g "$USER_GID" "$USER"
+            echo "$USER ALL=(ALL:ALL) ALL" > "$STORE"/rootfs/etc/sudoers.d/"$USER" && chmod 0440 "$STORE"/rootfs/etc/sudoers.d/"$USER"
+            echo "Created user $USER, uid $USER_UID, gid $USER_GID"
+        fi
+
+        # ensure quadlet exists and is loaded
+        echo "Loading services."
+        [[ -f "$HOME"/.config/containers/systemd/subsystem.container ]] && cp -f /etc/skel/.config/containers/systemd/subsystem.container
+        systemctl --user daemon-reload
+
+        # start subsystem
+        echo "Starting subsystem."
+        systemctl --user start subsystem
         ;;
     poweroff)
         # power off subsystem container
         echo "Stopping subsystem."
-        systemctl --user -M subsys@.host stop subsystem.service
+        systemctl --user stop subsystem.service
 
         # unmount subsystem rootfs (if mounted)
         echo "Unmounting subsystem rootfs."
-        for dir in /subsys/home/*; do findmnt "$dir" && umount "$dir" || true; done
-        findmnt /subsys > /dev/null && umount /subsys || true
-        findmnt /usr/lib/subsystem/rootfs > /dev/null && umount /usr/lib/subsystem/rootfs || true
+        findmnt "$STORE"/rootfs > /dev/null && fusermount3 -u "$STORE"/rootfs || true
+        findmnt "$STORE"/data/home/"$USER" > /dev/null && fusermount3 -u "$STORE"/data/home/"$USER" || true
+        findmnt "$STORE"/base > /dev/null && fusermount3 -u "$STORE"/base || true
         ;;
-    enter-subsystem-as)
-        shift
-
-        # check if an arg was passed
-        [[ -z "$1" ]] && echo "Usage: $0 enter-subsystem-as <username>" && exit 1
-
-        # disallow logging in as root
-        [[ "$1" == "root" ]] && echo "Cannot log in as root." && exit 1
-
-        # open shell in subsystem as provided user
+    enter-subsystem)
         echo "Opening shell."
-        machinectl shell -q subsys@.host /usr/bin/podman exec -u "$1" -it subsystem /bin/bash
+        podman exec -u "$USER" -it subsystem /bin/bash
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"

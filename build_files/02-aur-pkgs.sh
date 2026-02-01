@@ -22,6 +22,7 @@ pacman -Sq --noconfirm \
     bootc/uupd \
     chaotic-aur/bazaar-git \
     chaotic-aur/bibata-cursor-theme \
+    chaotic-aur/bindfs \
     chaotic-aur/bootc \
     chaotic-aur/darkly-qt6-git \
     chaotic-aur/distroshelf \

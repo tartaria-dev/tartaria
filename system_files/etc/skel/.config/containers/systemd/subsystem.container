@@ -8,7 +8,7 @@ EnvironmentHost=true
 Entrypoint=/usr/lib/systemd/systemd
 Exec=--unit=multi-user.target
 LogDriver=journald
-Rootfs=/subsys
+Rootfs=%h/.subsystem/rootfs
 Mount=type=tmpfs,dest=/tmp
 Mount=type=tmpfs,dest=/run
 Volume=/run/dbus:/run/dbus:ro
