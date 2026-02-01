@@ -1,7 +1,0 @@
-polkit.addRule(function(action, subject) {
-    if (action.id == "org.freedesktop.policykit.exec" && 
-        action.lookup("program") == "/usr/libexec/subsystem-mgr" &&
-        action.lookup("command-line").indexOf("enter-subsystem-as") !== -1) {
-        return polkit.Result.YES;
-    }
-});

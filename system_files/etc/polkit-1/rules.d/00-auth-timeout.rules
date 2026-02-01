@@ -1,0 +1,5 @@
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.policykit.exec") {
+        return polkit.Result.AUTH_ADMIN_KEEP;
+    }
+});
