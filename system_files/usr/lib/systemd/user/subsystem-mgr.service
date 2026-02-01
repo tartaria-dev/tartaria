@@ -1,7 +1,5 @@
 [Unit]
 Description=Subsystem manager
-After=local-fs.target
-Requires=local-fs.target
 
 [Service]
 Type=simple
