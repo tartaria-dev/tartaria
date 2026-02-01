@@ -10,6 +10,10 @@ mkdir -p /workdir
 cd /workdir
 cp -f /build/extra/mkosi.conf ./mkosi.conf
 
+# add packages to be installed in rootfs
+mkdir -p mkosi.extra/packages
+cp -f /packages/blesh-git*.pkg.tar.zst mkosi.extra/packages/
+
 # set rootfs path
 ROOTFS="/workdir/output/subsystem"
 
@@ -24,7 +28,7 @@ fakeroot chroot "$ROOTFS" locale-gen
 fakeroot chroot "$ROOTFS" ldconfig
 
 # configure bash prompt
-echo -e '\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> "$ROOTFS/etc/bash.bashrc"
+echo -e '\nsource -- /usr/share/blesh/ble.sh\n\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> "$ROOTFS/etc/bash.bashrc"
 
 # copy os-release files from host
 cp -f /usr/lib/os-release "$ROOTFS/usr/lib/os-release"
