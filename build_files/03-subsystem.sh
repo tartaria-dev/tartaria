@@ -20,6 +20,10 @@ ROOTFS="/workdir/output/subsystem"
 # build arch rootfs
 mkosi build
 
+# install additional packages in rootfs
+fakeroot chroot "$ROOTFS" pacman -U --noconfirm /packages/*.pkg.tar.zst
+fakeroot chroot "$ROOTFS" rm -rf /packages
+
 # generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > "$ROOTFS/etc/locale.gen"
 fakeroot chroot "$ROOTFS" locale-gen
