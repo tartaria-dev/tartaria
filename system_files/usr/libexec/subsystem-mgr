@@ -37,14 +37,13 @@ case $1 in
     poweron)
         # ensure rootfs dirs exist
         echo "Preparing."
-        mkdir -p "$STORE"/{rootfs,base,data/home/"$USER",.work}
+        mkdir -p "$STORE"/{rootfs,base,data,.work}
         mkdir -p "$HOME"/.config/containers/systemd
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
-        ! findmnt "$STORE"/data/home/"$USER" > /dev/null && bindfs "$HOME" "$STORE"/data/home/"$USER" || true
         ! findmnt "$STORE"/base > /dev/null && squashfuse -o uid="$USER_UID",gid="$USER_GID" /usr/lib/subsystem/base.dsk "$STORE"/base || true
-        ! findmnt "$STORE"/rootfs > /dev/null && fuse-overlayfs -o lowerdir="$STORE"/base,upperdir="$STORE"/data -o workdir="$STORE"/.work "$STORE"/rootfs || true
+        ! findmnt "$STORE"/rootfs > /dev/null && fuse-overlayfs -o allow_other,lowerdir="$STORE"/base,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/rootfs || true
         
         # ensure executing user exists in rootfs
         if ! proot -0 -r "$STORE/rootfs" getent passwd "$USER" >/dev/null 2>&1; then
@@ -55,12 +54,18 @@ case $1 in
             echo "Created user $USER, uid $USER_UID, gid $USER_GID"
         fi
 
-        # ensure quadlet exists and is loaded
+        # ensure quadlet exists
         echo "Loading services."
         if [[ ! -f "$HOME"/.config/containers/systemd/subsystem.container ]]; then
             cp -f /etc/skel/.config/containers/systemd/subsystem.container "$HOME"/.config/containers/systemd/subsystem.container
         fi
+
+        # configure quadlet with appropriate values
         sed -i "s/USER/$USER/g" "$HOME"/.config/containers/systemd/subsystem.container
+        sed -i "s/UID/$USER_UID/g" "$HOME"/.config/containers/systemd/subsystem.container
+        sed -i "s/GID/$USER_GID/g" "$HOME"/.config/containers/systemd/subsystem.container
+
+        # ensure quadlet is loaded
         systemctl --user daemon-reload
 
         # start subsystem
@@ -75,13 +80,12 @@ case $1 in
         # unmount subsystem rootfs (if mounted)
         echo "Unmounting subsystem rootfs."
         findmnt "$STORE"/rootfs > /dev/null && fusermount3 -u "$STORE"/rootfs || true
-        findmnt "$STORE"/data/home/"$USER" > /dev/null && fusermount3 -u "$STORE"/data/home/"$USER" || true
         findmnt "$STORE"/base > /dev/null && fusermount3 -u "$STORE"/base || true
         ;;
     enter-subsystem)
         # open subsystem shell
-        echo "Opening shell."
-        podman exec -u "$USER" -it subsystem /bin/bash
+        echo "Opening shell. This might take a second."
+        podman run --userns=keep-id -e HOME=/home/"$USER" -v /var/home/"$USER":/home/"$USER" -w /home/"$USER" -it subsystem /bin/bash
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"

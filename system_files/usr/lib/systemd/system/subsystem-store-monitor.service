@@ -1,0 +1,10 @@
+[Unit]
+Description=Enable subsystem store monitoring for new users
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'echo "/etc/passwd IN_MODIFY /usr/libexec/subsystem-store-create" | incrontab -'
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target
