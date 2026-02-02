@@ -5,7 +5,8 @@ Description=Subsystem container
 ContainerName=subsystem
 HostName=subsystem
 EnvironmentHost=true
-Entrypoint=/usr/lib/systemd/systemd
+Entrypoint=/sbin/openrc
+Exec=default
 User=0
 Group=0
 LogDriver=journald
@@ -16,4 +17,3 @@ Tmpfs=/tmp
 WorkingDir=/home/PLACEHOLDERUSER
 UserNS=keep-id
 Network=host
-PodmanArgs=--systemd=always

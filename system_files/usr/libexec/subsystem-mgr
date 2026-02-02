@@ -50,7 +50,7 @@ case $1 in
         if ! proot -0 -r "$STORE/rootfs" getent passwd "$USER" >/dev/null 2>&1; then
             echo "Creating user $USER."
             proot -0 -r "$STORE/rootfs" groupadd -g "$USER_GID" "$USER"
-            proot -0 -r "$STORE/rootfs" useradd -md "/home/$USER" -u "$USER_UID" -g "$USER_GID" "$USER"
+            proot -0 -r "$STORE/rootfs" useradd -md "/home/$USER" -u "$USER_UID" -g "$USER_GID" -s /bin/bash "$USER"
             echo "$USER ALL=(ALL:ALL) ALL" > "$STORE"/rootfs/etc/sudoers.d/"$USER" && chmod 0440 "$STORE"/rootfs/etc/sudoers.d/"$USER"
             echo "Created user $USER, uid $USER_UID, gid $USER_GID"
         fi

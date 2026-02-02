@@ -22,7 +22,7 @@ pacman -Sq --noconfirm \
     bootc/uupd \
     chaotic-aur/bazaar-git \
     chaotic-aur/bibata-cursor-theme \
-    chaotic-aur/bindfs \
+    chaotic-aur/blesh-git \
     chaotic-aur/bootc \
     chaotic-aur/darkly-qt6-git \
     chaotic-aur/distroshelf \
@@ -30,8 +30,6 @@ pacman -Sq --noconfirm \
     chaotic-aur/noctalia-shell \
     chaotic-aur/opentabletdriver \
     chaotic-aur/qt6ct-kde \
-    chaotic-aur/ttf-symbola \
-    chaotic-aur/ttf-twemoji \
     chaotic-aur/valent-git \
     chaotic-aur/zen-browser-bin
 

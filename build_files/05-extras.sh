@@ -27,7 +27,7 @@ cd ..
 rm -rf WhiteSur-icon-theme
 
 # setup bash prompt
-echo -e '\nsource -- /usr/share/blesh/ble.sh\n\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /etc/bash.bashrc
+echo -e '\n[[ $- == *i* ]] && source -- /usr/share/blesh/ble.sh\n\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /etc/bash.bashrc
 
 # set default niri config
 install -d /etc/niri/
