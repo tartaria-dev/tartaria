@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+systemctl --root="$BUILDROOT" enable dbus-broker.service
+systemctl --root="$BUILDROOT" preset-all

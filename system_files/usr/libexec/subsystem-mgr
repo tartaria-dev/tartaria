@@ -39,6 +39,7 @@ case $1 in
         echo "Preparing."
         mkdir -p "$STORE"/{rootfs,base,data,.work}
         mkdir -p "$HOME"/.config/containers/systemd
+        mkdir -p /run/user/"$USER_UID"/subsystem
 
         # setup subsystem root
         echo "Mounting subsystem rootfs."
@@ -62,10 +63,8 @@ case $1 in
         fi
 
         # configure quadlet with appropriate values
-        sed -i "s/USER/$USER/g" "$HOME"/.config/containers/systemd/subsystem.container
-        sed -i "s/UID/$USER_UID/g" "$HOME"/.config/containers/systemd/subsystem.container
-        sed -i "s/GID/$USER_GID/g" "$HOME"/.config/containers/systemd/subsystem.container
-
+        sed -i "s/PLACEHOLDERUSER/$USER/g" "$HOME"/.config/containers/systemd/subsystem.container
+        
         # ensure quadlet is loaded
         systemctl --user daemon-reload
 
@@ -85,8 +84,8 @@ case $1 in
         ;;
     enter-subsystem)
         # open subsystem shell
-        echo "Opening shell. This might take a second."
-        podman run --userns=keep-id -e HOME=/home/"$USER" -v /var/home/"$USER":/home/"$USER" -w /home/"$USER" -it subsystem /bin/bash
+        echo "Opening shell."
+        podman exec -u "$USER_UID" -it subsystem /bin/bash
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"
