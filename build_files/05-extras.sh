@@ -27,7 +27,8 @@ cd ..
 rm -rf WhiteSur-icon-theme
 
 # setup bash prompt
-echo -e '\n[[ $- == *i* ]] && source -- /usr/share/blesh/ble.sh\n\neval "$(starship init bash)"\neval "$(atuin init bash)"' >> /etc/bash.bashrc
+mkdir -p /etc/fish
+echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
 
 # set default niri config
 install -d /etc/niri/

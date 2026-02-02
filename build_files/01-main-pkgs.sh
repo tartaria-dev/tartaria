@@ -11,6 +11,7 @@ declare -a packages=(
     bash-completion
     binutils
     curl
+    fish
     gcc
     glibc-locales
     jq

@@ -85,7 +85,7 @@ case $1 in
     enter-subsystem)
         # open subsystem shell
         echo "Opening shell."
-        podman exec -u "$USER_UID" -it subsystem /bin/bash
+        podman exec -u "$USER_UID" -it subsystem /bin/fish
         ;;
     *)
         echo "Usage: $0 poweron|poweroff|enter-subsystem-as <username>"
