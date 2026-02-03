@@ -9,6 +9,9 @@ set -ouex pipefail
 mkdir -p /workdir/rootfs
 cd /workdir
 
+# install apk-tools
+pacman -S --noconfirm apk-tools
+
 # set rootfs path
 ROOTFS="/workdir/rootfs"
 
@@ -20,10 +23,10 @@ tar xzf alpine-minirootfs-*.tar.gz -C "$ROOTFS"
 echo -e "\nhttps://dl-cdn.alpinelinux.org/alpine/edge/community\nhttps://dl-cdn.alpinelinux.org/alpine/edge/testing" >> "$ROOTFS"/etc/apk/repositories
 
 # update package index
-fakeroot chroot "$ROOTFS" apk update
+apk --root "$ROOTFS" update
 
 # install packages
-fakeroot chroot "$ROOTFS" apk add --no-cache \
+apk --root "$ROOTFS" add --no-cache \
     atuin \
     atuin-sync \
     alpine-base \
@@ -75,7 +78,7 @@ mkdir -p "$ROOTFS"/etc/fish
 echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> "$ROOTFS"/etc/fish/config.fish
 
 # cleanup
-fakeroot chroot "$ROOTFS" apk cache clean
+apk --root "$ROOTFS" cache clean
 
 # copy os-release files from host
 cp -f /usr/lib/os-release "$ROOTFS/usr/lib/os-release"
@@ -91,5 +94,6 @@ mksquashfs "$ROOTFS" /usr/lib/subsystem/base.dsk -comp lz4 -Xhc -b 128K -no-xatt
 # cleanup
 cd /
 rm -rf /workdir
+pacman -Rns --noconfirm apk-tools
 
 echo "::endgroup::"
