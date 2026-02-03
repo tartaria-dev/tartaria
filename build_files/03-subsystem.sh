@@ -17,7 +17,7 @@ wget https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/alpine-minirootf
 tar xzf alpine-minirootfs-*.tar.gz -C "$ROOTFS"
 
 # add extra repos
-echo -e "\nhttps://dl-cdn.alpinelinux.org/alpine/edge/community\nhttps://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+echo -e "\nhttps://dl-cdn.alpinelinux.org/alpine/edge/community\nhttps://dl-cdn.alpinelinux.org/alpine/edge/testing" >> "$ROOTFS"/etc/apk/repositories
 
 # update package index
 fakeroot chroot "$ROOTFS" apk update
