@@ -39,6 +39,7 @@ apk --root "$ROOTFS" add --no-cache \
     gcc \
     git \
     less \
+    libc-utils \
     lsof \
     mandoc \
     musl-locales \
@@ -65,10 +66,6 @@ cat > "$ROOTFS"/etc/doas.conf << 'EOF'
 permit persist :wheel
 EOF
 chmod 0400 "$ROOTFS"/etc/doas.conf
-
-# generate locales
-echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
-fakeroot chroot "$ROOTFS" locale-gen
 
 # update dynamic linker cache
 fakeroot chroot "$ROOTFS" ldconfig
