@@ -27,11 +27,16 @@ apk --root "$ROOTFS" update
 
 # install packages
 apk --root "$ROOTFS" add --no-cache \
+    alpine-base \
+    shadow \
+    util-linux \
+    musl-locales \
+    musl-locales-lang \
+    sudo \
+    bash \
+    fish \
     atuin \
     atuin-sync \
-    alpine-base \
-    fish \
-    bash \
     binutils \
     curl \
     dbus \
@@ -42,7 +47,6 @@ apk --root "$ROOTFS" add --no-cache \
     libc-utils \
     lsof \
     mandoc \
-    musl-locales \
     nano \
     neovim \
     openssh \
@@ -53,7 +57,7 @@ apk --root "$ROOTFS" add --no-cache \
     tree \
     unzip \
     vim \
-    wget \
+    wget
 
 # setup OpenRC
 fakeroot chroot "$ROOTFS" rc-update add dbus default
