@@ -6,7 +6,7 @@ echo "::group::===========================> Perform subsystem installation"
 set -ouex pipefail
 
 # generate work directory and rootfs mountpoint
-mkdir -p /workdir
+mkdir -p /workdir/rootfs
 cd /workdir
 
 # set rootfs path
