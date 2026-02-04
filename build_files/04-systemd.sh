@@ -21,8 +21,6 @@ systemctl enable \
     polkit.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
-    subsystem-store-creator.service \
-    subsystem-store-monitor.service \
     tuned-ppd.service \
     tuned.service \
     usr-share-tartaria-cherries.mount \
@@ -35,7 +33,6 @@ systemctl preset \
 
 # user
 systemctl --global enable \
-    subsystem-mgr.service \
     chezmoi-init.service \
     chezmoi-update.timer \
     flathub-user.service \

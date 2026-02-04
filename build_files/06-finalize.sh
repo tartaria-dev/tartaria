@@ -20,7 +20,7 @@ rm -rf /boot /home /root /usr/local /srv /mnt /var /usr/opt
 rm -rf /usr/lib/sysimage/log /usr/lib/sysimage/cache/pacman/pkg
 rm -rf /build /packages
 
-# create essential directories
+# (re)create essential directories
 mkdir -p /sysroot /boot /usr/lib/ostree /var
 
 # move opt into /usr so content is preserved by opt-symlinks.conf

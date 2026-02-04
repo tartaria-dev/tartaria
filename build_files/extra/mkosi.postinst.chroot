@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+# fix pacman database dir
+mkdir -p /var/lib/pacman
+chmod 775 /var/lib/pacman
+
+# install extra packages
+pacman -U /packages/*
+
+# generate locales
+echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
+locale-gen
+
+# update dynamic linker cache
+ldconfig
+
+# setup fish prompt
+mkdir -p /etc/fish
+echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
+
+# cleanup rootfs before tarball generation
+rm -rf /{home,tmp,boot,efi,init,packages,.gnupg,var/{log,tmp}}/*
