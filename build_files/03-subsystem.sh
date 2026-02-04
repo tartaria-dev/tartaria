@@ -10,10 +10,6 @@ mkdir -p /workdir
 cd /workdir
 cp -f /build/extra/* .
 
-# add packages to be installed in subsystem tarball
-mkdir -p mkosi.extra/packages
-cp -f /packages/blesh-git*.pkg.tar.zst mkosi.extra/packages/
-
 # build subsystem tarball
 mkosi build
 
