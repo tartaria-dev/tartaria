@@ -11,7 +11,7 @@ cd /workdir
 cp -f /build/extra/* .
 
 # add extra files
-mkdir -p mkosi.extra
+mkdir -p mkosi.extra/etc mkosi.extra/usr/lib
 cp -f /usr/lib/os-release mkosi.extra/usr/lib/os-release
 cp -f /etc/os-release mkosi.extra/etc/os-release
 
