@@ -10,12 +10,13 @@ mkdir -p /workdir
 cd /workdir
 cp -f /build/extra/* .
 
+# add extra files
+mkdir -p mkosi.extra
+cp -f /usr/lib/os-release mkosi.extra/usr/lib/os-release
+cp -f /etc/os-release mkosi.extra/etc/os-release
+
 # build subsystem tarball
 mkosi build
-
-# copy os-release files from host
-cp -f /usr/lib/os-release "$ROOTFS/usr/lib/os-release"
-cp -f /etc/os-release "$ROOTFS/etc/os-release"
 
 # create subsystem image storage
 mkdir -p /usr/lib/subsystem
