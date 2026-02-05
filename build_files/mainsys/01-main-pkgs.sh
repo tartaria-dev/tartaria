@@ -150,8 +150,7 @@ declare -a packages=(
     glycin
     gnome-keyring
     greetd
-    greetd-regreet
-    incron
+    nwg-hello
     libappindicator
     niri
     orchis-theme

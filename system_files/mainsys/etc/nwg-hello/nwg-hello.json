@@ -1,0 +1,29 @@
+{
+  "session_dirs": [
+    "/usr/share/wayland-sessions"
+  ],
+  "custom_sessions": [],
+  "monitor_nums": [],
+  "form_on_monitors": [],
+  "delay_secs": 1,
+  "cmd-sleep": "systemctl suspend",
+  "cmd-reboot": "systemctl reboot",
+  "cmd-poweroff": "systemctl poweroff",
+  "gtk-theme": "Orchis-Dark",
+  "gtk-icon-theme": "default-icons-grey-dark",
+  "gtk-cursor-theme": "Bibata-Original-Ice",
+  "prefer-dark-theme": true,
+  "template-name": "",
+  "time-format": "%H:%M:%S",
+  "date-format": "%A, %d. %B",
+  "layer": "overlay",
+  "keyboard-mode": "exclusive",
+  "lang": "",
+  "avatar-show": false,
+  "avatar-size": 100,
+  "avatar-border-width": 1,
+  "avatar-border-color": "#eee",
+  "avatar-corner-radius": 15,
+  "avatar-circle": false,
+  "env-vars": []
+}

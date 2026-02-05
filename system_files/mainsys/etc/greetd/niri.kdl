@@ -1,4 +1,4 @@
-spawn-sh-at-startup "regreet >/dev/null 2>&1; niri msg action quit --skip-confirmation"
+spawn-sh-at-startup "nwg-hello >/dev/null 2>&1; niri msg action quit --skip-confirmation"
 hotkey-overlay {
     skip-at-startup
 }
