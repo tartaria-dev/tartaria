@@ -14,7 +14,6 @@ systemctl enable \
     cups.socket \
     firewalld.service \
     greetd.service \
-    incrond.service \
     kdeconnect-firewalld-bypass.service \
     NetworkManager.service \
     polkit.service \
