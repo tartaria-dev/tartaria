@@ -11,7 +11,6 @@ declare -a packages=(
     bash-completion
     binutils
     curl
-    fish
     gcc
     glibc-locales
     jq
@@ -30,14 +29,11 @@ declare -a packages=(
     wget
 
     # ========> cli extras
-    atuin
-    cava
     chezmoi
     fastfetch
     git
     powertop
     python3
-    starship
     vim
 
     # ========> filesystems

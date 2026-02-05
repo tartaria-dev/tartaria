@@ -1,0 +1,14 @@
+# base image
+FROM archlinux:latest
+
+# load in main build/system files
+COPY system_files/subsys /
+COPY build_files/subsys /build/
+
+# run main build scripts
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    sh /build/00-base.sh && \
+    sh /build/01-pkgs.sh && \
+    sh /build/02-extra.sh

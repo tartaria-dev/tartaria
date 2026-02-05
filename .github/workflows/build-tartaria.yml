@@ -95,12 +95,18 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
+      - name: Build subsystem
+        id: build_subsystem
+        run: |
+          mkdir -p store
+          podman --root ./store build -f Containerfile.SUBSYS -t factory
+
       - name: Build image
         id: build_image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
-            ./Containerfile
+            ./Containerfile.MAINSYS
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

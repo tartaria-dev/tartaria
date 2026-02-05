@@ -9,7 +9,6 @@ set -ouex pipefail
 systemctl enable \
     apparmor.service \
     bluetooth.service \
-    bootc-fetch-apply-updates.timer \
     brew-setup.service \
     cups-browsed.service \
     cups.socket \
