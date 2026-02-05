@@ -23,7 +23,7 @@ mkdir -p /usr/lib/subsystem
 chmod 755 /usr/lib/subsystem
 
 # import image into subsystem storage
-podman --root /usr/lib/subsystem import subsystem.tar subsystem:latest
+podman --storage-driver=vfs --root /usr/lib/subsystem import subsystem.tar subsystem:latest
 
 # cleanup
 cd /
