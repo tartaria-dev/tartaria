@@ -15,6 +15,7 @@ systemctl enable \
     firewalld.service \
     greetd.service \
     kdeconnect-firewalld-bypass.service \
+    config-additional-stores.service \
     NetworkManager.service \
     polkit.service \
     rechunker-group-fix.service \

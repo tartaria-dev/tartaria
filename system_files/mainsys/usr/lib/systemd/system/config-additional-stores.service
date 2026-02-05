@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure additional image stores for all existing users
+After=var.mount
+Requires=var.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/run-as-all-human-users 'echo -e "[storage.options]\nadditionalimagestores = [\n   '\"/usr/lib/subsystem\"'\n]" > $HOME/.config/containers/storage.conf'
+ExecStartPost=/usr/bin/systemctl disable config-additional-stores.service
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target
