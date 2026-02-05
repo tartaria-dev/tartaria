@@ -3,7 +3,7 @@
 
 echo "::group::===========================> Perform build preparation"
 
-set -oux pipefail
+set -ouex pipefail
 
 # update base image
 pacman -Syuq --noconfirm
