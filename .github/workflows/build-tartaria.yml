@@ -99,7 +99,7 @@ jobs:
         id: build_subsystem
         run: |
           mkdir -p store
-          podman --root ./store build -f Containerfile.SUBSYS -t factory
+          podman --root ./store build -f Containerfile.SUBSYS -t subsystem:factory
 
       - name: Build image
         id: build_image
