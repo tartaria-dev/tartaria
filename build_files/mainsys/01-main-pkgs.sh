@@ -153,7 +153,7 @@ declare -a packages=(
     glycin
     gnome-keyring
     greetd
-    nwg-hello
+    greetd-regreet
     libappindicator
     niri
     orchis-theme
