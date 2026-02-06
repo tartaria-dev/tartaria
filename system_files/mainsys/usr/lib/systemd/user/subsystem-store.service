@@ -1,0 +1,13 @@
+[Unit]
+Description=Subsystem store management
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/subsystem-store mount
+ExecStop=/usr/libexec/subsystem-store umount
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target

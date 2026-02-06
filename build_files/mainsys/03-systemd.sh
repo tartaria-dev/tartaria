@@ -15,7 +15,6 @@ systemctl enable \
     firewalld.service \
     greetd.service \
     kdeconnect-firewalld-bypass.service \
-    config-additional-stores.service \
     NetworkManager.service \
     polkit.service \
     rechunker-group-fix.service \
@@ -32,6 +31,7 @@ systemctl preset \
 
 # user
 systemctl --global enable \
+    subsystem-store.service \
     chezmoi-init.service \
     chezmoi-update.timer \
     flathub-user.service \

@@ -34,8 +34,10 @@ echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin 
 install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
-# configure subsystem container storage
-sed -i '/additionalimagestores = \[/,/\]/c\additionalimagestores = [\n    "/usr/lib/subsystem"\n]' /etc/containers/storage.conf
+# compress subsystem image store
+mksquashfs /usr/lib/subsystem-store /store.dsk -comp lz4 -Xhc -b 128K -noappend -always-use-fragments > /dev/null
+rm -rf /usr/lib/subsystem-store/*
+mv /store.dsk /usr/lib/subsystem-store/
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
