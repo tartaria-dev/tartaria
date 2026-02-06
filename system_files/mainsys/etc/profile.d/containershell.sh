@@ -6,7 +6,7 @@ if [[ $- == *i* ]]; then
     else
         if [[ "$EUID" != "0" ]]; then
             if [[ -z $(distrobox ls | grep subsystem) ]]; then
-                distrobox-create -i subsystem:latest -n subsystem
+                distrobox-create -i subsystem:latest -n subsystem --hostname subsystem -Y
                 exec distrobox-enter subsystem
             else
                 exec distrobox-enter subsystem
