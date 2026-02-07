@@ -26,10 +26,6 @@ bash ./install.sh -t grey -n default-icons -d /usr/share/icons
 cd ..
 rm -rf WhiteSur-icon-theme
 
-# setup bash prompt
-mkdir -p /etc/fish
-echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
-
 # set default niri config
 install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
