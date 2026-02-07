@@ -32,12 +32,12 @@ if ! getent passwd subsys > /dev/null; then
 fi
 
 case $1 in
-    store-mount)
+    mount-store)
         echo "Mounting subsystem image store."
         machinectl shell -q subsys@.host /usr/bin/mkdir -p "$STORE"/{store,data,.work}
         ! findmnt "$STORE"/store > /dev/null && mount -t overlay overlay -o lowerdir=/usr/lib/subsystem-store,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/store || true
         ;;
-    store-unmount)
+    unmount-store)
         echo "Unmounting subsystem image store."
         findmnt "$STORE"/store > /dev/null && umount "$STORE"/store || true
         ;;
@@ -51,8 +51,8 @@ case $1 in
         systemctl -M subsys@.host --user stop subsystem.service
         ;;
     *)
-        echo "Subsystem management utility 1.0"
-        echo "Usage: $0 store-mount|store-umount|poweron|poweroff"
+        echo "Subsystem management utility 1.0.2"
+        echo "Usage: $0 mount-store|unmount-store|poweron|poweroff"
         exit 1
         ;;
 esac
