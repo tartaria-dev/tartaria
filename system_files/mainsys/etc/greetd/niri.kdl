@@ -1,5 +1,4 @@
 spawn-sh-at-startup "regreet >/dev/null 2>&1; niri msg action quit --skip-confirmation"
-spawn-sh-at-startup "swww-daemon && swww img /usr/share/tartaria/wallpapers/default_wallpaper.jpg --transition-type none"
 
 hotkey-overlay {
     skip-at-startup
