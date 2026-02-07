@@ -25,7 +25,7 @@ readonly STORE="/etc/subsystem/.store"
 
 [[ "$EUID" != "0" ]] && echo "Please run this as an administrator." && exit 1
 
-if ! getent passwd subsys; then
+if ! getent passwd subsys > /dev/null; then
     groupadd -rg 767 subsys
     useradd -rmd /etc/subsystem -u 767 -g 767 -s /usr/bin/nologin subsys
     loginctl enable-linger subsys
@@ -34,14 +34,12 @@ fi
 case $1 in
     store-mount)
         echo "Mounting subsystem image store."
-        machinectl shell -q subsys@.host /usr/bin/mkdir -p "$STORE"/{store,data,.base,.work}
-        ! findmnt "$STORE"/.base > /dev/null && squashfuse -o allow_root,uid="767",gid="767" /usr/lib/subsystem-store/store.dsk "$STORE"/.base || true
-        ! findmnt "$STORE"/store > /dev/null && mount -t overlay overlay -o lowerdir="$STORE"/.base,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/store || true
+        machinectl shell -q subsys@.host /usr/bin/mkdir -p "$STORE"/{store,data,.work}
+        ! findmnt "$STORE"/store > /dev/null && mount -t overlay overlay -o lowerdir=/usr/lib/subsystem-store,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/store || true
         ;;
     store-unmount)
         echo "Unmounting subsystem image store."
-        findmnt "$STORE"/store > /dev/null && fusermount3 -u "$STORE"/store || true
-        findmnt "$STORE"/.base > /dev/null && umount "$STORE"/.base || true
+        findmnt "$STORE"/store > /dev/null && umount "$STORE"/store || true
         ;;
     poweron)
         echo "Powering subsystem on."

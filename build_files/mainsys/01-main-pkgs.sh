@@ -45,8 +45,6 @@ declare -a packages=(
     mtools
     nilfs-utils
     ntfs-3g
-    squashfs-tools
-    squashfuse
     udftools
 
     # ========> drivers

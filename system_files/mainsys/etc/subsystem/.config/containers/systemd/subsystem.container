@@ -9,7 +9,6 @@ EnvironmentHost=true
 User=0
 Group=0
 Entrypoint=/usr/lib/systemd/systemd
-Exec=--unit=multi-user.target
 LogDriver=journald
 Volume=$HOME:$HOME:rslave
 Tmpfs=/run
