@@ -39,6 +39,12 @@ mksquashfs /usr/lib/subsystem-store /store.dsk -comp lz4 -Xhc -b 128K -noappend 
 rm -rf /usr/lib/subsystem-store/*
 mv /store.dsk /usr/lib/subsystem-store/
 
+# create subsystem quadlet config symlink
+ln -sT /etc/subsystem/.config/containers/systemd/subsystem.container /etc/subsystem/subsystem.container
+
+# set correct conf permissions
+chown -R 767:767 /etc/subsystem/
+
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 

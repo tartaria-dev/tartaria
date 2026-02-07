@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+readonly STORE="/etc/subsystem/.store"
+
+[[ "$EUID" != "0" ]] && echo "Please run this as an administrator." && exit 1
+
+if ! getent passwd subsys; then
+    groupadd -rg 767 subsys
+    useradd -rmd /etc/subsystem -u 767 -g 767 -s /usr/bin/nologin subsys
+    loginctl enable-linger subsys
+fi
+
+case $1 in
+    store-mount)
+        echo "Mounting subsystem image store."
+        machinectl shell -q subsys@.host /usr/bin/mkdir -p "$STORE"/{store,data,.base,.work}
+        ! findmnt "$STORE"/.base > /dev/null && squashfuse -o allow_root,uid="767",gid="767" /usr/lib/subsystem-store/store.dsk "$STORE"/.base || true
+        ! findmnt "$STORE"/store > /dev/null && mount -t overlay overlay -o lowerdir="$STORE"/.base,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/store || true
+        ;;
+    store-unmount)
+        echo "Unmounting subsystem image store."
+        findmnt "$STORE"/store > /dev/null && fusermount3 -u "$STORE"/store || true
+        findmnt "$STORE"/.base > /dev/null && umount "$STORE"/.base || true
+        ;;
+    poweron)
+        echo "Powering subsystem on."
+        systemctl -M subsys@.host --user daemon-reload
+        systemctl -M subsys@.host --user start subsystem.service
+        ;;
+    poweroff)
+        echo "Powering subsystem off."
+        systemctl -M subsys@.host --user stop subsystem.service
+        ;;
+    *)
+        echo "Subsystem management utility 1.0"
+        echo "Usage: $0 store-mount|store-umount|poweron|poweroff"
+        exit 1
+        ;;
+esac

@@ -39,11 +39,9 @@ declare -a packages=(
     # ========> filesystems
     exfatprogs
     f2fs-tools
-    fuse-overlayfs
     gpart
     gparted
     jfsutils
-    mkosi
     mtools
     nilfs-utils
     ntfs-3g
@@ -184,7 +182,6 @@ declare -a packages=(
     frameworkintegration
     gnome-calculator
     gnome-calendar
-    gnome-disk-utility
     gnome-music
     gnome-text-editor
     gnome-weather

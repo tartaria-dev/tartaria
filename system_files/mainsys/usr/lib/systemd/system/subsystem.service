@@ -1,0 +1,17 @@
+[Unit]
+Description=Subsystem
+After=systemd-logind.service var.mount
+BindsTo=systemd-logind.service var.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/subsystem-mgr store-mount
+ExecStart=/usr/libexec/subsystem-mgr poweron
+ExecStop=/usr/libexec/subsystem-mgr poweroff
+ExecStop=/usr/libexec/subsystem-mgr store-unount
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target default.target
