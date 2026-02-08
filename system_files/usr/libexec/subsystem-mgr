@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+checkmnt() {
+    ! findmnt "$1" > /dev/null
+}
+
+checknomnt() {
+    findmnt "$1" > /dev/null
+}
+
+readonly STORE="/var/lib/subsystem-store/$USER"
+readonly USER_UID=$(id -u)
+readonly USER_GID=$(id -g)
+
+case $1 in
+    create-stores)
+        [[ "$EUID" != "0" ]] && echo "This command is meant to run as root." && exit 1
+        for user in /var/home/*; do
+            username=$(basename "$user")
+            if getent passwd "$username" >/dev/null 2>&1; then
+                user_uid=$(id -u "$username")
+                user_gid=$(id -g "$username")
+                if [[ $user_uid -ge 1000 ]]; then
+                    echo "Creating store for $username."
+                    mkdir -p /var/lib/subsystem-store/"$username"
+                    chown "$user_uid":"$user_gid" /var/lib/subsystem-store/"$username"
+                    chmod 700 /var/lib/subsystem-store/"$username"
+                fi
+            fi
+        done
+        ;;
+    mount-store)
+        [[ "$EUID" == "0" ]] && echo "This command is not meant to run as root." && exit 1
+        echo "Mounting subsystem image store."
+        mkdir -p "$STORE"/{store,data,.base,.work}
+        checkmnt "$STORE"/.base && squashfuse -o uid="$USER_UID",gid="$USER_GID" /usr/lib/subsystem-store/store.dsk "$STORE"/.base || true
+        checkmnt "$STORE"/store && fuse-overlayfs -o lowerdir="$STORE"/.base,upperdir="$STORE"/data,workdir="$STORE"/.work "$STORE"/store || true
+        ;;
+    unmount-store)
+        [[ "$EUID" == "0" ]] && echo "This command is not meant to run as root." && exit 1
+        echo "Unmounting subsystem image store."
+        checknomnt "$STORE"/store && fusermount3 -u "$STORE"/store || true
+        checknomnt "$STORE"/.base && fusermount3 -u "$STORE"/.base || true
+        ;;
+    poweron)
+        [[ "$EUID" == "0" ]] && echo "This command is not meant to run as root." && exit 1
+        echo "Powering subsystem on."
+        systemctl --user daemon-reload
+        systemctl --user start subsystem.service
+        ;;
+    poweroff)
+        [[ "$EUID" == "0" ]] && echo "This command is not meant to run as root." && exit 1
+        echo "Powering subsystem off."
+        systemctl --user stop subsystem.service
+        ;;
+    *)
+        echo "Subsystem management utility 1.1.0"
+        echo "This utility is only meant for usage by the system."
+        echo "This utility is not meant for direct invocation by a user."
+        exit 1
+        ;;
+esac
