@@ -30,12 +30,6 @@ rm -rf WhiteSur-icon-theme
 install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
-# create subsystem quadlet config symlink
-ln -sT /etc/subsystem/.config/containers/systemd/subsystem.container /etc/subsystem/subsystem.container
-
-# set correct conf/store permissions
-chown -R 767:767 /etc/subsystem/ /usr/lib/subsystem-store/
-
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
