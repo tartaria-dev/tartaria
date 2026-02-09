@@ -1,65 +1,73 @@
 #!/usr/bin/env bash
 
 checkserv() {
+    local SERVICE="$1"
+    local ACTIVE
+    local FAILED
+    local ARG=""
+
+    ACTIVE=$(systemctl is-active "$SERVICE" $ARG 2>/dev/null)
+    FAILED=$(systemctl is-failed "$SERVICE" $ARG 2>/dev/null)
+    
     if [[ "$1" == "-u" ]]; then
-        local SERVICE="$2"
-        local ARG="--user"
-    else
-        local SERVICE="$1"
-        local ARG=""
+        SERVICE="$2"
+        ARG="--user"
     fi
 
-    local ACTIVE=$(systemctl is-active "$SERVICE" $ARG 2>/dev/null)
-
-    if [ "$ACTIVE" = "active" ]; then
+    if [[ "$ACTIVE" = "active" ]]; then
         echo "active"
-    elif [ "$ACTIVE" = "inactive" ]; then
-        FAILED=$(systemctl is-failed "$SERVICE" $ARG 2>/dev/null)
-        if [ "$FAILED" = "failed" ]; then
-            echo "failed"
-        else
-            echo "inactive"
-        fi
+        return
+    elif [[ "$ACTIVE" != "active" ]]; then
+        echo "inactive"
+        return
+    elif [[ "$FAILED" = "failed" ]]; then
+        echo "failed"
+        return
     else
-        echo "state unknown"
+        echo "inactive"
+        return
     fi
 }
 
-if [[ $- == *i* ]]; then
-    if [[ "$TERM" == "linux" ]]; then
-        echo "Detetcted TTY, entering host shell."
-    else
-        if [[ "$EUID" != "0" ]]; then
-            if [[ "$(checkserv subsystem-stores)" == "active" ]]; then
-                if [[ "$(checkserv -u subsystem)" == "active" ]]; then
-                    podman exec -u $(id -u) -it subsystem /bin/fish
-                elif [[ "$(checkserv -u subsystem)" == "inactive" ]]; then
-                    systemctl --user start subsystem
-                    if [[ "$?" != "0" ]]; then
-                        echo "Subsystem failed to start!"
-                        echo "Dumping service state."
-                        systemctl --user status subsystem --no-pager
-                        echo "Dropping into host shell."
-                        exec /usr/bin/sh
-                    else
-                        podman exec -u $(id -u) -it subsystem /bin/fish
-                    fi
-                else
-                    echo "Subsystem failed to start!"
-                    echo "Dropping into local shell."
-                    exec /usr/bin/sh
-                fi
-            else
-                echo "Subsystem store management has failed to start!"
-                echo "Dumping service state."
-                systemctl status subsystem-stores --no-pager
-                echo "Entering host shell."
-                exec /usr/bin/sh
-            fi
-        else
-            echo "Detected root user, entering host shell."
-        fi
-    fi
+SUBSYSTEM_STATUS=$(checkserv -u subsystem)
+readonly SUBSYSTEM_STATUS
+
+# check if the shell is interactive, if we are in a TTY, or if we are root
+if [[ $- != *i* ]]; then
+    return
+elif [[ "$TERM" == "linux" ]]; then
+    echo "Detetcted TTY, entering host shell."
+    return
+elif [[ "$EUID" == "0" ]]; then
+    echo "Detected root user, entering host shell."
+    return
 fi
 
-unset checkserv
+# check if subsystem store setup has completed
+if [[ "$(checkserv subsystem-stores)" != "active" ]]; then
+    echo "Subsystem store management has failed to start!"
+    echo "Dumping service state."
+    systemctl status subsystem-stores --no-pager
+    echo "Entering host shell."
+    return
+fi
+
+# check if subsystem itself is active
+if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
+    exec podman exec -u "$(id -u)" -it subsystem /bin/fish
+elif [[ "$SUBSYSTEM_STATUS" != "active" ]]; then
+    if ! systemctl --user start subsystem; then
+        echo "Subsystem failed to start!"
+        echo "Dumping service state."
+        systemctl --user status subsystem --no-pager
+        echo "Dropping into host shell."
+        return
+    fi
+    exec podman exec -u "$(id -u)" -it subsystem /bin/fish
+fi
+
+# subsystem in unknown/failed state
+echo "Subsystem has failed/is in an unknown state!"
+echo "Dumping service state."
+systemctl --user status subsystem --no-pager
+echo "Dropping into host shell."

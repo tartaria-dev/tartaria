@@ -19,28 +19,39 @@
 # You should have received a copy of the GNU General Public License
 # along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
 
+# do not list users by default
 ECHO_USER=0
 
-[[ "$EUID" != "0" ]] && echo "We are not root, abort!!" && exit 1
-
-if [[ -z "$1" ]]; then
+# check if we aren't root or no arg was provided
+if [[ "$EUID" != "0" ]]; then
+    echo "We are not root, abort!!"
+    exit 1
+elif [[ -z "$1" ]]; then
     echo "Usage: $0 'command to run'"
     exit 1
-elif [[ "$1" == "--list" ]]; then
+fi
+
+# check if we need to list users
+if [[ "$1" == "--list" ]]; then
     ECHO_USER=1
 fi
 
+# iterate through every user with a homedir in /var/home
 for user in /var/home/*; do
     username=$(basename "$user")
-    if getent passwd "$username" >/dev/null 2>&1; then
-        user_uid=$(id -u "$username")
-        if [[ $user_uid -ge 1000 ]]; then
-            if [[ "$ECHO_USER" != "1" ]]; then
-                echo "Executing '$1' as $username, uid $user_uid"
-                su - "$username" -c "$1"
-            else
-                echo "$username"
-            fi
-        fi
+    
+    # skip if user doesn't exist
+    getent passwd "$username" >/dev/null 2>&1 || continue
+    
+    # skip if UID < 1000
+    user_uid=$(id -u "$username")
+    [[ $user_uid -lt 1000 ]] && continue
+    
+    # execute as or echo user based on flag
+    if [[ "$ECHO_USER" == "1" ]]; then
+        echo "$username"
+    else
+        echo "Executing '$1' as $username, uid $user_uid"
+        su - "$username" -c "$1"
     fi
 done

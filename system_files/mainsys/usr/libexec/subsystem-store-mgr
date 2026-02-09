@@ -21,23 +21,26 @@
 
 set -e
 
-# set vars
+# constants
 readonly MAIN_STORE="/var/lib/subsystem"
-readonly MACHINEID="$(cat /etc/machine-id)"
+MACHINEID="$(cat /etc/machine-id)"
+readonly MACHINEID
 
-# set functions
+# utilities
 checkmnt() {
     if [[ "$1" == "-n" ]]; then
-        ! findmnt $2 > /dev/null
+        findmnt "$2" > /dev/null && exit 1
     else
-        findmnt $1 > /dev/null
+        findmnt "$1" > /dev/null
     fi
 }
 
 cre_conf_file() {
     local home="$1"
-    local user="$(basename $home)"
-    cat > "$home"/.config/containers/storage.conf <<EOF
+    local user
+    user="$(basename "$home")"
+
+    cat > "$home/.config/containers/storage.conf" <<EOF
 # !! NOTICE !!
 # If a "storage.conf.bk" file is present in the same directory as this file,
 # that means your storage configuration was overridden.
@@ -56,78 +59,92 @@ additionalimagestores = [
 EOF
 }
 
-# ensure executing user is root
-[[ "$EUID" != "0" ]] && echo "Please run this as an administrator." && exit 1
+# check if we aren't root and if the main store doesn't exist
+if [[ "$EUID" != "0" ]]; then
+    echo "Please run this as an administrator."
+    exit 1
+elif [[ ! -d "$MAIN_STORE" ]]; then
+    mkdir -p "$MAIN_STORE"
+fi
 
-# ensure main store directory exists
-[[ ! -d "$MAIN_STORE" ]] && mkdir -p "$MAIN_STORE"
-
-# sort through provided args
-case $1 in
+# iterate through args
+case "$1" in
     setup-configs)
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             home="/var/home/$user"
             conf_dir="$home/.config/containers"
-
-            # setup configs if needed
-            if [[ ! -f "$home"/.config/.subsystem-store-setup-done-do-not-remove ]]; then
+            marker="$home/.config/.subsystem-store-setup-done-do-not-remove"
+            quadlet="$conf_dir/systemd/subsystem-$MACHINEID.container"
+            
+            if [[ ! -f "$marker" ]]; then # setup storage config if needed
                 echo "Creating storage config for $user."
-                [[ -f "$conf_dir"/storage.conf ]] && mv "$conf_dir"/storage.conf "$conf_dir"/storage.conf.bk
+                [[ -f "$conf_dir/storage.conf" ]] && mv "$conf_dir/storage.conf" "$conf_dir/storage.conf.bk"
                 mkdir -p "$conf_dir"
                 cre_conf_file "$home"
-                touch "$home"/.config/.subsystem-store-setup-done-do-not-remove
-            elif [[ ! -f "$conf_dir"/systemd/"subsystem-$MACHINEID.container" ]]; then
+                touch "$marker"
+                return
+            elif [[ ! -f "$quadlet" ]]; then # setup quadlet config if needed
                 echo "Creating quadlet config for $user."
-                mkdir -p "$conf_dir"/systemd
-                cp -f /etc/subsystem/subsystem.container "$conf_dir"/systemd/"subsystem-$MACHINEID.container"
-                systemctl -M "$user"@.host --user daemon-reload
-                systemctl -M "$user"@.host --user enable "subsystem-$MACHINEID.service"
+                mkdir -p "$conf_dir/systemd"
+                cp -f /etc/subsystem/subsystem.container "$quadlet"
+                systemctl -M "$user@.host" --user daemon-reload
+                systemctl -M "$user@.host" --user enable "subsystem-$MACHINEID.service"
+                return
             else
                 echo "Nothing to do for user $user."
             fi
         done
         ;;
+        
     setup-stores)
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
-            user_uid="$(id -u $user)"
-            user_gid="$(id -g $user)"
-
-            # setup image stores if needed
-            if [[ ! -d "$msdir" ]]; then
+            user_uid=$(id -u "$user")
+            user_gid=$(id -g "$user")
+            
+            # check if msdir already exists; if not, create it
+            if [[ -d "$msdir" ]]; then
+                echo "Nothing to do for user $user."
+            else
                 mkdir -p "$msdir"/{store,store-data,.base,.work}
                 chown -R "$user_uid":"$user_gid" "$msdir"
                 chmod 700 "$msdir"
-            else
-                echo "Nothing to do for user $user."
             fi
         done
         ;;
+        
     mount-stores)
-        echo "Mounting subsystem image stores."
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
-            user_uid="$(id -u $user)"
-            user_gid="$(id -g $user)"
+            user_uid=$(id -u "$user")
+            user_gid=$(id -g "$user")
 
-            # if not already mounted, mount the image store for this user
-            checkmnt -n "$msdir"/.base && mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o loop,ro,acl,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir"/.base
-            checkmnt -n "$msdir"/store && mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir"/store
-        done 
+            if checkmnt -n "$msdir/.base"; then # mount base store if not mounted
+                mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 \
+                      -o loop,ro,acl,user_xattr -t erofs \
+                      /usr/lib/subsystem-store/store.dsk "$msdir/.base"
+            elif checkmnt -n "$msdir/store"; then # mount store if not mounted
+                mount -t overlay overlay \
+                      -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work \
+                      "$msdir/store"
+            fi
+        done
         ;;
+        
     unmount-stores)
         echo "Unmounting subsystem image stores."
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
 
-            # if mounted, unmount the image store for this user
-            checkmnt "$msdir"/store && umount "$msdir"/store
-            checkmnt "$msdir"/.base && umount "$msdir"/.base
+            checkmnt "$msdir/store" && umount "$msdir/store" # unmount store if mounted
+            checkmnt "$msdir/.base" && umount "$msdir/.base" # unmount base store if mounted
         done
         ;;
+        
     *)
         echo "Subsystem store management utility 1.0.2"
         echo "Usage: $0 setup-configs|setup-stores|mount-stores|unmount-stores"
+        echo "Note: This utility is not intended for use by users."
         exit 1
         ;;
 esac
