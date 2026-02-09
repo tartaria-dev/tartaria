@@ -35,7 +35,15 @@ if [[ $- == *i* ]]; then
                     podman exec -u $(id -u) -it subsystem /bin/fish
                 elif [[ "$(checkserv -u subsystem)" == "inactive" ]]; then
                     systemctl --user start subsystem
-                    [[ "$?" != "0" ]] && echo "Subsystem failed to start!" && echo "Dropping into host shell." && exec /usr/bin/sh
+                    if [[ "$?" != "0" ]]; then
+                        echo "Subsystem failed to start!"
+                        echo "Dumping service state."
+                        systemctl --user status subsystem --no-pager
+                        echo "Dropping into host shell."
+                        exec /usr/bin/sh
+                    else
+                        podman exec -u $(id -u) -it subsystem /bin/fish
+                    fi
                 else
                     echo "Subsystem failed to start!"
                     echo "Dropping into local shell."
