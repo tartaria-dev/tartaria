@@ -101,7 +101,7 @@ jobs:
           mkdir -p store
           podman --root ./store build -f Containerfile.SUBSYS -t subsystem:latest
           mkfifo store.pipe
-          bash -c "tar -zcvf ./store.pipe && rm -rf ./store ./store.pipe"
+          bash -c "tar -zcvf ./store.pipe ./store && rm -rf ./store ./store.pipe" &
 
       - name: Build image
         id: build_image
