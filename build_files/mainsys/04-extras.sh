@@ -31,9 +31,8 @@ install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
 # create erofs image of subsystem store
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /store.dsk /usr/lib/subsystem-store > /dev/null
-rm -rf /usr/lib/subsystem-store/*
-mv /store.dsk /usr/lib/subsystem-store/store.dsk
+mkdir -p /usr/lib/subsystem-store
+mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store --tar /store.pipe /usr/lib/subsystem-store/store.dsk > /dev/null
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas

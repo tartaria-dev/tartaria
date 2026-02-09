@@ -100,6 +100,8 @@ jobs:
         run: |
           mkdir -p store
           podman --root ./store build -f Containerfile.SUBSYS -t subsystem:latest
+          mkfifo store.pipe
+          bash -c "tar -zcvf ./store.pipe && rm -rf ./store ./store.pipe"
 
       - name: Build image
         id: build_image
@@ -111,11 +113,6 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           oci: true
-
-      - name: Cleanup
-        id: cleanup
-        run: |
-          sudo rm -rf ./store
 
       - name: Login to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
