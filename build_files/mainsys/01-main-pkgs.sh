@@ -38,6 +38,7 @@ declare -a packages=(
 
     # ========> filesystems
     exfatprogs
+    erofs-utils
     f2fs-tools
     gpart
     gparted
