@@ -31,7 +31,7 @@ if [[ $- == *i* ]]; then
     else
         if [[ "$EUID" != "0" ]]; then
             if [[ "$(checkserv subsystem-stores)" == "active" ]]; then
-                if [[ "$(checkserv -u subsystem)" == "active" ]];
+                if [[ "$(checkserv -u subsystem)" == "active" ]]; then
                     podman exec -u $(id -u) -it subsystem /bin/fish
                 elif [[ "$(checkserv -u subsystem)" == "inactive" ]]; then
                     systemctl --user start subsystem

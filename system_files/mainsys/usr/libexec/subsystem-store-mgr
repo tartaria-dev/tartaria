@@ -65,7 +65,7 @@ EOF
 # sort through provided args
 case $1 in
     setup-configs)
-        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+        for user in $(/usr/libexec/run-as-all-human-users --list); do
             home="/var/home/$user"
             conf_dir="$home/.config/containers"
 
@@ -88,7 +88,7 @@ case $1 in
         done
         ;;
     setup-stores)
-        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+        for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
             user_uid="$(id -u $user)"
             user_gid="$(id -g $user)"
@@ -105,7 +105,7 @@ case $1 in
         ;;
     mount-stores)
         echo "Mounting subsystem image stores."
-        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+        for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
             user_uid="$(id -u $user)"
             user_gid="$(id -g $user)"
@@ -117,7 +117,7 @@ case $1 in
         ;;
     unmount-stores)
         echo "Unmounting subsystem image stores."
-        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+        for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
 
             # if mounted, unmount the image store for this user
