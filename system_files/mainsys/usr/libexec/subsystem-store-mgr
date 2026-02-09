@@ -1,0 +1,128 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+# set vars
+readonly MAIN_STORE="/var/lib/subsystem"
+
+# set functions
+checkmnt() {
+    if [[ "$1" == "-n" ]]; then
+        ! findmnt $2 > /dev/null
+    else
+        findmnt $1 > /dev/null
+    fi
+}
+
+cre_conf_file() {
+    local home="$1"
+    local user="$(basename $home)"
+    cat > "$home"/.config/containers/storage.conf <<EOF
+# !! NOTICE !!
+# If a "storage.conf.bk" file is present in the same directory as this file,
+# that means your storage configuration was overridden.
+# If the file is not present, ignore the rest of this comment.
+# Otherwise, please merge this storage configuration with your configuration,
+# as this configuration is needed for the containerized shell to work properly.
+
+[storage]
+driver = "overlay"
+
+[storage.options]
+mount_program = "/usr/bin/fuse-overlayfs"
+additionalimagestores = [
+    "/var/lib/subsystem/$user/store"
+]
+EOF
+}
+
+# ensure executing user is root
+[[ "$EUID" != "0" ]] && echo "Please run this as an administrator." && exit 1
+
+# ensure main store directory exists
+[[ ! -d "$MAIN_STORE" ]] && mkdir -p "$MAIN_STORE"
+
+# sort through provided args
+case $1 in
+    setup-configs)
+        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+            home="/var/home/$user"
+            conf_dir="$home/.config/containers"
+
+            # setup configs if needed
+            if [[ ! -f "$home"/.config/.subsystem-store-setup-done-do-not-remove ]]; then
+                [[ -f "$conf_dir"/storage.conf ]] && mv "$conf_dir"/storage.conf "$conf_dir"/storage.conf.bk
+                mkdir -p "$conf_dir"
+                cre_conf_file "$home"
+                touch "$home"/.config/.subsystem-store-setup-done-do-not-remove
+            elif [[ ! -f "$conf_dir"/systemd/subsystem.container ]]; then
+                cp -f /etc/subsystem/subsystem.container "$conf_dir"/systemd/subsystem.container
+                systemctl -M "$user"@.host --user enable subsystem.service
+            else
+                echo "Nothing to do for user $user."
+            fi
+        done
+        ;;
+    setup-stores)
+        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+            msdir="$MAIN_STORE/$user"
+            user_uid="$(id -u $user)"
+            user_gid="$(id -g $user)"
+
+            # setup image stores if needed
+            if [[ ! -d "$msdir" ]]; then
+                mkdir -p "$msdir"/{store,store-data,.base,.work}
+                chown -R "$user_uid":"$user_gid" "$msdir"
+                chmod 700 "$msdir"
+            else
+                echo "Nothing to do for user $user."
+            fi
+        done
+        ;;
+    mount-stores)
+        echo "Mounting subsystem image stores."
+        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+            msdir="$MAIN_STORE/$user"
+            user_uid="$(id -u $user)"
+            user_gid="$(id -g $user)"
+
+            # if not already mounted, mount the image store for this user
+            checkmnt -n "$msdir"/.base && mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o loop,ro,acl,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir"/.base
+            checkmnt -n "$msdir"/store && mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir"/store
+        done 
+        ;;
+    unmount-stores)
+        echo "Unmounting subsystem image stores."
+        for user in "$(/usr/libexec/run-as-all-human-users --list)"; do
+            msdir="$MAIN_STORE/$user"
+
+            # if mounted, unmount the image store for this user
+            checkmnt "$msdir"/store && umount "$msdir"/store
+            checkmnt "$msdir"/.base && umount "$msdir"/.base
+        done
+        ;;
+    *)
+        echo "Subsystem store management utility 1.0.2"
+        echo "Usage: $0 setup-configs|setup-stores|mount-stores|unmount-stores"
+        exit 1
+        ;;
+esac

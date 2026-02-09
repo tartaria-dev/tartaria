@@ -1,5 +1,8 @@
 [Unit]
 Description=Subsystem
+PartOf=graphical-session.target
+Requisite=graphical-session.target
+After=graphical-session.target
 
 [Container]
 ContainerName=subsystem
@@ -10,8 +13,11 @@ User=0
 Group=0
 Entrypoint=/usr/lib/systemd/systemd
 LogDriver=journald
-Volume=/var/home:/home:rslave
+Volume=%h:%h:rslave
 Tmpfs=/run
 Tmpfs=/tmp
 UserNS=keep-id
 Network=host
+
+[Install]
+WantedBy=graphical-session.target

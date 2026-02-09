@@ -19,11 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
 
+ECHO_USER=0
+
 [[ "$EUID" != "0" ]] && echo "We are not root, abort!!" && exit 1
 
 if [[ -z "$1" ]]; then
     echo "Usage: $0 'command to run'"
     exit 1
+elif [[ "$1" == "--list" ]]; then
+    ECHO_USER=1
 fi
 
 for user in /var/home/*; do
@@ -31,8 +35,12 @@ for user in /var/home/*; do
     if getent passwd "$username" >/dev/null 2>&1; then
         user_uid=$(id -u "$username")
         if [[ $user_uid -ge 1000 ]]; then
-            echo "Executing '$1' as $username, uid $user_uid"
-            su - "$username" -c "$1"
+            if [[ "$ECHO_USER" != "1" ]]; then
+                echo "Executing '$1' as $username, uid $user_uid"
+                su - "$username" -c "$1"
+            else
+                echo "$username"
+            fi
         fi
     fi
 done

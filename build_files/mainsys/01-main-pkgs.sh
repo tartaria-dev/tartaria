@@ -40,6 +40,7 @@ declare -a packages=(
     exfatprogs
     erofs-utils
     f2fs-tools
+    fuse-overlayfs
     gpart
     gparted
     jfsutils

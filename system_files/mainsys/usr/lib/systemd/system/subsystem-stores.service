@@ -1,0 +1,17 @@
+[Unit]
+Description=Subsystem store management
+After=systemd-logind.service local-fs.target
+BindsTo=systemd-logind.service local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/subsystem-store-mgr setup-configs
+ExecStart=/usr/libexec/subsystem-store-mgr setup-stores
+ExecStart=/usr/libexec/subsystem-store-mgr mount-stores
+ExecStop=/usr/libexec/subsystem-store-mgr unmount-stores
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target default.target
