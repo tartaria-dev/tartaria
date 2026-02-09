@@ -115,7 +115,7 @@ jobs:
       - name: Cleanup
         id: cleanup
         run: |
-          rm -rf ./store
+          sudo rm -rf ./store
 
       - name: Login to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
