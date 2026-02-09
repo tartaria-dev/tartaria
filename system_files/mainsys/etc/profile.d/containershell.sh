@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 checkserv() {
-    if [[ "$1" == "-u"; then ]];
+    if [[ "$1" == "-u" ]]; then
         local SERVICE="$2"
         local ARG="--user"
     else
