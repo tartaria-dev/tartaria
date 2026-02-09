@@ -23,6 +23,7 @@ set -e
 
 # set vars
 readonly MAIN_STORE="/var/lib/subsystem"
+readonly MACHINEID="$(cat /etc/machine-id)"
 
 # set functions
 checkmnt() {
@@ -70,13 +71,16 @@ case $1 in
 
             # setup configs if needed
             if [[ ! -f "$home"/.config/.subsystem-store-setup-done-do-not-remove ]]; then
+                echo "Creating storage config for $user."
                 [[ -f "$conf_dir"/storage.conf ]] && mv "$conf_dir"/storage.conf "$conf_dir"/storage.conf.bk
                 mkdir -p "$conf_dir"
                 cre_conf_file "$home"
                 touch "$home"/.config/.subsystem-store-setup-done-do-not-remove
-            elif [[ ! -f "$conf_dir"/systemd/subsystem.container ]]; then
-                cp -f /etc/subsystem/subsystem.container "$conf_dir"/systemd/subsystem.container
-                systemctl -M "$user"@.host --user enable subsystem.service
+            elif [[ ! -f "$conf_dir"/systemd/"subsystem-$MACHINEID.container" ]]; then
+                echo "Creating quadlet config for $user."
+                mkdir -p "$conf_dir"/systemd
+                cp -f /etc/subsystem/subsystem.container "$conf_dir"/systemd/"subsystem-$MACHINEID.container"
+                systemctl -M "$user"@.host --user enable "subsystem-$MACHINEID.service"
             else
                 echo "Nothing to do for user $user."
             fi
