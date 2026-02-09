@@ -80,6 +80,7 @@ case $1 in
                 echo "Creating quadlet config for $user."
                 mkdir -p "$conf_dir"/systemd
                 cp -f /etc/subsystem/subsystem.container "$conf_dir"/systemd/"subsystem-$MACHINEID.container"
+                systemctl -M "$user"@.host --user daemon-reload
                 systemctl -M "$user"@.host --user enable "subsystem-$MACHINEID.service"
             else
                 echo "Nothing to do for user $user."
