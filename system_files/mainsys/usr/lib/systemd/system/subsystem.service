@@ -1,0 +1,17 @@
+[Unit]
+Description=Subsystem
+After=systemd-logind.service local-fs.target
+BindsTo=systemd-logind.service local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/subsystem-mgr mount-store
+ExecStart=/usr/libexec/subsystem-mgr poweron
+ExecStop=/usr/libexec/subsystem-mgr poweroff
+ExecStop=/usr/libexec/subsystem-mgr unmount-store
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target default.target

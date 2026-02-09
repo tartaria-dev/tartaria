@@ -38,12 +38,10 @@ declare -a packages=(
 
     # ========> filesystems
     exfatprogs
-    erofs-utils
     f2fs-tools
     gpart
     gparted
     jfsutils
-    mkosi
     mtools
     nilfs-utils
     ntfs-3g

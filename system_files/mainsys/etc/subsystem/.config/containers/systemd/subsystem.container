@@ -1,0 +1,17 @@
+[Unit]
+Description=Subsystem
+
+[Container]
+ContainerName=subsystem
+HostName=subsystem
+Image=subsystem:latest
+EnvironmentHost=true
+User=0
+Group=0
+Entrypoint=/usr/lib/systemd/systemd
+LogDriver=journald
+Volume=/var/home:/home:rslave
+Tmpfs=/run
+Tmpfs=/tmp
+UserNS=keep-id
+Network=host
