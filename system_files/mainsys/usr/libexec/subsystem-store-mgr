@@ -29,7 +29,7 @@ readonly MACHINEID
 # utilities
 checkmnt() {
     if [[ "$1" == "-n" ]]; then
-        findmnt "$2" > /dev/null && exit 1
+        ! findmnt "$2" > /dev/null
     else
         findmnt "$1" > /dev/null
     fi
@@ -57,6 +57,7 @@ additionalimagestores = [
     "/var/lib/subsystem/$user/store"
 ]
 EOF
+    chown "$user":"$user" "$home/.config/containers/storage.conf"
 }
 
 # check if we aren't root and if the main store doesn't exist
@@ -87,6 +88,7 @@ case "$1" in
                 echo "Creating quadlet config for $user."
                 mkdir -p "$conf_dir/systemd"
                 cp -f /etc/subsystem/subsystem.container "$quadlet"
+                chown "$user":"$user" "$quadlet"
                 systemctl -M "$user@.host" --user daemon-reload
                 systemctl -M "$user@.host" --user enable "subsystem-$MACHINEID.service"
                 return
