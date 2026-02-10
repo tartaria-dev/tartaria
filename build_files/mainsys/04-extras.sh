@@ -3,9 +3,6 @@
 
 set -ouex pipefail
 
-# remove base-devel
-pacman -Rns --noconfirm base-devel
-
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
@@ -36,5 +33,8 @@ fakeroot rsync -azHAX /store/ /usr/lib/subsystem-store/
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# remove base-devel
+pacman -Rns --noconfirm base-devel
 
 echo "::endgroup::"
