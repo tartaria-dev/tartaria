@@ -100,8 +100,6 @@ jobs:
         run: |
           mkdir -p store
           podman --root ./store build -f Containerfile.SUBSYS -t subsystem:latest
-          mkfifo store.pipe
-          bash -c "podman --root ./store save --format oci-archive -o store.pipe subsystem:latest && rm -rf ./store" &
 
       - name: Build image
         id: build_image

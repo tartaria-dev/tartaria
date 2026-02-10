@@ -1,9 +1,12 @@
-# base image
+# base image for subsystem build
+FROM quay.io
+# base image for main image
 FROM docker.io/cachyos/cachyos-v3:latest
 
 # load in main build/system files
 COPY system_files/mainsys /
 COPY build_files/mainsys /build/
+COPY store /usr/lib/subsystem-store/
 
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
