@@ -30,9 +30,9 @@ rm -rf WhiteSur-icon-theme
 install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
-# create erofs image of subsystem store
+# create subsystem store base
 mkdir -p /usr/lib/subsystem-store
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /usr/lib/subsystem-store/store.dsk /store > /dev/null
+rsync -avzHAX /store/ /usr/lib/subsystem-store/
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas

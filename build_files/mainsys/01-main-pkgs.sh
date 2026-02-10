@@ -54,7 +54,6 @@ declare -a packages=(
     dosfstools
     e2fsprogs
     exfatprogs
-    erofs-utils
     f2fs-tools
     fuse-overlayfs
     gpart
