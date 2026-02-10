@@ -32,7 +32,7 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # create subsystem store base
 mkdir -p /usr/lib/subsystem-store
-rsync -azHAX --progress /store/ /usr/lib/subsystem-store/
+rsync -azHAX /store/ /usr/lib/subsystem-store/
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
