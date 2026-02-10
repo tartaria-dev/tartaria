@@ -123,15 +123,8 @@ case "$1" in
             user_uid=$(id -u "$user")
             user_gid=$(id -g "$user")
 
-            # mount base store if not mounted
-            if checkmnt -n "$msdir/.base"; then
-                mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o loop,ro,acl,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base"
-            fi
-
-            # mount store if not mounted
-            if checkmnt -n "$msdir/store"; then
-                mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir/store"
-            fi
+            checkmnt -n "$msdir/.base" && mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o loop,ro,acl,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base" || true # mount base store if not mounted
+            checkmnt -n "$msdir/store" && mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir/store" || true # mount store if not mounted
         done
         ;;
         
@@ -140,8 +133,8 @@ case "$1" in
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
 
-            checkmnt "$msdir/store" && umount "$msdir/store" # unmount store if mounted
-            checkmnt "$msdir/.base" && umount "$msdir/.base" # unmount base store if mounted
+            checkmnt "$msdir/store" && umount "$msdir/store" || true # unmount store if mounted
+            checkmnt "$msdir/.base" && umount "$msdir/.base" || true # unmount base store if mounted
         done
         ;;
         
