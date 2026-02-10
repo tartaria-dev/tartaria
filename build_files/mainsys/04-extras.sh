@@ -32,9 +32,7 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # create erofs image of subsystem store
 mkdir -p /usr/lib/subsystem-store
-cat /store.pipe > /store.tar.gz
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store --tar /usr/lib/subsystem-store/store.dsk /store.tar.gz > /dev/null
-rm -f /store.tar.gz
+mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /store /usr/lib/subsystem-store/store.dsk > /dev/null
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
