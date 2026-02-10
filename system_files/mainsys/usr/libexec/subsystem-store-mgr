@@ -60,11 +60,14 @@ EOF
     chown "$user":"$user" "$home/.config/containers/storage.conf"
 }
 
-# check if we aren't root and if the main store doesn't exist
+# check if we aren't root
 if [[ "$EUID" != "0" ]]; then
     echo "Please run this as an administrator."
     exit 1
-elif [[ ! -d "$MAIN_STORE" ]]; then
+fi
+
+# chkeck if the main store exists
+if [[ ! -d "$MAIN_STORE" ]]; then
     mkdir -p "$MAIN_STORE"
 fi
 
@@ -88,12 +91,11 @@ case "$1" in
                 echo "Creating quadlet config for $user."
                 mkdir -p "$conf_dir/systemd"
                 cp -f /etc/subsystem/subsystem.container "$quadlet"
-                chown "$user":"$user" "$quadlet"
-                systemctl -M "$user@.host" --user daemon-reload
+                chown -R "$user":"$user" "$conf_dir/systemd"
                 systemctl -M "$user@.host" --user enable "subsystem-$MACHINEID.service"
                 return
             else
-                echo "Nothing to do for user $user."
+                echo "Configs already setup for user $user."
             fi
         done
         ;;
@@ -106,7 +108,7 @@ case "$1" in
             
             # check if msdir already exists; if not, create it
             if [[ -d "$msdir" ]]; then
-                echo "Nothing to do for user $user."
+                echo "Subsystem store already setup for user $user."
             else
                 mkdir -p "$msdir"/{store,store-data,.base,.work}
                 chown -R "$user_uid":"$user_gid" "$msdir"
@@ -121,14 +123,14 @@ case "$1" in
             user_uid=$(id -u "$user")
             user_gid=$(id -g "$user")
 
-            if checkmnt -n "$msdir/.base"; then # mount base store if not mounted
-                mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 \
-                      -o loop,ro,acl,user_xattr -t erofs \
-                      /usr/lib/subsystem-store/store.dsk "$msdir/.base"
-            elif checkmnt -n "$msdir/store"; then # mount store if not mounted
-                mount -t overlay overlay \
-                      -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work \
-                      "$msdir/store"
+            # mount base store if not mounted
+            if checkmnt -n "$msdir/.base"; then
+                mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o loop,ro,acl,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base"
+            fi
+
+            # mount store if not mounted
+            if checkmnt -n "$msdir/store"; then
+                mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir/store"
             fi
         done
         ;;

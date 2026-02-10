@@ -6,6 +6,19 @@ echo "::group::===========================> Perform system package installations
 set -ouex pipefail
 
 declare -a packages=(
+    # ========> system
+    base
+    dracut
+    linux-cachyos
+    linux-firmware
+    ostree
+    skopeo
+    dbus
+    dbus-glib
+    glib2
+    ostree
+    shadow
+
     # ========> cli essentials
     bash
     bash-completion
@@ -37,6 +50,9 @@ declare -a packages=(
     vim
 
     # ========> filesystems
+    btrfs-progs
+    dosfstools
+    e2fsprogs
     exfatprogs
     erofs-utils
     f2fs-tools
@@ -47,6 +63,7 @@ declare -a packages=(
     mtools
     nilfs-utils
     ntfs-3g
+    xfsprogs
     udftools
 
     # ========> drivers

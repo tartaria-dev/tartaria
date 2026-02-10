@@ -20,10 +20,8 @@ sed -i \
     -e "/DownloadUser/d" \
     /etc/pacman.conf
 
-# initialize database and install base packages
+# update base system and install arch repos
 pacman -Syuq --noconfirm
-pacman -Syq --noconfirm reflector
-pacman -Syq --noconfirm base dracut linux-cachyos linux-firmware ostree btrfs-progs e2fsprogs xfsprogs dosfstools skopeo dbus dbus-glib glib2 ostree shadow
-pacman -S --clean --noconfirm
+pacman -S --noconfirm reflector
 
 echo "::endgroup::"

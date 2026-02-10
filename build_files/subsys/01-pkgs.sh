@@ -6,6 +6,13 @@ echo "::group::===========================> Perform package installations"
 set -ouex pipefail
 
 declare -a packages=(
+    # ========> system
+    base
+    dbus
+    dbus-glib
+    glib2
+    shadow
+
     # ========> cli essentials
     binutils
     curl
