@@ -29,7 +29,9 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # create subsystem store base
 mkdir -p /usr/lib/subsystem-store
-cat /store.pipe | podman --root /usr/lib/subsystem-store load --quiet
+cat /store.pipe > /store.tar
+podman --root /usr/lib/subsystem-store load -i /store.tar --quiet
+rm -f /store.tar
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
