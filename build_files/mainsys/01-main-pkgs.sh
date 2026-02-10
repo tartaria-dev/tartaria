@@ -215,4 +215,4 @@ declare -a packages=(
     sysprof
 )
 
-pacman -Syq --noconfirm "${packages[@]}"
+pacman -Syq --noconfirm "${packages[@]}" > /dev/null

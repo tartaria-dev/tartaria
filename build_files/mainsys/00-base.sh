@@ -22,6 +22,6 @@ sed -i \
 
 # update base system and install arch repos
 pacman -Syuq --noconfirm
-pacman -S --noconfirm reflector
+pacman -S --noconfirm reflector > /dev/null
 
 echo "::endgroup::"

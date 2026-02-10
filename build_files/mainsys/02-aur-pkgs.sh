@@ -30,8 +30,8 @@ pacman -Sq --noconfirm \
     chaotic-aur/opentabletdriver \
     chaotic-aur/qt6ct-kde \
     chaotic-aur/valent-git \
-    chaotic-aur/zen-browser-bin
+    chaotic-aur/zen-browser-bin > /dev/null
 
-pacman -U --noconfirm /packages/*.pkg.tar.zst
+pacman -U --noconfirm /packages/*.pkg.tar.zst > /dev/null
 
 echo "::endgroup::"
