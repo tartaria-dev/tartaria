@@ -9,15 +9,12 @@ Image=subsystem:latest
 EnvironmentHost=true
 User=0
 Group=0
-Entrypoint=/usr/lib/systemd/systemd
+Exec=sleep infinity
 WorkingDir=%h
 LogDriver=journald
 Volume=%h:%h:rslave
-Tmpfs=/run
-Tmpfs=/tmp
 UserNS=keep-id
 Network=host
-PodmanArgs=--systemd=always
 
 [Install]
 WantedBy=graphical-session.target
