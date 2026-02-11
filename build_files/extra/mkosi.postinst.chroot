@@ -15,8 +15,5 @@ echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin 
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
-# systemctl setup
-systemctl preset-all
-
-# cleanup rootfs before rootfs image generation
+# cleanup rootfs before import
 rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
