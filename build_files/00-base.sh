@@ -9,7 +9,7 @@ set -oux pipefail
 grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | \
     xargs -n1 sh -c \
         'mkdir -p "/usr/lib/sysimage/$(dirname $(echo $1 | sed "s@/var/@@"))" && \
-         mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' ''
+         mv -v "$1" "/usr/lib/sysimage/$(echo "$1" | sed "s@/var/@@")"' '' > /dev/null
 
 set -e
 
