@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # extra important stuff
 
 set -ouex pipefail

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # prepare image and install base packages
 
 echo "::group::===========================> Perform image build preparation"

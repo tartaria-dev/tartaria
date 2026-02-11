@@ -6,7 +6,6 @@ FROM docker.io/cachyos/cachyos-v3:latest
 # load in main build/system files
 COPY system_files/mainsys /
 COPY build_files/mainsys /build/
-COPY store /usr/lib/subsystem-store/
 
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
@@ -17,13 +16,14 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tarta
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
-    --mount=type=bind,source=store.pipe,target=/store.pipe \
-    sh /build/00-base.sh && \
-    sh /build/01-main-pkgs.sh && \
-    sh /build/02-aur-pkgs.sh && \
-    sh /build/03-systemd.sh && \
-    sh /build/04-extras.sh && \
-    sh /build/05-finalize.sh
+    --mount=type=bind,source=store,target=/store \
+    bash /build/00-base.sh && \
+    bash /build/01-main-pkgs.sh && \
+    bash /build/02-aur-pkgs.sh && \
+    bash /build/03-subsystem.sh && \
+    bash /build/04-systemd.sh && \
+    bash /build/05-extras.sh && \
+    bash /build/06-finalize.sh
 
 # proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
 LABEL containers.bootc=1

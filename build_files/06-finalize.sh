@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # finalize image build
 
 echo "::group::===========================> Finalize image build"

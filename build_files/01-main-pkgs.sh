@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # commands for installing main arch packages
 
 echo "::group::===========================> Perform system package installations"
@@ -53,6 +53,7 @@ declare -a packages=(
     btrfs-progs
     dosfstools
     e2fsprogs
+    erofs-utils
     exfatprogs
     f2fs-tools
     fuse-overlayfs
@@ -60,6 +61,7 @@ declare -a packages=(
     gparted
     jfsutils
     mtools
+    mkosi
     nilfs-utils
     ntfs-3g
     xfsprogs

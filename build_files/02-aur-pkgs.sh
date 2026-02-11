@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # commands for installing misc packages (AUR, Chaotic AUR, bootc)
 
 set -ouex pipefail

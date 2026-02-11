@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# post-installation script for mkosi rootfs generation
+
+# generate locales
+echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
+locale-gen
+
+# update dynamic linker cache
+ldconfig
+
+# setup fish prompt
+mkdir -p /etc/fish
+echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
+
+# disable pacman sandboxing
+sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
+
+# systemctl setup
+systemctl preset-all
+
+# cleanup rootfs before rootfs image generation
+rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
