@@ -4,8 +4,8 @@ FROM quay.io
 FROM docker.io/cachyos/cachyos-v3:latest
 
 # load in main build/system files
-COPY system_files/mainsys /
-COPY build_files/mainsys /build/
+COPY system_files /
+COPY build_files /build/
 
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
@@ -16,7 +16,6 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tarta
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
-    --mount=type=bind,source=store,target=/store \
     bash /build/00-base.sh && \
     bash /build/01-main-pkgs.sh && \
     bash /build/02-aur-pkgs.sh && \
