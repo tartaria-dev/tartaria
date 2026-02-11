@@ -19,7 +19,7 @@ podman --root /store import ./output/subsystem.tar.zst subsystem:latest
 
 # compress store
 mkdir -p /usr/lib/subsystem-store
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /store /usr/lib/subsystem-store/store.dsk > /dev/null
+mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /usr/lib/subsystem-store/store.dsk /store > /dev/null
 
 # cleanup
 cd /
