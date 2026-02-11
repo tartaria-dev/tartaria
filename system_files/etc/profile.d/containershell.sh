@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo -e "Initializing.\n"
+
 checkserv() {
     local SERVICE="$1"
     local ACTIVE
@@ -29,6 +31,20 @@ checkserv() {
     fi
 }
 
+first-time() {
+    if [[ -f ~/.config/subsystem/suppress-notice ]]; then
+        return
+    fi
+
+    echo "Hello there!"
+    echo "Your shell is currently running inside a containerized environment."
+    echo "Whatever you do inside this environment won't affect your host system."
+    echo "Well, besides changes to your home directory - those definitely stick."
+    echo "To suppress this lovely notice, please run the following:"
+    echo "'touch ~/.config/subsystem/suppress-notice'"
+    echo ""
+}
+
 MACHINE_ID=$(cat /etc/machine-id)
 SUBSYSTEM_STATUS=$(checkserv -u "subsystem-$MACHINE_ID")
 readonly MACHINE_ID
@@ -56,6 +72,7 @@ fi
 
 # check if subsystem itself is active
 if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
+    first-time
     exec podman exec -u "$(id -u)" -it subsystem /bin/fish
 elif [[ "$SUBSYSTEM_STATUS" != "active" ]]; then
     if ! systemctl --user start "subsystem-$MACHINE_ID"; then
@@ -64,8 +81,10 @@ elif [[ "$SUBSYSTEM_STATUS" != "active" ]]; then
         systemctl --user status subsystem --no-pager
         echo "Dropping into host shell."
         return
+    else
+        first-time
+        exec podman exec -u "$(id -u)" -it subsystem /bin/fish
     fi
-    exec podman exec -u "$(id -u)" -it subsystem /bin/fish
 else
     echo "Subsystem has failed to start/is in an unknown state!"
     echo "Dumping service state."
