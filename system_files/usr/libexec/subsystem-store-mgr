@@ -77,13 +77,13 @@ case "$1" in
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             home="/var/home/$user"
             conf_dir="$home/.config/containers"
-            marker="$home/.config/.subsystem-store-setup-done-do-not-remove"
+            marker="$home/.config/subsystem/setup-done"
             quadlet="$conf_dir/systemd/subsystem-$MACHINEID.container"
             
             if [[ ! -f "$marker" ]]; then # setup storage config if needed
                 echo "Creating storage config for $user."
                 [[ -f "$conf_dir/storage.conf" ]] && mv "$conf_dir/storage.conf" "$conf_dir/storage.conf.bk"
-                mkdir -p "$conf_dir"
+                mkdir -p "$conf_dir" "$home/.config/subsystem"
                 cre_conf_file "$home"
                 touch "$marker"
                 return
