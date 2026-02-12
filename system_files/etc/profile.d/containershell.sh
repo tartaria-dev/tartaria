@@ -40,9 +40,11 @@ first-time() {
     echo "Your shell is currently running inside a containerized environment."
     echo "Whatever you do inside this environment won't affect your host system."
     echo "Well, besides changes to your home directory - those definitely stick."
+    echo ""
     echo "To suppress this lovely notice, please run the following:"
     echo "'touch ~/.config/subsystem/suppress-notice'"
     echo ""
+    echo "To access basic system management utilities, run 'tart'."
 }
 
 MACHINE_ID=$(cat /etc/machine-id)

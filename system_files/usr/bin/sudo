@@ -1,7 +1,0 @@
-#!/bin/sh
-
-echo "Sudo is not installed on this system."
-echo "Usage of 'pkexec' is highly recommended."
-echo "Now executing '$@' with 'pkexec'."
-
-pkexec "$@"

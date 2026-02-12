@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+readonly ver="1.0.0-beta"
+
+status() {
+    cat <<EOF
+tartaria $(cat /usr/share/tartaria/os-ver)
+=======================
+$(hostnamectl)
+=======================
+$(ostree admn status)
+EOF
+}
+
+help() {
+    cat <<EOF
+tart "$ver"
+
+usage: tart [option]
+
+options:
+    help                            show this message
+    sys                             system management utilities
+    exec [command]                  execute a command on your host system
+    rexec [command]                 execute a command on your host system as root (requires auth)
+    vitals                          view host system vitals
+EOF
+}
+
+sys-help() {
+    cat <<EOF
+tart "$ver"
+system management utilities
+
+usage: tart sys [option]
+
+options:
+    help                            show this message
+    stat                            show deployment status (ostree)
+    upd                             perform system upgrade (bootc) (requires auth)
+    rlbk                            perform system rollback (bootc) (requires auth)
+EOF
+}
+
+# check that we are running inside a container
+if [[ ! -f /run/.containerenv ]]; then
+	echo "I must be run inside a container!"
+	exit 1
+fi
+
+# iterate throgh args
+case $1 in
+    help)
+        help
+        ;;
+    sys)
+        shift
+        case $1 in
+            help)
+                sys-help
+                ;;
+            stat)
+                pkexec bootc status
+                ;;
+            upd)
+                pkexec bootc upgrade
+                ;;
+            rlbk)
+                pkexec bootc rollback
+                ;;
+            *)
+                sys-help
+                ;;
+        esac
+        ;;
+    exec)
+        shift
+        bash -c "$@"
+        ;;
+    rexec)
+        shift
+        pkexec bash -c "$@"
+        ;;
+    vitals)
+        status
+        ;;
+    *)
+        echo -e "Invalid argument!\n"
+        help
+        ;;
+esac
