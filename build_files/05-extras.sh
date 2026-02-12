@@ -30,6 +30,9 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
+# refresh font cache
+fc-cache -rsfv
+
 # remove base-devel
 pacman -Rns --noconfirm base-devel
 
