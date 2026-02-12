@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo -e "Initializing.\n"
-
 checkserv() {
     local SERVICE="$1"
     local ACTIVE
@@ -45,6 +43,7 @@ first-time() {
     echo "'touch ~/.config/subsystem/suppress-notice'"
     echo ""
     echo "To access basic system management utilities, run 'tart'."
+    echo ""
 }
 
 MACHINE_ID=$(cat /etc/machine-id)
