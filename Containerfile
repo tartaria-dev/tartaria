@@ -1,5 +1,3 @@
-# base image for subsystem build
-FROM quay.io
 # base image for main image
 FROM docker.io/cachyos/cachyos-v3:latest
 
