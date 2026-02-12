@@ -11,6 +11,7 @@ Exec=sleep infinity
 WorkingDir=%h
 LogDriver=journald
 Volume=%h:%h:rslave
+Volume=/run/user/%U:/run/user/%U:ro,rslave
 UserNS=keep-id
 Network=host
 
