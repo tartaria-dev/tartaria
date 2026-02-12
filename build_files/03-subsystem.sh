@@ -10,6 +10,11 @@ mkdir -p /workdir
 cd /workdir
 cp -rf /build/extra/* .
 
+# fetch host-spawn binary
+mkdir -p mkosi.extra/usr/bin
+curl -fsSL https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -o mkosi.extra/usr/bin/host-spawn
+chmod +x mkosi.extra/usr/bin/host-spawn
+
 # build arch rootfs
 mkosi build
 

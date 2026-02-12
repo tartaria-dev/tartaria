@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # post-installation script for mkosi rootfs generation
 
-# install host-spawn
-curl -fsSL https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -o /usr/bin/host-spawn
-chmod +x /usr/bin/host-spawn
-
 # allow access to tart utility
 ln -sT /usr/bin/host-spawn /usr/libexec/tart
 
