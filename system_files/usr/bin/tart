@@ -29,7 +29,7 @@ tartaria $(cat /usr/share/tartaria/os-ver)
 =======================
 $(hostnamectl)
 =======================
-$(ostree admn status)
+$(ostree admin status)
 EOF
 }
 
