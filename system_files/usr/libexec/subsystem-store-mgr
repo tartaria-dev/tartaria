@@ -22,42 +22,23 @@
 set -e
 
 # constants
-readonly MAIN_STORE="/var/lib/subsystem"
 MACHINEID="$(cat /etc/machine-id)"
+readonly MAIN_STORE="/var/lib/subsystem"
 readonly MACHINEID
 
 # utilities
 checkmnt() {
     if [[ "$1" == "-n" ]]; then
-        ! findmnt "$2" > /dev/null
+        findmnt "$2" > /dev/null && return 1 || return 0
     else
         findmnt "$1" > /dev/null
     fi
 }
 
-cre_conf_file() {
-    local home="$1"
-    local user
-    user="$(basename "$home")"
-
-    cat > "$home/.config/containers/storage.conf" <<EOF
-# !! NOTICE !!
-# If a "storage.conf.bk" file is present in the same directory as this file,
-# that means your storage configuration was overridden.
-# If the file is not present, ignore the rest of this comment.
-# Otherwise, please merge this storage configuration with your configuration,
-# as this configuration is needed for the containerized shell to work properly.
-
-[storage]
-driver = "overlay"
-
-[storage.options]
-mount_program = "/usr/bin/fuse-overlayfs"
-additionalimagestores = [
-    "/var/lib/subsystem/$user/store"
-]
-EOF
-    chown "$user":"$user" "$home/.config/containers/storage.conf"
+cre_storage_conf() {
+    cp -f /etc/subsystem/default-storage.conf "$1"
+    sed -i "s/PLACEHOLDER/$2/g" "$1"
+    chown "$2":"$2" "$1"
 }
 
 # check if we aren't root
@@ -66,9 +47,18 @@ if [[ "$EUID" != "0" ]]; then
     exit 1
 fi
 
-# chkeck if the main store exists
+# check if the main store exists
 if [[ ! -d "$MAIN_STORE" ]]; then
     mkdir -p "$MAIN_STORE"
+fi
+
+# check that passwd monitoring is already set up
+if ! incrontab -l 2>/dev/null | grep -qF '/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-configs'; then
+    (incrontab -l 2>/dev/null; echo "/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-configs") | incrontab -
+fi
+
+if ! incrontab -l 2>/dev/null | grep -qF '/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-stores'; then
+    (incrontab -l 2>/dev/null; echo "/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-stores") | incrontab -
 fi
 
 # iterate through args
@@ -76,25 +66,36 @@ case "$1" in
     setup-configs)
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             home="/var/home/$user"
-            conf_dir="$home/.config/containers"
-            marker="$home/.config/subsystem/setup-done"
-            quadlet="$conf_dir/systemd/subsystem-$MACHINEID.container"
+            user_conf_dir="$home/.config/containers"
+            quadlet_conf="$user_conf_dir/systemd/subsystem-$MACHINEID.container"
+            storage_conf="$user_conf_dir/storage.conf"
             
-            if [[ ! -f "$marker" ]]; then # setup storage config if needed
+            # setup config directories if needed
+            if [[ ! -d "$user_conf_dir/systemd" ]]; then
+                echo "Creating configuration dirs for user $user."
+                mkdir -p "$user_conf_dir/systemd"
+                chown -R "$user":"$user" "$user_conf_dir/systemd"
+            fi
+
+            # setup storage config if needed
+            if [[ ! -f "$storage_conf" ]]; then
                 echo "Creating storage config for $user."
-                [[ -f "$conf_dir/storage.conf" ]] && mv "$conf_dir/storage.conf" "$conf_dir/storage.conf.bk"
-                mkdir -p "$conf_dir" "$home/.config/subsystem"
-                cre_conf_file "$home"
-                touch "$marker"
-                return
-            elif [[ ! -f "$quadlet" ]]; then # setup quadlet config if needed
-                echo "Creating quadlet config for $user."
-                mkdir -p "$conf_dir/systemd"
-                cp -f /etc/subsystem/subsystem.container "$quadlet"
-                chown -R "$user":"$user" "$conf_dir/systemd"
-                return
+                cre_storage_conf "$storage_conf" "$user"
+            elif [[ -f "$storage_conf" ]] && ! grep "/var/lib/subsystem/$user/store" "$storage_conf" > /dev/null; then
+                echo "Replacing storage config for $user."
+                mv "$storage_conf" "$storage_conf.bk"
+                cre_storage_conf "$storage_conf" "$user"
             else
-                echo "Configs already setup for user $user."
+                echo "Storage config already setup for user $user."
+            fi
+
+            # setup quadlet config if needed
+            if [[ ! -f "$quadlet_conf" ]]; then
+                echo "Creating quadlet for $user."
+                cp -f /etc/subsystem/subsystem.container "$quadlet_conf"
+                chown "$user":"$user" "$quadlet_conf"
+            else
+                echo "Quadlet config already setup for user $user."
             fi
         done
         ;;
@@ -102,28 +103,37 @@ case "$1" in
     setup-stores)
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
-            user_uid=$(id -u "$user")
-            user_gid=$(id -g "$user")
             
             # check if msdir already exists; if not, create it
-            if [[ -d "$msdir" ]]; then
-                echo "Subsystem store already setup for user $user."
-            else
+            if [[ ! -d "$msdir" ]]; then
+                echo "Creating subsystem store for user $user."
                 mkdir -p "$msdir"/{store,store-data,.base,.work}
-                chown -R "$user_uid":"$user_gid" "$msdir"
+                chown -R "$user":"$user" "$msdir"
                 chmod 700 "$msdir"
+            else
+                echo "Subsystem store already setup for user $user."
             fi
         done
         ;;
         
     mount-stores)
+        echo "Mounting subsystem image stores."
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
-            user_uid=$(id -u "$user")
-            user_gid=$(id -g "$user")
 
-            checkmnt -n "$msdir/.base" && mount --map-users 0:"$user_uid":1 --map-groups 0:"$user_gid":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base" || true # mount base store if not mounted
-            checkmnt -n "$msdir/store" && mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir/store" || true # mount store if not mounted
+            # ensure user has a store set up
+            if [[ ! -d "$msdir" ]]; then
+                echo "Refusing to operate on user $user, user does not have a subsystem store set up."
+                continue
+            fi
+
+            # mount base store if not mounted
+            checkmnt "$msdir/.base" && echo "Base subsystem image store for user $user already mounted, skipping."
+            checkmnt -n "$msdir/.base" && mount --map-users 0:"$user":1 --map-groups 0:"$user":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base" || true
+
+            # mount store if not mounted
+            checkmnt "$msdir/store" && echo "Subsystem image store overlay for user $user already mounted, skipping."
+            checkmnt -n "$msdir/store" && mount -t overlay overlay -o index=off,lowerdir="$msdir"/.base,upperdir="$msdir"/store-data,workdir="$msdir"/.work "$msdir/store" || true
         done
         ;;
         
@@ -132,15 +142,27 @@ case "$1" in
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
 
-            checkmnt "$msdir/store" && umount "$msdir/store" || true # unmount store if mounted
-            checkmnt "$msdir/.base" && umount "$msdir/.base" || true # unmount base store if mounted
+            # ensure user has a store set up
+            if [[ ! -d "$msdir" ]]; then
+                echo "Refusing to operate on user $user, user does not have a subsystem store set up."
+                continue
+            fi
+
+            # unmount store if mounted
+            checkmnt -n "$msdir/store" && echo "Subsystem image store overlay for user $user not mounted, skipping."
+            checkmnt "$msdir/store" && umount "$msdir/store" || true
+
+            # unmount base store if mounted
+            checkmnt -n "$msdir/.base" && echo "Base subsystem image store for user $user not mounted, skipping."
+            checkmnt "$msdir/.base" && umount "$msdir/.base" || true
         done
         ;;
         
     *)
-        echo "Subsystem store management utility 1.0.2"
+        echo "Subsystem store management utility 1.1.0"
         echo "Usage: $0 setup-configs|setup-stores|mount-stores|unmount-stores"
         echo "Note: This utility is not intended for use by users."
+        echo "Error: no option specified"
         exit 1
         ;;
 esac

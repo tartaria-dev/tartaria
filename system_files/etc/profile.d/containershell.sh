@@ -6,8 +6,8 @@ checkserv() {
     local FAILED
     local ARG=""
 
-    ACTIVE=$(systemctl is-active "$SERVICE" $ARG 2>/dev/null)
-    FAILED=$(systemctl is-failed "$SERVICE" $ARG 2>/dev/null)
+    ACTIVE=$(systemctl is-active "$SERVICE" "$ARG" 2>/dev/null)
+    FAILED=$(systemctl is-failed "$SERVICE" "$ARG" 2>/dev/null)
     
     if [[ "$1" == "-u" ]]; then
         SERVICE="$2"
@@ -34,16 +34,32 @@ first-time() {
         return
     fi
 
-    echo "Hello there!"
-    echo "Your shell is currently running inside a containerized environment."
-    echo "Whatever you do inside this environment won't affect your host system."
-    echo "Well, besides changes to your home directory - those definitely stick."
-    echo ""
-    echo "To suppress this lovely notice, please run the following:"
-    echo "'touch ~/.config/subsystem/suppress-notice'"
-    echo ""
-    echo "To access basic system management utilities, run 'tart'."
-    echo ""
+    cat <<EOF
+Hello there!
+
+Your shell is currently running inside a containerized environment.
+Whatever you do inside this environment won't affect your host system.
+Well, besides changes to your home directory - those definitely stick.
+
+To suppress this lovely notice, please run the following:"
+'touch ~/.config/subsystem/suppress-notice'"
+
+To access basic system management utilities, run 'tart'.
+
+EOF
+}
+
+warn() {
+    cat <<EOF
+Hello there!
+
+Your shell has not been fully set up yet. How unfortunate!
+Don't worry, just reboot and your shell will be all nice and fancy for you.
+
+For now, you will be dropped into a shell on the host.
+Please be aware that your actions can damage your system.
+
+EOF
 }
 
 MACHINE_ID=$(cat /etc/machine-id)
@@ -64,10 +80,16 @@ fi
 
 # check if subsystem store setup has completed
 if [[ "$(checkserv subsystem-stores)" != "active" ]]; then
-    echo "Subsystem store management has failed to start!"
-    echo "Dumping service state."
+    echo "Oops, subsystem store management has failed to start!"
+    echo "Dumping store management state."
     systemctl status subsystem-stores --no-pager
     echo "Entering host shell."
+    return
+fi
+
+# check if we have a subsystem store set up
+if [[ ! -d "/var/lib/subsystem/$USER" ]]; then
+    warn
     return
 fi
 
@@ -77,19 +99,19 @@ if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
     exec podman exec -u "$(id -u)" -it subsystem /bin/fish
 elif [[ "$SUBSYSTEM_STATUS" != "active" ]]; then
     if ! systemctl --user start "subsystem-$MACHINE_ID"; then
-        echo "Subsystem failed to start!"
-        echo "Dumping service state."
+        echo "Oops, your subsystem failed to start!"
+        echo "Dumping subsystem state."
         systemctl --user status subsystem --no-pager
-        echo "Dropping into host shell."
+        echo "Entering host shell."
         return
     else
         first-time
         exec podman exec -u "$(id -u)" -it subsystem /bin/fish
     fi
 else
-    echo "Subsystem has failed to start/is in an unknown state!"
-    echo "Dumping service state."
+    echo "Oops, your subsystem has failed to start/is in an unknown state!"
+    echo "Dumping subsystem state."
     systemctl --user status subsystem --no-pager
-    echo "Dropping into host shell."
+    echo "Entering host shell."
     return
 fi

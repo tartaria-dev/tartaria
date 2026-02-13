@@ -17,6 +17,7 @@ systemctl enable \
     kdeconnect-firewalld-bypass.service \
     NetworkManager.service \
     polkit.service \
+    incrond.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
     subsystem-stores.service \
