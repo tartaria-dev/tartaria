@@ -15,6 +15,9 @@ sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
 # set correct permissions on polkit rules dir
 chmod 750 /etc/polkit-1
 
+# remove any .pacnew files
+find / -name "*.pacnew" -type f -delete
+
 # disable uupd distrobox updates
 sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
 
