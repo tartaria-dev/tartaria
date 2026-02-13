@@ -12,6 +12,9 @@ useradd -M -G video,input -s /usr/bin/nologin greeter || true
 # set plymouth theme
 sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
 
+# set correct permissions on polkit rules dir
+chmod 750 /etc/polkit-1
+
 # disable uupd distrobox updates
 sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
 
