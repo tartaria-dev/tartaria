@@ -73,8 +73,8 @@ case "$1" in
             # setup config directories if needed
             if [[ ! -d "$user_conf_dir/systemd" ]]; then
                 echo "Creating configuration dirs for user $user."
-                mkdir -p "$user_conf_dir/systemd"
-                chown -R "$user":"$user" "$user_conf_dir/systemd"
+                mkdir -p "$user_conf_dir/systemd" "$home/.config/containershell"
+                chown -R "$user":"$user" "$user_conf_dir/systemd" "$home/.config/containershell"
             fi
 
             # setup storage config if needed
