@@ -1,34 +1,6 @@
 #!/usr/bin/env bash
 
-checkserv() {
-    local SERVICE="$1"
-    local ACTIVE
-    local FAILED
-    local ARG=""
-
-    ACTIVE=$(systemctl is-active "$SERVICE" "$ARG" 2>/dev/null)
-    FAILED=$(systemctl is-failed "$SERVICE" "$ARG" 2>/dev/null)
-    
-    if [[ "$1" == "-u" ]]; then
-        SERVICE="$2"
-        ARG="--user"
-    fi
-
-    if [[ "$ACTIVE" = "active" ]]; then
-        echo "active"
-        return
-    elif [[ "$ACTIVE" != "active" ]]; then
-        echo "inactive"
-        return
-    elif [[ "$FAILED" = "failed" ]]; then
-        echo "failed"
-        return
-    else
-        echo "inactive"
-        return
-    fi
-}
-
+# utilities
 first-time() {
     if [[ -f ~/.config/subsystem/suppress-notice ]]; then
         return
@@ -41,8 +13,8 @@ Your shell is currently running inside a containerized environment.
 Whatever you do inside this environment won't affect your host system.
 Well, besides changes to your home directory - those definitely stick.
 
-To suppress this lovely notice, please run the following:"
-'touch ~/.config/subsystem/suppress-notice'"
+To suppress this lovely notice, please run the following:
+touch ~/.config/containershell/suppress-notice
 
 To access basic system management utilities, run 'tart'.
 
@@ -62,10 +34,30 @@ Please be aware that your actions can damage your system.
 EOF
 }
 
+errmsg() {
+    if [[ "$1" == "store" ]]; then
+        local subject="Subsystem store management"
+        systemctl status subsystem-stores -l --no-pager > "$HOME/.containershell-failure"
+    elif [[ "$1" == "subsystem" ]]; then
+        local subject="Subsystem"
+        systemctl --user status "subsystem-$MACHINE_ID" -l --no-pager > "$HOME/.containershell-failure"
+    fi
+    cat <<EOF
+$subject has failed to start.
+Logs have been stored in $HOME/.containershell-failure.
+Entering host shell.
+EOF
+}
+
+# constants
 MACHINE_ID=$(cat /etc/machine-id)
-SUBSYSTEM_STATUS=$(checkserv -u "subsystem-$MACHINE_ID")
+SUBSYSTEM_STATUS=$(systemctl --user is-failed "subsystem-$MACHINE_ID")
+STORE_STATUS=$(systemctl is-failed subsystem-stores)
+STORE="/var/lib/subsystem/$USER"
 readonly MACHINE_ID
 readonly SUBSYSTEM_STATUS
+readonly STORE_STATUS
+readonly STORE
 
 # check if the shell is interactive, if we are in a TTY, or if we are root
 if [[ $- != *i* ]]; then
@@ -78,40 +70,33 @@ elif [[ "$EUID" == "0" ]]; then
     return
 fi
 
-# check if subsystem store setup has completed
-if [[ "$(checkserv subsystem-stores)" != "active" ]]; then
-    echo "Oops, subsystem store management has failed to start!"
-    echo "Dumping store management state."
-    systemctl status subsystem-stores --no-pager
-    echo "Entering host shell."
-    return
+# if it exists, clean out the previous failure log
+if [[ -f "$HOME/.containershell-failure" ]]; then
+    rm -f "$HOME/.containershell-failure"
 fi
 
-# check if we have a subsystem store set up
-if [[ ! -d "/var/lib/subsystem/$USER" ]]; then
+# check if subsystem store setup has properly completed, fail if it hasn't
+if [[ "$STORE_STATUS" != "active" ]]; then
+    errmsg store
+    return  
+elif [[ ! -d "/var/lib/subsystem/$USER" ]]; then
     warn
     return
+elif ! findmnt "$STORE/.base" >/dev/null || ! findmnt "$STORE/store" >/dev/null; then
+    errmsg store
+    return
 fi
 
-# check if subsystem itself is active
+# check if subsystem is active and exec into subsystem, otherwise fail
 if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
     first-time
     exec podman exec -u "$(id -u)" -it subsystem /bin/fish
-elif [[ "$SUBSYSTEM_STATUS" != "active" ]]; then
-    if ! systemctl --user start "subsystem-$MACHINE_ID"; then
-        echo "Oops, your subsystem failed to start!"
-        echo "Dumping subsystem state."
-        systemctl --user status subsystem --no-pager
-        echo "Entering host shell."
+else
+    if ! systemctl --user start "subsystem-$MACHINE_ID" >/dev/null; then
+        errmsg subsystem
         return
     else
         first-time
         exec podman exec -u "$(id -u)" -it subsystem /bin/fish
     fi
-else
-    echo "Oops, your subsystem has failed to start/is in an unknown state!"
-    echo "Dumping subsystem state."
-    systemctl --user status subsystem --no-pager
-    echo "Entering host shell."
-    return
 fi
