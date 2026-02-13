@@ -53,11 +53,11 @@ if [[ ! -d "$MAIN_STORE" ]]; then
 fi
 
 # check that passwd monitoring is already set up
-if ! incrontab -l 2>/dev/null | grep -qF '/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-configs'; then
+if ! grep -qF '/usr/libexec/subsystem-store-mgr setup-configs' /var/spool/incron/root; then
     (incrontab -l 2>/dev/null; echo "/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-configs") | incrontab -
 fi
 
-if ! incrontab -l 2>/dev/null | grep -qF '/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-stores'; then
+if ! grep -qF '/usr/libexec/subsystem-store-mgr setup-stores' /var/spool/incron/root; then
     (incrontab -l 2>/dev/null; echo "/etc/passwd IN_CLOSE_WRITE /usr/libexec/subsystem-store-mgr setup-stores") | incrontab -
 fi
 
@@ -120,6 +120,8 @@ case "$1" in
         echo "Mounting subsystem image stores."
         for user in $(/usr/libexec/run-as-all-human-users --list); do
             msdir="$MAIN_STORE/$user"
+            uid=$(id -u "$user")
+            gid=$(id -g "$user")
 
             # ensure user has a store set up
             if [[ ! -d "$msdir" ]]; then
@@ -129,7 +131,7 @@ case "$1" in
 
             # mount base store if not mounted
             checkmnt "$msdir/.base" && echo "Base subsystem image store for user $user already mounted, skipping."
-            checkmnt -n "$msdir/.base" && mount --map-users 0:"$user":1 --map-groups 0:"$user":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base" || true
+            checkmnt -n "$msdir/.base" && mount --map-users 0:"$uid":1 --map-groups 0:"$gid":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem-store/store.dsk "$msdir/.base" || true
 
             # mount store if not mounted
             checkmnt "$msdir/store" && echo "Subsystem image store overlay for user $user already mounted, skipping."
