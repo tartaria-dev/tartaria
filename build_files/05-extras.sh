@@ -3,6 +3,9 @@
 
 set -ouex pipefail
 
+# remove base-devel since it's not needed
+pacman -Rns --noconfirm base-devel
+
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
@@ -25,8 +28,5 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
-
-# remove base-devel
-pacman -Rns --noconfirm base-devel
 
 echo "::endgroup::"
