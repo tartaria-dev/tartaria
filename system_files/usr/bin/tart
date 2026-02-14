@@ -21,9 +21,7 @@
 
 set -e
 
-readonly ver="1.0.0-beta"
-
-status() {
+vitals() {
     cat <<EOF
 tartaria $(cat /usr/share/tartaria/os-ver)
 =======================
@@ -35,64 +33,30 @@ EOF
 
 help() {
     cat <<EOF
-tart "$ver"
+synopsis: simple system management utility for tartaria
 
 usage: tart [option]
 
 options:
     help                            show this message
-    sys                             system management utilities
+    sysupd                          perform system upgrade (requires auth)
+    sysrlbk                         perform system rollback (requires auth)
     exec [command]                  execute a command on your host system
     rexec [command]                 execute a command on your host system as root (requires auth)
     vitals                          view host system vitals
 EOF
 }
 
-sys-help() {
-    cat <<EOF
-tart "$ver"
-system management utilities
-
-usage: tart sys [option]
-
-options:
-    help                            show this message
-    stat                            show deployment status (ostree)
-    upd                             perform system upgrade (bootc) (requires auth)
-    rlbk                            perform system rollback (bootc) (requires auth)
-EOF
-}
-
-# check that we are running inside a container
-if [[ ! -f /run/.containerenv ]]; then
-	echo "I must be run inside a container!"
-	exit 1
-fi
-
 # iterate throgh args
 case $1 in
     help)
         help
         ;;
-    sys)
-        shift
-        case $1 in
-            help)
-                sys-help
-                ;;
-            stat)
-                pkexec bootc status
-                ;;
-            upd)
-                pkexec bootc upgrade
-                ;;
-            rlbk)
-                pkexec bootc rollback
-                ;;
-            *)
-                sys-help
-                ;;
-        esac
+    upd)
+        pkexec bootc upgrade
+        ;;
+    rlbk)
+        pkexec bootc rollback
         ;;
     exec)
         shift
@@ -103,10 +67,10 @@ case $1 in
         pkexec bash -c "$@"
         ;;
     vitals)
-        status
+        vitals
         ;;
     *)
-        echo -e "Invalid argument!\n"
         help
+        echo -e "\nerror: invalid argument!"
         ;;
 esac
