@@ -29,7 +29,9 @@ systemctl enable \
 
 # system-preset
 systemctl preset \
-    systemd-resolved.service
+    systemd-resolved.service \
+    subsystem-stores.service \
+    kdeconnect-firewalld-bypass.service
 
 # user
 systemctl --global enable \
@@ -46,8 +48,10 @@ systemctl preset --global \
     chezmoi-init \
     chezmoi-update \
     flathub-user \
-    post-chezmoi-update \
-    udiskie
+    noctalia-shell \
+    opentabletdriver \
+    udiskie \
+    wl-clip-persist
 
 # user-wants for Niri
 systemctl add-wants --global niri.service \
