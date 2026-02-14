@@ -35,7 +35,11 @@ Well, besides changes to your home directory - those definitely stick.
 To suppress this lovely notice, please run the following:
 touch ~/.config/containershell/suppress-notice
 
-To access basic system management utilities, run 'tart'.
+To run commands on the host, run the following:
+sysexec (--root) [COMMAND]
+
+The following commands are available in this environment and execute on the host:
+"ostree", "bootc", "podman", "distrobox", "docker"
 
 EOF
 }

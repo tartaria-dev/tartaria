@@ -3,9 +3,13 @@
 
 set -e
 
-# allow access to tart utility
-mkdir -p /usr/libexec
-ln -sT /usr/bin/host-spawn /usr/libexec/tart
+# allow access to various utilities on the host
+ln -sT /usr/libexec/host-spawn /usr/bin/sysexec
+ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
+ln -sT /usr/libexec/host-spawn /usr/bin/podman
+ln -sT /usr/libexec/host-spawn /usr/bin/docker
+ln -sT /usr/libexec/host-spawn /usr/bin/ostree
+ln -sT /usr/libexec/host-spawn /usr/bin/bootc
 
 # generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
@@ -16,8 +20,8 @@ ldconfig
 
 # setup fish prompt
 mkdir -p /etc/fish
+echo -e '\nset -gx container=subsystem' >> /etc/fish/config.fish
 echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
-echo -e '\nalias tart="/usr/libexec/tart"' >> /etc/fish/config.fish
 
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
