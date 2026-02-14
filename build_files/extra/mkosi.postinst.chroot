@@ -11,6 +11,9 @@ ln -sT /usr/libexec/host-spawn /usr/bin/docker
 ln -sT /usr/libexec/host-spawn /usr/bin/ostree
 ln -sT /usr/libexec/host-spawn /usr/bin/bootc
 
+# passwordless sudo! you love to fucking see it
+echo "ALL ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/nopasswd
+
 # generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
