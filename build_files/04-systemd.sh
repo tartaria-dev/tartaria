@@ -45,13 +45,12 @@ systemctl --global enable \
     
 # user-preset
 systemctl preset --global \
-    chezmoi-init \
-    chezmoi-update \
-    flathub-user \
-    noctalia-shell \
-    opentabletdriver \
-    udiskie \
-    wl-clip-persist
+    chezmoi-init.service \
+    chezmoi-update.timer \
+    flathub-user.service \
+    noctalia-shell.service \
+    udiskie.service \
+    wl-clip-persist.service
 
 # user-wants for Niri
 systemctl add-wants --global niri.service \

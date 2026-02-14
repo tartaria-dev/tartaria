@@ -1,7 +1,6 @@
 enable flathub-user.service
 enable chezmoi-init.service
 enable chezmoi-update.timer
-enable opentabletdriver.service
 enable wl-clip-persist.service
 enable iio-niri.service
 enable udiskie.service
