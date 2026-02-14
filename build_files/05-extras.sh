@@ -9,6 +9,9 @@ pacman -Rns --noconfirm base-devel
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
+# configure useradd defaults
+sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
+
 # set plymouth theme
 sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
 
@@ -37,5 +40,9 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# move /opt into /usr so it gets preserved
+rm -rf /usr/opt
+mv /opt /usr
 
 echo "::endgroup::"
