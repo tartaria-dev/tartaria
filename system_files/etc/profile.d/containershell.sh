@@ -113,13 +113,13 @@ fi
 # check if subsystem is active and exec into subsystem, otherwise fail
 if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
     first-time
-    exec podman exec -it subsystem /bin/fish
+    exec podman exec -u "$(id -u)" -it subsystem /bin/fish
 else
     if ! systemctl --user start "subsystem-$MACHINE_ID" >/dev/null; then
         errmsg subsystem
         return
     else
         first-time
-        exec podman exec -it subsystem /bin/fish
+        exec podman exec -u "$(id -u)" -it subsystem /bin/fish
     fi
 fi
