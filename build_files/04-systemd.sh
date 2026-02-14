@@ -38,7 +38,6 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     opentabletdriver.service \
-    post-chezmoi-update.service \
     udiskie.service \
     wl-clip-persist.service
     
