@@ -21,12 +21,12 @@ rm -rf /{build,packages}
 mkdir -p /sysroot /boot /usr/lib/ostree /var
 
 # create symlinks for bootc filesystem layout
-ln -sT /sysroot/ostree /ostree
-ln -sT /var/roothome /root
-ln -sT /var/srv /srv
-ln -sT /var/mnt /mnt
-ln -sT /var/opt /opt
-ln -sT /var/home /home
-ln -sT /var/usrlocal /usr/local
+ln -sT sysroot/ostree /ostree
+ln -sT var/roothome /root
+ln -sT var/srv /srv
+ln -sT var/mnt /mnt
+ln -sT var/opt /opt
+ln -sT var/home /home
+ln -sT var/usrlocal /usr/local
 
 echo "::endgroup::"
