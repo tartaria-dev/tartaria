@@ -6,7 +6,7 @@
 <h3 align="center">CachyOS Bootc / Niri / Noctalia</h3>
 
 <p align="center">
-  <img width="1366" height="768" alt="Screenshot from 2026-02-09 20-33-01" src="https://github.com/user-attachments/assets/21c69910-d277-4d16-a0de-89a67334abaf" />
+  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b501237a-7b30-4949-985a-f2314a9107a9" />
 </p>
 
 
