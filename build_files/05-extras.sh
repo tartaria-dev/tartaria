@@ -25,7 +25,7 @@ find /etc/ -name "*.pacnew" -type f -delete
 sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
 
 # pick random gender flag and set it as default face
-cp "/usr/share/tartaria/faces/face-$(shuf -i 1-10 -n 1)" /usr/share/tartaria/faces/default-face
+cp "/usr/share/tartaria/faces/face-$(shuf -i 1-10 -n 1).png" /usr/share/tartaria/faces/default-face.png
 
 # install default icon theme
 git clone https://github.com/vinceliuice/WhiteSur-icon-theme
