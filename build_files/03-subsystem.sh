@@ -20,7 +20,7 @@ mkosi build
 
 # import rootfs into false store
 mkdir -p /store
-podman --root /store import ./output/subsystem.tar.zst subsystem:latest
+podman --root /store import ./output/image.tar.zst subsystem:latest
 
 # compress store
 mkdir -p /usr/lib/subsystem-store
