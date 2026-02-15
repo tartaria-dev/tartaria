@@ -35,12 +35,6 @@ checkmnt() {
     fi
 }
 
-cre_storage_conf() {
-    cp -f /etc/subsystem/default-storage.conf "$1"
-    sed -i "s/PLACEHOLDER/$2/g" "$1"
-    chown "$2":"$2" "$1"
-}
-
 # check if we aren't root
 if [[ "$EUID" != "0" ]]; then
     echo "Please run this as an administrator."
@@ -80,22 +74,29 @@ case "$1" in
             # setup storage config if needed
             if [[ ! -f "$storage_conf" ]]; then
                 echo "Creating storage config for $user."
-                cre_storage_conf "$storage_conf" "$user"
-            elif [[ -f "$storage_conf" ]] && ! grep "/var/lib/subsystem/$user/store" "$storage_conf" > /dev/null; then
+                ln -sT /etc/subsystem/default-storage.conf "$storage_conf"
+                chown -h "$user":"$user" "$storage_conf"
+            elif [[ -f "$storage_conf" ]] && [[ "$(realpath "$storage_conf")" != "/etc/subsystem/default-storage.conf" ]]; then
                 echo "Replacing storage config for $user."
                 mv "$storage_conf" "$storage_conf.bk"
-                cre_storage_conf "$storage_conf" "$user"
+                ln -sT /etc/subsystem/default-storage.conf "$storage_conf"
+                chown -h "$user":"$user" "$storage_conf"
             else
                 echo "Storage config already setup for user $user."
             fi
 
-            # setup quadlet config if needed
+            # setup quadlet if needed
             if [[ ! -f "$quadlet_conf" ]]; then
-                echo "Creating quadlet for $user."
-                cp -f /etc/subsystem/subsystem.container "$quadlet_conf"
-                chown "$user":"$user" "$quadlet_conf"
+                echo "Creating subsystem quadlet for $user."
+                ln -sT /etc/subsystem/subsystem.container "$quadlet_conf"
+                chown -h "$user":"$user" "$quadlet_conf"
+            elif [[ -f "$quadlet_conf" ]] && [[ "$(realpath "$quadlet_conf")" != "/etc/subsystem/subsystem.container" ]]; then
+                echo "Replacing subsystem quadlet for $user."
+                mv "$quadlet_conf" "$quadlet_conf.bk"
+                ln -sT /etc/subsystem/subsystem.container "$quadlet_conf"
+                chown -h "$user":"$user" "$quadlet_conf"
             else
-                echo "Quadlet config already setup for user $user."
+                echo "Subsystem quadlet already setup for user $user."
             fi
         done
         ;;
