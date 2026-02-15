@@ -8,6 +8,7 @@ set -ouex pipefail
 declare -a packages=(
     # ========> system
     base
+    cpio
     dracut
     linux-cachyos
     linux-firmware
