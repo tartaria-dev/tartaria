@@ -11,7 +11,6 @@ cd /workdir
 cp -rf /build/extra/* .
 
 # fetch host-spawn binary
-mkdir -p mkosi.extra/usr/libexec
 curl -fsSL https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -o mkosi.extra/usr/libexec/host-spawn
 chmod +x mkosi.extra/usr/libexec/host-spawn
 
