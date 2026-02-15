@@ -10,7 +10,7 @@ declare -a packages=(
     base
     cpio
     dracut
-    linux-cachyos
+    linux
     linux-firmware
     ostree
     skopeo
