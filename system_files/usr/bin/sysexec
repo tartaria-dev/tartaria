@@ -21,16 +21,98 @@
 
 set -e
 
+help() {
+    cat <<EOF
+usage:
+    sysexec [options...] <command>
+
+synopsis:
+    execute, link, or unlink commands from the host system
+
+options:
+    -h, --help                      show this help message
+    -r, --root                      execute the command(s) as root, requires user authentication
+    -l, --link                      link a command from the host
+    -u, --unlink                    unlink a command linked from the host
+
+EOF
+}
+
+# check if we're root, exit if so
+if [[ "$EUID" == "0" ]]; then
+    echo "Cannot be root."
+    exit 1
+fi
+
+# ensure linked-cmds exists
+touch "$HOME/.config/containershell/linked-cmds"
+
 # iterate through args
 case $1 in
-    --help|-h|help)
-        echo "usage: sysexec (--root|--help,-h,help) [COMMAND]"
+    -h|--help)
+        help
         ;;
-    --root)
+    -r|--root)
         shift
+        if [[ -z "$*" ]]; then
+            help
+            echo "No command provided."
+            exit 1
+        elif ! command -v "$1" >/dev/null; then
+            echo "Command $1 not found, refusing to operate."
+            exit 1
+        fi
         pkexec bash -c "$@"
         ;;
+    -l|--link)
+        shift
+        if [[ -z "$1" ]]; then
+            help
+            echo "No command to link provided."
+            exit 1
+        elif ! command -v "$1" >/dev/null; then
+            echo "Command $1 not found, refusing to operate."
+            exit 1
+        elif grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
+            echo "Command $1 is already linked, refusing to operate."
+            exit 1
+        elif [[ "$(podman exec -it subsystem realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
+            echo "Command $1 already exists, refusing to operate."
+            exit 1
+        fi
+        echo "Linking command $1."
+        podman exec -it subsystem ln -sT /usr/libexec/host-spawn /usr/bin/"$1"
+        echo "$1" >> "$HOME/.config/containershell/linked-cmds"
+        ;;
+    -u|--unlink)
+        shift
+        if [[ -z "$1" ]]; then
+            help
+            echo "No command to unlink provided."
+            exit 1
+        elif ! command -v "$1" >/dev/null; then
+            echo "Command $1 not found, refusing to operate."
+            exit 1
+        elif ! grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
+            echo "Command $1 isn't linked, refusing to operate."
+            exit 1
+        elif [[ "$(podman exec -it subsystem realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
+            echo "Command $1 already exists, refusing to operate."
+            exit 1
+        fi
+        echo "Unlinking command $1."
+        podman exec -it subsystem rm -f /usr/bin/"$1"
+        sed -i "/$1/d" "$HOME/.config/containershell/linked-cmds"
+        ;;
     *)
+        if [[ -z "$*" ]]; then
+            help
+            echo "No command provided."
+            exit 1
+        elif ! command -v "$1" >/dev/null; then
+            echo "Command $1 not found, refusing to operate."
+            exit 1
+        fi
         bash -c "$@"
         ;;
 esac
