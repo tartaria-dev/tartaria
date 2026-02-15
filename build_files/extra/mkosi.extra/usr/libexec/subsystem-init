@@ -21,7 +21,7 @@
 
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
-    echo "$EXECUTING_SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/nopasswd-for-subsystem
+    echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/nopasswd-for-subsystem
 fi
 
 # stay alive

@@ -55,15 +55,9 @@ EOF
 }
 
 errmsg() {
-    if [[ "$1" == "store" ]]; then
-        local subject="Subsystem store management"
-        systemctl status subsystem-stores -l --no-pager > "$HOME/.containershell-failure"
-    elif [[ "$1" == "subsystem" ]]; then
-        local subject="Subsystem"
-        systemctl --user status "subsystem-$MACHINE_ID" -l --no-pager > "$HOME/.containershell-failure"
-    fi
+    systemctl --user status subsystem -l --no-pager > "$HOME/.containershell-failure"
     cat <<EOF
-$subject has failed to start.
+The subsystem has failed to start.
 Logs have been stored in $HOME/.containershell-failure.
 Entering host shell.
 EOF
@@ -71,13 +65,7 @@ EOF
 
 # constants
 MACHINE_ID=$(cat /etc/machine-id)
-SUBSYSTEM_STATUS=$(systemctl --user is-failed "subsystem-$MACHINE_ID")
-STORE_STATUS=$(systemctl is-failed subsystem-stores)
-STORE="/var/lib/subsystem/$USER"
 readonly MACHINE_ID
-readonly SUBSYSTEM_STATUS
-readonly STORE_STATUS
-readonly STORE
 
 # check if the shell is interactive, if we are in a TTY, or if we are root
 if [[ $- != *i* ]]; then
@@ -95,28 +83,16 @@ if [[ -f "$HOME/.containershell-failure" ]]; then
     rm -f "$HOME/.containershell-failure"
 fi
 
-# check if subsystem store setup has properly completed, fail if it hasn't
-if [[ "$STORE_STATUS" != "active" ]]; then
-    errmsg store
-    return  
-elif [[ ! -d "/var/lib/subsystem/$USER" ]]; then
-    warn
-    return
-elif ! findmnt "$STORE/.base" >/dev/null || ! findmnt "$STORE/store" >/dev/null; then
-    errmsg store
-    return
-fi
-
 # check if subsystem is active and exec into subsystem, otherwise fail
-if [[ "$SUBSYSTEM_STATUS" == "active" ]]; then
+if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
     first-time
-    exec podman exec -u "$(id -u)" -it subsystem /bin/fish
+    exec podman exec -u "$(id -u)" -it "subsystem-$MACHINE_ID" /bin/fish
 else
-    if ! systemctl --user start "subsystem-$MACHINE_ID" >/dev/null; then
-        errmsg subsystem
+    if ! systemctl --user start subsystem >/dev/null; then
+        errmsg
         return
     else
         first-time
-        exec podman exec -u "$(id -u)" -it subsystem /bin/fish
+        exec podman exec -u "$(id -u)" -it "subsystem-$MACHINE_ID" /bin/fish
     fi
 fi

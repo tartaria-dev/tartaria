@@ -8,7 +8,7 @@ COPY build_files /build/
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 
-# fetch Cherries and fetch precompiled AUR packages
+# fetch Cherries precompiled AUR packages
 COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 

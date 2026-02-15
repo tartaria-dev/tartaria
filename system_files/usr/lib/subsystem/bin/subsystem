@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+# constants
+MACHINE_ID=$(cat /etc/machine-id)
+USER_UID=$(id -u)
+readonly MACHINE_ID
+readonly USER_UID
+
+# ensure we have sufficient args
+if [[ -z $1 ]]; then
+    echo "Insufficient parameters."
+    exit 1
+fi
+
+# ensure we aren't root
+if [[ "$EUID" == "0" ]]; then
+    echo "Please do not run this as an administrator."
+    exit 1
+fi
+
+# ensure store management has started
+if [[ "$(systemctl is-failed subsystem-stores)" != "active" ]]; then
+    echo "Store management has failed/is inactive, abort."
+    exit 1  
+elif [[ ! -d "/var/lib/subsystem/$USER" ]]; then
+    echo "We do not have a configured subsystem store, abort."
+    exit 1
+elif ! findmnt "/var/lib/subsystem/$USER/.base" >/dev/null || ! findmnt "/var/lib/subsystem/$USER/store" >/dev/null; then
+    echo "Our subsystem store isn't properly mounted, abort."
+    exit 1
+fi
+
+# iterate through args
+case $1 in
+    start)
+        # if susbsytem doesn't exist, create it, otherwise, start it
+        if ! podman ps -a | grep -q "subsystem-$MACHINE_ID"; then
+            podman run --name "subsystem-$MACHINE_ID" --log-driver journald --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" /usr/lib/subsystem --network host --sdnotify=conmon -d --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
+        elif ! podman ps | grep -q "subsystem-$MACHINE_ID"; then
+            podman start "subsystem-$MACHINE_ID"
+        else
+            echo "Nothing to do, subsystem already started."
+        fi
+        ;;
+    stop)
+        if podman ps | grep -q "subsystem-$MACHINE_ID"; then
+            podman stop "subsystem-$MACHINE_ID"
+        else
+            echo "Nothing to do, subsystem already stopped."
+        fi
+        ;;
+    *)
+        echo "Unrecognized parameter $1."
+        exit 1
+        ;;
+esac
