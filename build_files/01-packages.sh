@@ -11,7 +11,7 @@ declare -a packages=(
     chaotic-aur/bootc
     cpio
     dracut
-    cachyos-v3/linux-cachyos-bore
+    cachyos/linux-cachyos-bore
     linux-firmware
     ostree
     skopeo
@@ -79,7 +79,7 @@ declare -a packages=(
     iio-sensor-proxy
     intel-media-driver
     intel-ucode
-    cachyos-v3/lib32-vulkan-radeon
+    cachyos/lib32-vulkan-radeon
     libva-intel-driver
     libva-mesa-driver
     lm_sensors
@@ -224,8 +224,8 @@ declare -a packages=(
     mission-center
     nautilus
     papers
-    cachyos-v3/scx-manager
-    cachyos-v3/scx-scheds
+    cachyos/scx-manager
+    cachyos/scx-scheds
     secrets
     showtime
     sysprof
