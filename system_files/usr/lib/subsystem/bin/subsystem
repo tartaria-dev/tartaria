@@ -56,7 +56,7 @@ case $1 in
     start)
         # if susbsytem doesn't exist, create it, otherwise, start it
         if ! podman ps -a | grep -q "subsystem-$MACHINE_ID"; then
-            podman run --name "subsystem-$MACHINE_ID" --log-driver journald --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" /usr/lib/subsystem --network host --sdnotify=conmon -d --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
+            podman run --name "subsystem-$MACHINE_ID" --log-driver journald --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" --network host --sdnotify=conmon -d --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
         elif ! podman ps | grep -q "subsystem-$MACHINE_ID"; then
             podman start "subsystem-$MACHINE_ID"
         else
