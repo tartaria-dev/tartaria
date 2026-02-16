@@ -3,9 +3,6 @@
 
 set -ouex pipefail
 
-# remove base-devel since it's not needed
-pacman -Rns --noconfirm base-devel
-
 # manually add greetd user due to rebase issues
 useradd -M -G video,input -s /usr/bin/nologin greeter || true
 
@@ -14,9 +11,6 @@ sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
 
 # set plymouth theme
 sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
-
-# set correct permissions on polkit rules dir
-chmod 750 /etc/polkit-1
 
 # remove any .pacnew files
 find /etc/ -name "*.pacnew" -type f -delete
