@@ -22,7 +22,6 @@ sed -i \
 
 # init keys
 pacman-key --init
-pacman -Sy
 
 # enable multilib
 sed -i '/^\[multilib\]/,/^Include/ s/^#//' /etc/pacman.conf
@@ -47,6 +46,6 @@ pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
 echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
 
 # perform system update
-pacman -Syuq --noconfirm
+pacman -Syuq --noconfirm > /dev/null
 
 echo "::endgroup::"
