@@ -7,19 +7,28 @@ set -ouex pipefail
 
 declare -a packages=(
     # ========> system
-    chaotic-aur/bootc
+    base
     cpio
-    dracut
-    cachyos/linux-cachyos-bore
-    linux-firmware
-    ostree
-    skopeo
+    dbus
     dbus-glib
+    dracut
+    linux-firmware
+    shadow
+    udev
+
+    # ========> bootloader & ostree
+    chaotic-aur/bootc
+    cachyos/linux-cachyos-bore
+    efibootmgr
     ostree
+    shim
+    skopeo
 
     # ========> cli essentials
+    bash
     bash-completion
-    bootc/uupd
+    binutils
+    curl
     gcc
     glibc-locales
     jq
@@ -28,12 +37,8 @@ declare -a packages=(
     man-db
     nano
     openssh
-    patchelf
-    rsync
-    tree
-    udev
+    tar
     unzip
-    usbutils
     wget
 
     # ========> cli extras
@@ -47,6 +52,7 @@ declare -a packages=(
     # ========> filesystems
     btrfs-progs
     dosfstools
+    e2fs-progs
     erofs-utils
     exfatprogs
     f2fs-tools
@@ -54,29 +60,25 @@ declare -a packages=(
     gpart
     gparted
     jfsutils
-    mtools
     mkosi
+    mtools
     nilfs-utils
     ntfs-3g
-    xfsprogs
     udftools
+    xfsprogs
 
-    # ========> drivers
+    # ========> drivers & hardware
     acpid
     amd-ucode
     apparmor
     ddcutil
-    efibootmgr
-    iio-sensor-proxy
     intel-media-driver
     intel-ucode
-    lib32-vulkan-radeon
+    iio-sensor-proxy
+    lm_sensors
+    multilib/lib32-vulkan-radeon
     libva-intel-driver
     libva-mesa-driver
-    lm_sensors
-    mesa
-    mesa-utils
-    shim
     vpl-gpu-rt
     vulkan-icd-loader
     vulkan-intel
@@ -84,10 +86,16 @@ declare -a packages=(
     xf86-video-amdgpu
     zram-generator
 
-    # ========> pipewire
+    # ========> display & graphics
+    mesa
+    mesa-utils
+    wayland-utils
+    xwayland-satellite
+
+    # ========> audio
     alsa-firmware
-    lib32-pipewire
     linux-firmware-intel
+    multilib/lib32-pipewire
     pipewire
     pipewire-audio
     pipewire-ffado
@@ -111,7 +119,7 @@ declare -a packages=(
     bluez
     bluez-utils
 
-    # ========> containerization
+    # ========> containers & virtualization
     distrobox
     docker
     docker-buildx
@@ -133,8 +141,6 @@ declare -a packages=(
     mpv-mpris
     playerctl
     plymouth
-    wayland-utils
-    xwayland-satellite
 
     # ========> fonts
     gnu-free-fonts
@@ -158,11 +164,10 @@ declare -a packages=(
     archlinux-xdg-menu
     brightnessctl
     chaotic-aur/bibata-cursor-theme
+    chaotic-aur/darkly-qt6-git
     chaotic-aur/matugen-git
     chaotic-aur/noctalia-shell
-    chaotic-aur/opentabletdriver
     cliphist
-    chaotic-aur/darkly-qt6-git
     dgop
     evolution-data-server
     glycin
@@ -185,22 +190,28 @@ declare -a packages=(
     xdg-user-dirs
     xdg-utils
 
+    # ========> input devices
+    chaotic-aur/opentabletdriver
+    patchwel
+
     # ========> accessibility
     espeak-ng
     orca
 
-    # ========> printers
+    # ========> printing
     cups
     cups-browsed
     hplip
 
-    # ========> apps
+    # ========> applications
     ark
     chaotic-aur/bazaar-git
     chaotic-aur/distroshelf
     chaotic-aur/qt6ct-kde
     chaotic-aur/valent-git
     chaotic-aur/zen-browser-bin
+    cachyos/scx-manager
+    cachyos/scx-scheds
     decibels
     frameworkintegration
     gnome-calculator
@@ -215,8 +226,6 @@ declare -a packages=(
     mission-center
     nautilus
     papers
-    cachyos/scx-manager
-    cachyos/scx-scheds
     secrets
     showtime
     sysprof
