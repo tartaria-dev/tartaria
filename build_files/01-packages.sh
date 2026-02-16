@@ -76,7 +76,6 @@ declare -a packages=(
     intel-ucode
     iio-sensor-proxy
     lm_sensors
-    multilib/lib32-vulkan-radeon
     libva-intel-driver
     libva-mesa-driver
     vpl-gpu-rt
@@ -95,7 +94,6 @@ declare -a packages=(
     # ========> audio
     alsa-firmware
     linux-firmware-intel
-    multilib/lib32-pipewire
     pipewire
     pipewire-audio
     pipewire-ffado
@@ -192,7 +190,6 @@ declare -a packages=(
 
     # ========> input devices
     chaotic-aur/opentabletdriver
-    patchwel
 
     # ========> accessibility
     espeak-ng
