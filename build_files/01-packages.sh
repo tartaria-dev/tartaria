@@ -7,7 +7,6 @@ set -ouex pipefail
 
 declare -a packages=(
     # ========> system
-    base
     chaotic-aur/bootc
     cpio
     dracut
@@ -15,18 +14,12 @@ declare -a packages=(
     linux-firmware
     ostree
     skopeo
-    dbus
     dbus-glib
-    glib2
     ostree
-    shadow
 
     # ========> cli essentials
-    bash
     bash-completion
     bootc/uupd
-    binutils
-    curl
     gcc
     glibc-locales
     jq
@@ -37,7 +30,6 @@ declare -a packages=(
     openssh
     patchelf
     rsync
-    tar
     tree
     udev
     unzip
@@ -55,7 +47,6 @@ declare -a packages=(
     # ========> filesystems
     btrfs-progs
     dosfstools
-    e2fsprogs
     erofs-utils
     exfatprogs
     f2fs-tools
