@@ -95,7 +95,6 @@ declare -a packages=(
 
     # ========> pipewire
     alsa-firmware
-    lib32-pipewire
     linux-firmware-intel
     pipewire
     pipewire-audio
