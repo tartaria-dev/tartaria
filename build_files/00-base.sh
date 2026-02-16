@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# prepare image and install base packages
+# prepare base image
 
 echo "::group::===========================> Perform image build preparation"
 
@@ -20,8 +20,26 @@ sed -i \
     -e "/DownloadUser/d" \
     /etc/pacman.conf
 
-# update base system and install arch repos
+# add cachyos-v3 repo
+curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz
+tar -xvf /tmp/cachyos-repo.tar.xz -C /
+pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key F3B607488DB35A47
+echo -e '\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-mirrorlist' >> /etc/pacman.conf
+
+# add chaotic AUR repo
+pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+pacman-key --init && pacman-key --lsign-key 3056513887B78AEB
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm > /dev/null
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm > /dev/null
+echo -e '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' >> /etc/pacman.conf
+
+# add heck's bootc repo
+pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
+echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
+
+# perform system update
 pacman -Syuq --noconfirm
-pacman -S --noconfirm reflector > /dev/null
 
 echo "::endgroup::"

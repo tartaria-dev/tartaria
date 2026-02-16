@@ -8,19 +8,18 @@ COPY build_files /build/
 # fetch Brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 
-# fetch Cherries precompiled AUR packages
+# fetch Cherries and precompiled AUR packages
 COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
 COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
-    bash /build/01-main-pkgs.sh && \
-    bash /build/02-aur-pkgs.sh && \
-    bash /build/03-subsystem.sh && \
-    bash /build/04-systemd.sh && \
-    bash /build/05-extras.sh && \
-    bash /build/06-finalize.sh
+    bash /build/01-packages.sh && \
+    bash /build/02-subsystem.sh && \
+    bash /build/03-systemd.sh && \
+    bash /build/04-extras.sh && \
+    bash /build/05-finalize.sh
 
 # proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
 LABEL containers.bootc=1

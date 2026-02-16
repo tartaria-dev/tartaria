@@ -8,9 +8,10 @@ set -ouex pipefail
 declare -a packages=(
     # ========> system
     base
+    chaotic-aur/bootc
     cpio
     dracut
-    linux
+    cachyos-v3/linux-cachyos-bore
     linux-firmware
     ostree
     skopeo
@@ -23,6 +24,7 @@ declare -a packages=(
     # ========> cli essentials
     bash
     bash-completion
+    bootc/uupd
     binutils
     curl
     gcc
@@ -77,7 +79,7 @@ declare -a packages=(
     iio-sensor-proxy
     intel-media-driver
     intel-ucode
-    lib32-vulkan-radeon
+    cachyos-v3/lib32-vulkan-radeon
     libva-intel-driver
     libva-mesa-driver
     lm_sensors
@@ -164,7 +166,12 @@ declare -a packages=(
     accountsservice
     archlinux-xdg-menu
     brightnessctl
+    chaotic-aur/bibata-cursor-theme
+    chaotic-aur/matugen-git
+    chaotic-aur/noctalia-shell
+    chaotic-aur/opentabletdriver
     cliphist
+    chaotic-aur/darkly-qt6-git
     dgop
     evolution-data-server
     glycin
@@ -198,6 +205,11 @@ declare -a packages=(
 
     # ========> apps
     ark
+    chaotic-aur/bazaar-git
+    chaotic-aur/distroshelf
+    chaotic-aur/qt6ct-kde
+    chaotic-aur/valent-git
+    chaotic-aur/zen-browser-bin
     decibels
     frameworkintegration
     gnome-calculator
@@ -212,11 +224,12 @@ declare -a packages=(
     mission-center
     nautilus
     papers
-    scx-manager
-    scx-scheds
+    cachyos-v3/scx-manager
+    cachyos-v3/scx-scheds
     secrets
     showtime
     sysprof
 )
 
 pacman -Syq --noconfirm "${packages[@]}" > /dev/null
+pacman -U --noconfirm /packages/*.pkg.tar.zst > /dev/null
