@@ -1,35 +1,35 @@
 #!/usr/bin/env bash
 # commands for installing main arch packages
 
-echo "::group::===========================> Perform system package installations"
+echo "::group::===========================> Install packages"
 
 set -ouex pipefail
 
 declare -a packages=(
     # ========> system
     base
+    bootc/uupd
+    cachyos/linux-cachyos-bore
+    chaotic-aur/bootc
     cpio
     dbus
     dbus-glib
     dracut
-    linux-firmware
-    shadow
-    udev
-
-    # ========> bootloader & ostree
-    chaotic-aur/bootc
-    cachyos/linux-cachyos-bore
     efibootmgr
+    linux-firmware
     ostree
+    shadow
     shim
     skopeo
+    udev
 
-    # ========> cli essentials
+    # ========> cli
     bash
     bash-completion
     binutils
     curl
     gcc
+    git
     glibc-locales
     jq
     less
@@ -37,17 +37,12 @@ declare -a packages=(
     man-db
     nano
     openssh
-    tar
-    unzip
-    wget
-
-    # ========> cli extras
-    chezmoi
-    fastfetch
-    git
     powertop
     python3
+    tar
+    unzip
     vim
+    wget
 
     # ========> filesystems
     btrfs-progs
@@ -67,10 +62,14 @@ declare -a packages=(
     udftools
     xfsprogs
 
-    # ========> drivers & hardware
+    # ========> hardware
     acpid
     amd-ucode
     apparmor
+    bluez
+    bluez-utils
+    cups
+    cups-browsed
     ddcutil
     intel-media-driver
     intel-ucode
@@ -113,11 +112,7 @@ declare -a packages=(
     udiskie
     udisks2
 
-    # ========> bluetooth
-    bluez
-    bluez-utils
-
-    # ========> containers & virtualization
+    # ========> containers
     distrobox
     docker
     docker-buildx
@@ -165,8 +160,11 @@ declare -a packages=(
     chaotic-aur/darkly-qt6-git
     chaotic-aur/matugen-git
     chaotic-aur/noctalia-shell
+    chaotic-aur/opentabletdriver
+    chezmoi
     cliphist
     dgop
+    espeak-ng
     evolution-data-server
     glycin
     gnome-keyring
@@ -175,6 +173,7 @@ declare -a packages=(
     incron
     libappindicator
     niri
+    orca
     orchis-theme
     polkit-kde-agent
     quickshell
@@ -187,18 +186,6 @@ declare -a packages=(
     xdg-desktop-portal-gnome
     xdg-user-dirs
     xdg-utils
-
-    # ========> input devices
-    chaotic-aur/opentabletdriver
-
-    # ========> accessibility
-    espeak-ng
-    orca
-
-    # ========> printing
-    cups
-    cups-browsed
-    hplip
 
     # ========> applications
     ark
@@ -217,6 +204,7 @@ declare -a packages=(
     gnome-text-editor
     gnome-weather
     gpu-screen-recorder
+    hplip
     impression
     kitty
     loupe

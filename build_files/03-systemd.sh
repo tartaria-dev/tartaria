@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # configure important system services
 
-echo "::group::===========================> Perform system configuration"
+echo "::group::===========================> Configure system"
 
 set -ouex pipefail
 

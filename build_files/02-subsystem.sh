@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # install subsystem container store
 
-echo "::group::===========================> Perform subsystem installation"
+echo "::group::===========================> Install subsystem"
 
 set -ouex pipefail
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # prepare base image
 
-echo "::group::===========================> Perform image build preparation"
+echo "::group::===========================> Prepare image build"
 
 set -oux pipefail
 
