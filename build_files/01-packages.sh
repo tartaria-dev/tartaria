@@ -52,7 +52,7 @@ declare -a packages=(
     # ========> filesystems
     btrfs-progs
     dosfstools
-    e2fs-progs
+    e2fsprogs
     erofs-utils
     exfatprogs
     f2fs-tools
