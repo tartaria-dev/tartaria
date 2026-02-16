@@ -70,7 +70,7 @@ declare -a packages=(
     iio-sensor-proxy
     intel-media-driver
     intel-ucode
-    cachyos/lib32-vulkan-radeon
+    lib32-vulkan-radeon
     libva-intel-driver
     libva-mesa-driver
     lm_sensors
