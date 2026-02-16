@@ -20,16 +20,19 @@ sed -i \
     -e "/DownloadUser/d" \
     /etc/pacman.conf
 
+# init keys
+pacman-key --init
+
 # add cachyos-v3 repo
-curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz
-tar -xvf /tmp/cachyos-repo.tar.xz -C /
 pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 pacman-key --lsign-key F3B607488DB35A47
+pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst'
+pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-22-1-any.pkg.tar.zst'
 echo -e '\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-mirrorlist' >> /etc/pacman.conf
 
 # add chaotic AUR repo
 pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-pacman-key --init && pacman-key --lsign-key 3056513887B78AEB
+pacman-key --lsign-key 3056513887B78AEB
 pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm > /dev/null
 pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm > /dev/null
 echo -e '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' >> /etc/pacman.conf
