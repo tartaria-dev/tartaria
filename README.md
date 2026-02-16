@@ -3,7 +3,7 @@
 </p>
 
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">CachyOS Bootc / Niri / Noctalia</h3>
+<h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 
 <p align="center">
   <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b501237a-7b30-4949-985a-f2314a9107a9" />
@@ -11,7 +11,7 @@
 
 
 # What's Tartaria?
-A custom CachyOS-bootc image built for general day-to-day usage, bundled with an opinionated, mostly GTK-based app suite, a containerized shell powered by a minimal Arch container, the Niri scrollable tiling Wayland compositor, and the featureful Noctalia desktop shell built to stay out of your way.
+A custom Arch bootc image with the CachyOS kernel built for general day-to-day usage, bundled with an opinionated, mostly GTK-based app suite, a containerized shell powered by a minimal Arch container, the Niri scrollable tiling Wayland compositor, and the featureful Noctalia desktop shell built to stay out of your way.
 
 
 # What inspired the name?
