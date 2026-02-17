@@ -14,6 +14,7 @@ Type=notify
 NotifyAccess=all
 SyslogIdentifier=%N
 ExecStart=/usr/lib/subsystem/bin/subsystem start
+TimeoutStopSec=5s
 
 [Install]
 WantedBy=graphical-session.target
