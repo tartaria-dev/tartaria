@@ -25,11 +25,11 @@ sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.servi
 cp "/usr/share/tartaria/faces/face-$(shuf -i 1-10 -n 1).png" /usr/share/tartaria/faces/default-face.png
 
 # install default icon theme
-git clone https://github.com/vinceliuice/WhiteSur-icon-theme
-cd WhiteSur-icon-theme
+git clone https://github.com/vinceliuice/MacTahoe-icon-theme
+cd MacTahoe-icon-theme
 bash ./install.sh -t grey -n default-icons -d /usr/share/icons
 cd ..
-rm -rf WhiteSur-icon-theme
+rm -rf MacTahoe-icon-theme
 
 # set default niri config
 install -d /etc/niri/
