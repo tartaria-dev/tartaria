@@ -54,7 +54,7 @@ case "$1" in
             fi
 
             # create main store dir
-            mkdir -p "$msdir/{store,lockstruct}"
+            mkdir -p "$msdir"/{store,lockstruct}
 
             # mount subsystem image store with idmap
             mount --map-users 0:"$uid":1 --map-groups 0:"$gid":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/store/store.dsk "$msdir/store"
