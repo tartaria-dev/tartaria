@@ -48,9 +48,12 @@ case "$1" in
             gid=$(id -g "$user")
 
             # ensure user doesn't have a store set up
-            if [[ -d "$msdir" ]]; then
+            if [[ -d "$msdir" ]] && findmnt "$msdir/store" >/dev/null; then
                 echo "Skipping $user, they have a store set up."
                 continue
+            elif [[ -d "$msdir" ]] && ! findmnt "$msdir/store" >/dev/null; then
+                echo "User $user has an improperly setup store, resetting it."
+                rm -rf "$msdir"
             fi
 
             # create main store dir
@@ -80,6 +83,11 @@ case "$1" in
             # ensure user has a store set up
             if [[ ! -d "$msdir" ]]; then
                 echo "Skipping $user, they don't have a store set up."
+                continue
+            elif [[ -d "$msdir" ]] && ! findmnt "$msdir/store" >/dev/null; then
+                echo "User $user has an existing store, but store isnt mounted."
+                echo "Removing store for user $user."
+                rm -rf "$msdir"
                 continue
             fi
 
