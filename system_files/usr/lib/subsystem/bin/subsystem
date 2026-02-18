@@ -61,7 +61,7 @@ case $1 in
             echo "Creating storage config."
             cp -f /usr/lib/subsystem/defaults/storage.conf "$HOME/.config/containers/storage.conf"
             sed -i "s/PLACEHOLDER/$MSDIR/g" "$HOME/.config/containers/storage.conf"
-        elif [[ -f "$HOME/.config/containers/storage.conf" ]] && ! grep -q "/var/lib/subsystem/$USER/store" "$HOME/.config/containers/storage.conf"; then
+        elif [[ -f "$HOME/.config/containers/storage.conf" ]] && ! grep -q "$MSDIR/store" "$HOME/.config/containers/storage.conf"; then
             echo "Replacing storage config."
             mv "$HOME/.config/containers/storage.conf" "$HOME/.config/containers/storage.conf.bk"
             cp -f /usr/lib/subsystem/defaults/storage.conf "$HOME/.config/containers/storage.conf"
