@@ -19,6 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
 
+# constants
+SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+readonly SUBSYS_ID
+
 # utilities
 first-time() {
     if [[ -f ~/.config/subsystem/suppress-notice ]]; then
@@ -43,13 +47,11 @@ EOF
 
 warn() {
     cat <<EOF
-Hello there!
+Oops,
 
-Your shell has not been fully set up yet. How unfortunate!
-Don't worry, just reboot and your shell will be all nice and fancy for you.
-
-For now, you will be dropped into a shell on the host.
-Please be aware that your actions can damage your system.
+We can't start your containerized environment right now.
+Don't worry - a reboot should fix things.
+For now, here's a regular shell on the host - be careful.
 
 EOF
 }
@@ -63,10 +65,6 @@ Entering host shell.
 EOF
 }
 
-# constants
-MACHINE_ID=$(cat /etc/machine-id)
-readonly MACHINE_ID
-
 # check if the shell is interactive, if we are in a TTY, or if we are root
 if [[ $- != *i* ]]; then
     return
@@ -78,6 +76,11 @@ elif [[ "$EUID" == "0" ]]; then
     return
 fi
 
+# if it doesn't exist, create the configuration dir
+if [[ ! -d "$HOME/.config/containershell" ]]; then
+    mkdir -p "$HOME/.config/containershell"
+fi
+
 # if it exists, clean out the previous failure log
 if [[ -f "$HOME/.containershell-failure" ]]; then
     rm -f "$HOME/.containershell-failure"
@@ -86,13 +89,13 @@ fi
 # check if subsystem is active and exec into subsystem, otherwise fail
 if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
     first-time
-    exec podman exec -u "$(id -u)" -it "subsystem-$MACHINE_ID" /bin/fish
+    exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/fish
 else
     if ! systemctl --user start subsystem >/dev/null; then
         errmsg
         return
     else
         first-time
-        exec podman exec -u "$(id -u)" -it "subsystem-$MACHINE_ID" /bin/fish
+        exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/fish
     fi
 fi

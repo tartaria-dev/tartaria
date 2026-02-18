@@ -5,8 +5,6 @@ BindsTo=systemd-logind.service local-fs.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/lib/subsystem/bin/store-mgr setup-configs
-ExecStart=/usr/lib/subsystem/bin/store-mgr setup-stores
 ExecStart=/usr/lib/subsystem/bin/store-mgr mount-stores
 ExecStop=/usr/lib/subsystem/bin/store-mgr unmount-stores
 RemainAfterExit=yes
