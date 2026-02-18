@@ -75,7 +75,7 @@ case $1 in
         # if subsystem doesn't exist, create it, otherwise, start it
         if ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
             echo "Starting subsystem."
-            podman run --name "subsystem-$SUBSYS_ID" --log-driver journald --detach --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" --network host --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/USER/$USER_UID":"/run/USER/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
+            podman run --name "subsystem-$SUBSYS_ID" --log-driver journald --detach --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" --network host --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
             echo "Started subsystem."
             echo "Blocking until subsystem exit."
             podman wait "subsystem-$SUBSYS_ID"
