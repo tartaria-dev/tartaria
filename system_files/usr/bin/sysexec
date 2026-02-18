@@ -21,6 +21,11 @@
 
 set -e
 
+# constants
+SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+readonly SUBSYS_ID
+
+# utilities
 help() {
     cat <<EOF
 usage:
@@ -38,14 +43,22 @@ options:
 EOF
 }
 
-# check if we're root, exit if so
+# ensure we aren't root
 if [[ "$EUID" == "0" ]]; then
     echo "Cannot be root."
     exit 1
 fi
 
+# ensure subsystem is even running
+if ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
+    echo "Subsystem isn't running."
+    exit 1
+fi
+
 # ensure linked-cmds exists
-touch "$HOME/.config/containershell/linked-cmds"
+if [[ ! -f "$HOME/.config/containershell/linked-cmds" ]]; then
+    touch "$HOME/.config/containershell/linked-cmds"
+fi
 
 # iterate through args
 case $1 in
@@ -76,12 +89,12 @@ case $1 in
         elif grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
             echo "Command $1 is already linked, refusing to operate."
             exit 1
-        elif [[ "$(podman exec -it subsystem realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
+        elif [[ "$(podman exec -it "subsystem-$SUBSYS_ID" realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
             echo "Command $1 already exists, refusing to operate."
             exit 1
         fi
         echo "Linking command $1."
-        podman exec -it subsystem ln -sT /usr/libexec/host-spawn /usr/bin/"$1"
+        podman exec -it "subsystem-$SUBSYS_ID" ln -sT /usr/libexec/host-spawn /usr/bin/"$1"
         echo "$1" >> "$HOME/.config/containershell/linked-cmds"
         ;;
     -u|--unlink)
@@ -96,12 +109,12 @@ case $1 in
         elif ! grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
             echo "Command $1 isn't linked, refusing to operate."
             exit 1
-        elif [[ "$(podman exec -it subsystem realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
+        elif [[ "$(podman exec -it "subsystem-$SUBSYS_ID" realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
             echo "Command $1 already exists, refusing to operate."
             exit 1
         fi
         echo "Unlinking command $1."
-        podman exec -it subsystem rm -f /usr/bin/"$1"
+        podman exec -it "subsystem-$SUBSYS_ID" rm -f /usr/bin/"$1"
         sed -i "/$1/d" "$HOME/.config/containershell/linked-cmds"
         ;;
     *)
