@@ -9,7 +9,7 @@ declare -a packages=(
     # ========> system
     base
     bootc/uupd
-    cachyos/linux-cachyos-bore
+    cachyos/linux-cachyos
     chaotic-aur/bootc
     cpio
     dbus
