@@ -29,7 +29,7 @@ readonly SUBSYS_ID
 help() {
     cat <<EOF
 usage:
-    sysexec [options...] <command>
+    synergy [options...] <command>
 
 synopsis:
     execute, link, or unlink commands from the host system
@@ -43,14 +43,11 @@ options:
 EOF
 }
 
-# ensure we aren't root
+# do our checks
 if [[ "$EUID" == "0" ]]; then
     echo "Cannot be root."
     exit 1
-fi
-
-# ensure subsystem is even running
-if ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
+elif ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
     echo "Subsystem isn't running."
     exit 1
 fi

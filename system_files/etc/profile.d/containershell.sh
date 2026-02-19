@@ -40,7 +40,7 @@ To suppress this lovely notice, please run the following:
 touch ~/.config/containershell/suppress-notice
 
 To see how to run commands on the host, run the following:
-sysexec --help
+synergy --help
 
 EOF
 }
