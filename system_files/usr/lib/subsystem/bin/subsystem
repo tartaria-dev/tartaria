@@ -29,27 +29,21 @@ readonly SUBSYS_ID
 readonly USER_UID
 readonly MSDIR
 
-# ensure we have sufficient args
+# do our checks
 if [[ -z $1 ]]; then
     echo "Insufficient parameters."
     exit 1
-fi
-
-# ensure we aren't root
-if [[ "$EUID" == "0" ]]; then
+elif [[ "$EUID" == "0" ]]; then
     echo "Please do not run this as an administrator."
     exit 1
-fi
-
-# ensure store management has started
-if [[ "$(systemctl is-failed subsystem-stores)" != "active" ]]; then
-    echo "Store management has failed/is inactive, abort."
+elif [[ "$(systemctl is-failed subsystem-stores)" != "active" ]]; then
+    echo "Store management has failed/is inactive."
     exit 1  
 elif [[ ! -d "$MSDIR" ]]; then
-    echo "We do not have a configured subsystem store, abort."
+    echo "We do not have a configured subsystem store."
     exit 1
 elif ! findmnt "$MSDIR/store" >/dev/null; then
-    echo "Our subsystem store isn't properly mounted, abort."
+    echo "Our subsystem store isn't properly mounted."
     exit 1
 fi
 
@@ -72,19 +66,32 @@ case $1 in
         ;;
 
     start)
-        # if subsystem doesn't exist, create it, otherwise, start it
-        if ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
+        # if subsystem doesn't exist, create it
+        if ! podman container exists "subsystem-$SUBSYS_ID"; then
+            echo "Creating subsystem."
+            podman container create --init \
+                --name "subsystem-$SUBSYS_ID" \
+                --hostname subsystem \
+                --log-driver journald \
+                --cgroups=split \
+                --sdnotify=conmon \
+                --workdir "$HOME" \
+                --env-host \
+                --env "SUBSYSTEM_USER=$USER" \
+                --network host \
+                --user 0:0 \
+                --userns keep-id \
+                -v "$HOME":"$HOME":rslave \
+                -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+                subsystem:latest /usr/libexec/ignition
+            echo "Subsystem created."
+        fi
+        
+        # start subsystem if not already started
+        if ! podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q .; then
             echo "Starting subsystem."
-            podman run --name "subsystem-$SUBSYS_ID" --log-driver journald --detach --cgroups=split --workdir "$HOME" --hostname subsystem --env-host --env "SUBSYSTEM_USER=$USER" --network host --user 0:0 --userns keep-id -v "$HOME":"$HOME":rslave -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave subsystem:latest /usr/libexec/subsystem-init
+            podman container start "subsystem-$SUBSYS_ID"
             echo "Started subsystem."
-            echo "Blocking until subsystem exit."
-            podman wait "subsystem-$SUBSYS_ID"
-        elif ! podman ps | grep -q "subsystem-$SUBSYS_ID"; then
-            echo "Starting subsystem."
-            podman start "subsystem-$SUBSYS_ID"
-            echo "Started subsystem."
-            echo "Blocking until subsystem exit."
-            podman wait "subsystem-$SUBSYS_ID"
         else
             echo "Nothing to do, subsystem already started."
         fi
@@ -92,9 +99,9 @@ case $1 in
 
     stop)
         # if subsystem isn't already stopped, stop it
-        if podman ps | grep -q "subsystem-$SUBSYS_ID"; then
+        if podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q .; then
             echo "Stopping subsystem."
-            podman stop -t 5 "subsystem-$SUBSYS_ID"
+            podman container stop "subsystem-$SUBSYS_ID"
             echo "Stopped subsystem."
         else
             echo "Nothing to do, subsystem already stopped."

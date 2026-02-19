@@ -21,14 +21,11 @@
 
 set -e
 
-# ensure we have sufficient args
+# do our checks
 if [[ -z $1 ]]; then
     echo "Insufficient parameters."
     exit 1
-fi
-
-# ensure we are root
-if [[ "$EUID" != "0" ]]; then
+elif [[ "$EUID" != "0" ]]; then
     echo "Please run this as an administrator."
     exit 1
 fi
