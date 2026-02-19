@@ -1,3 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-cat /usr/lib/sysusers.d/*.conf | grep -e "^g" | grep -v -e "^#" | awk "NF" | awk '{print $2}' | grep -v -e "wheel" -e "root" -e "sudo" | xargs -I{} sed -i "/{}/d" $1
+# thank your Zirconium devs for this fix :vlone:
+
+GSHADOW_FILE="/etc/gshadow"
+GROUP_FILE="/etc/group"
+
+for f in $(cat $GROUP_FILE); do
+   cut -f1 -d':' <(echo $f) | xargs -I{} grep ^"{}" $GSHADOW_FILE &>/dev/null || \
+     echo $(cut -f1 -d':' <(echo $f)):'!*::' >> $GSHADOW_FILE
+done
