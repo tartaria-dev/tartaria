@@ -26,3 +26,6 @@
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
     echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/nopasswd-for-subsystem
 fi
+
+# keep subsystem alive, DO NOT REMOVE
+sleep infinity
