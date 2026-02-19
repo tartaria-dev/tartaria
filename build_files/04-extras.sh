@@ -6,9 +6,6 @@ set -ouex pipefail
 # set correct permissions on polkit rules dir
 chmod 750 /etc/polkit-1
 
-# manually add greetd user due to rebase issues
-useradd -M -G video,input -s /usr/bin/nologin greeter || true
-
 # configure useradd defaults
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
 
