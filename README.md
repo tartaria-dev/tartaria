@@ -1,58 +1,58 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/tartaria-dev/.github/refs/heads/main/142.svg" alt="Tartaria Logo" width="400">
-</p>
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 <p align="center">
   <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b501237a-7b30-4949-985a-f2314a9107a9" />
 </p>
 
-<br>
 
-<h1 align="center">What's Tartaria?</h1>
-<p align="center">A custom Arch bootc image with the standard CachyOS kernel built for (optimized) general day-to-day usage, bundled with an opinionated and mostly GTK-based app suite, a containerized shell powered by a minimal Arch container (it's got some bells and whistles, don't worry), the Niri scrollable tiling Wayland compositor (ooo, infinite scrolling), and the Noctalia desktop shell - featureful, but made to stay out of your way (and very pretty).</p>
+## What's Tartaria?
+Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage.
+Bundled with:
 
-<br>
+- the standard CachyOS kernel (`linux-cachyos`)
+- an opinionated and mostly GTK-based app suite,
+- a containerized shell powered by a minimal Arch container,
+- the Niri scrollable tiling Wayland compositor,
+- and the modern, fluid Noctalia desktop shell,
 
-<h1 align="center">What inspired the name?</h1>
-<p align="center">My favorite species of cherries, the <a href="https://shop.arborday.org/treeguide/210">Black Tartarian</a> species - tender, juicy, and sweet.</p>
+Tartaria aims to provide a modern and unobtrusive experience for its users that lets them get their work done.
+Not many apps or extra bells and whistles are installed by default, as extra configuration is left up to the user.
+The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
-<br>
 
-<h1 align="center">How can I switch?</h1>
-<p align="center">At the moment, only rebasing is supported. Rebasing from <a href="https://github.com/XeniaMeraki/XeniaOS/tree/main">XeniaOS</a> or <a href="https://github.com/zirconium-dev/zirconium/">Zirconium</a> is highly encouraged.<br>
-ISO support will come soon.<br>
-Before you rebase, however, please check if your CPU supports the <code>x86_64-v3</code> microarchitecture - this is necessary for reasons detailed under the Notice section.<br>
-You may check by running the following command in your terminal:</p>
+## How can I switch?
+At the moment, only rebasing is supported - ISO support will come soon.
 
-<div align="center">
+Rebasing from [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/tree/main) or [Zirconium](https://github.com/zirconium-dev/zirconium/) is highly encouraged.
+
+Before you rebase, however, please check if your CPU supports the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level - this is necessary for reasons detailed under the Notice section.
+
+You may check by running the following command in your terminal:
 
 `/lib/ld-linux-x86-64.so.2 --help | grep -F "v3 (supported, searched)"`
 
-</div>
+If the above command produced no output, you cannot run Tartaria. Sorry!
 
-<p align="center">If the above command produced no output, you cannot run Tartaria. Sorry!<br>
-If it did, however, you're good to go!</p>
+If it did, however, you're good to go!
 
-<p align="center">To rebase, use the following command in your terminal:</p>
-
-<div align="center">
+To rebase, use the following command in your terminal:
 
 `sudo bootc switch ghcr.io/tartaria-dev/tartaria`
 
-</div>
+...and you'll be on your (jolly) way!
 
-<p align="center">...and you'll be on your (jolly) way!</p>
 
-<br>
+## Notice
+This OS is only compatible and intended for devices with AMD/Intel graphics, and the kernel has optimizations for CPUs supporting the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level.
 
-<h1 align="center">Notice</h1>
-<p align="center">This OS is only compatible and intended for devices with AMD/Intel graphics, and the kernel has optimizations for CPUs supporting the <a href="https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels"><code>x86_64-v3</code></a> microarchitecture level.<br>
-Due to such optimizations by the kernel, this custom image will only work on CPUs supporting the aforementioned microarchitecture level.<br>
-Support for the <a href="https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels"><code>znver4</code></a> and <a href="https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels"><code>x86-64_v4</code></a> microarchitecture levels are being considered.<br>
-Support for NVIDIA graphics will not be looked into under any circumstances; I will leave that to the user to integrate into a fork of Tartaria (sorry).</p>
+Due to these kernel optimizations, this custom image will only work on CPUs that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level.
 
-<br>
+Support for the [`x86_64-v4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) and [`znver4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture levels are being considered.
 
-<h1 align="center">Thanks!</h1>
-<p align="center">Many thanks to the <a href="https://discord.gg/52Qcb4x2w3">Bootcrew Discord</a> for general help/support and the <a href="https://github.com/XeniaMeraki/XeniaOS/tree/main">XeniaOS</a> and <a href="https://github.com/zirconium-dev/zirconium/">Zirconium</a> projects for inspiring the creation of Tartaria!</p>
+Support for NVIDIA graphics will not be looked into under any circumstances; I will leave that to the user to integrate into a fork of Tartaria.
+
+
+## Thanks!
+Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support and the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
