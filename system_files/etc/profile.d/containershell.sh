@@ -86,7 +86,7 @@ if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
     first-time
     exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/fish
 else
-    if ! systemctl --user start subsystem >/dev/null; then
+    if ! systemctl --user start subsystem >/dev/null 2>&1; then
         errmsg
         return
     else
