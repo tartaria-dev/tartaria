@@ -55,4 +55,4 @@ Support for NVIDIA graphics will not be looked into under any circumstances; I w
 
 
 ## Thanks!
-Many thanks to the [Bootcrew Discord](https://discord.gg/52Qcb4x2w3) for general help/support and the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
+Many thanks to the [Bootcrew team](https://discord.gg/52Qcb4x2w3) for making this project possible (and for general help), and the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
