@@ -49,7 +49,7 @@ This OS is only compatible and intended for devices with AMD/Intel graphics, and
 
 Due to these kernel optimizations, this custom image will only work on CPUs that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level.
 
-Support for the [`x86_64-v4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) and [`znver4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture levels are being considered.
+Support for the [`x86_64-v4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) and [`znver4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture levels is being considered.
 
 Support for NVIDIA graphics will not be looked into under any circumstances; I will leave that to the user to integrate into a fork of Tartaria.
 
