@@ -35,33 +35,28 @@ Hello there!
 Your shell is currently running inside a containerized environment.
 Whatever you do inside this environment won't affect your host system.
 Well, besides changes to your home directory - those definitely stick.
+Commands relating to container management (e.g. distrobox) are already
+linked into this environment, and will run on the host when invoked.
 
 To suppress this lovely notice, please run the following:
 touch ~/.config/containershell/suppress-notice
 
-To see how to run commands on the host, run the following:
+To see how to run/link/unlink commands from the host, run the following:
 synergy --help
 
 EOF
 }
 
-warn() {
+errmsg() {
+    journalctl --user --no-pager -lxeu subsystem > "$HOME/.containershell-failure"
     cat <<EOF
 Oops,
 
-We can't start your containerized environment right now.
+Your containerized environment failed to start.
+Logs have been stored in ~/.containershell-failure.
 Don't worry - a reboot should fix things.
 For now, here's a regular shell on the host - be careful.
 
-EOF
-}
-
-errmsg() {
-    systemctl --user status subsystem -l --no-pager > "$HOME/.containershell-failure"
-    cat <<EOF
-The subsystem has failed to start.
-Logs have been stored in $HOME/.containershell-failure.
-Entering host shell.
 EOF
 }
 
