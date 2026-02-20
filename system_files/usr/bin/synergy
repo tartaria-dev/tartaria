@@ -69,7 +69,7 @@ case $1 in
             echo "No command provided."
             exit 1
         elif ! command -v "$1" >/dev/null; then
-            echo "Command $1 not found, refusing to operate."
+            echo "Command $1 not found."
             exit 1
         fi
         pkexec bash -c "$@"
@@ -81,13 +81,13 @@ case $1 in
             echo "No command to link provided."
             exit 1
         elif ! command -v "$1" >/dev/null; then
-            echo "Command $1 not found, refusing to operate."
+            echo "Command $1 not found."
             exit 1
         elif grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
-            echo "Command $1 is already linked, refusing to operate."
+            echo "Command $1 is already linked."
             exit 1
-        elif [[ "$(podman exec -it "subsystem-$SUBSYS_ID" realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
-            echo "Command $1 already exists, refusing to operate."
+        elif ! podman exec -it "subsystem-$SUBSYS_ID" command -v "$1" >/dev/null; then
+            echo "Command $1 already exists."
             exit 1
         fi
         echo "Linking command $1."
@@ -101,13 +101,10 @@ case $1 in
             echo "No command to unlink provided."
             exit 1
         elif ! command -v "$1" >/dev/null; then
-            echo "Command $1 not found, refusing to operate."
+            echo "Command $1 not found."
             exit 1
         elif ! grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
-            echo "Command $1 isn't linked, refusing to operate."
-            exit 1
-        elif [[ "$(podman exec -it "subsystem-$SUBSYS_ID" realpath /usr/bin/"$1")" != "/usr/libexec/host-spawn" ]]; then
-            echo "Command $1 already exists, refusing to operate."
+            echo "Command $1 isn't linked."
             exit 1
         fi
         echo "Unlinking command $1."
@@ -120,7 +117,7 @@ case $1 in
             echo "No command provided."
             exit 1
         elif ! command -v "$1" >/dev/null; then
-            echo "Command $1 not found, refusing to operate."
+            echo "Command $1 not found."
             exit 1
         fi
         bash -c "$@"
