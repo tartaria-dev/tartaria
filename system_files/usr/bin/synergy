@@ -86,7 +86,7 @@ case $1 in
         elif grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
             echo "Command $1 is already linked."
             exit 1
-        elif ! podman exec -it "subsystem-$SUBSYS_ID" command -v "$1" >/dev/null; then
+        elif ! podman exec -it "subsystem-$SUBSYS_ID" which "$1" >/dev/null 2>&1; then
             echo "Command $1 already exists."
             exit 1
         fi
@@ -99,9 +99,6 @@ case $1 in
         if [[ -z "$1" ]]; then
             help
             echo "No command to unlink provided."
-            exit 1
-        elif ! command -v "$1" >/dev/null; then
-            echo "Command $1 not found."
             exit 1
         elif ! grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
             echo "Command $1 isn't linked."
