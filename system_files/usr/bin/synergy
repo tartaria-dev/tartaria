@@ -53,8 +53,8 @@ elif ! podman ps -a | grep -q "subsystem-$SUBSYS_ID"; then
 fi
 
 # ensure linked-cmds exists
-if [[ ! -f "$HOME/.config/containershell/linked-cmds" ]]; then
-    touch "$HOME/.config/containershell/linked-cmds"
+if [[ ! -f "$HOME/.config/subsystem/linked-cmds" ]]; then
+    touch "$HOME/.config/subsystem/linked-cmds"
 fi
 
 # iterate through args
@@ -83,7 +83,7 @@ case $1 in
         elif ! command -v "$1" >/dev/null; then
             echo "Command $1 not found."
             exit 1
-        elif grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
+        elif grep -q "$1" "$HOME/.config/subsystem/linked-cmds"; then
             echo "Command $1 is already linked."
             exit 1
         elif ! podman exec -it "subsystem-$SUBSYS_ID" which "$1" >/dev/null 2>&1; then
@@ -92,7 +92,7 @@ case $1 in
         fi
         echo "Linking command $1."
         podman exec -it "subsystem-$SUBSYS_ID" ln -sT /usr/libexec/host-spawn /usr/bin/"$1"
-        echo "$1" >> "$HOME/.config/containershell/linked-cmds"
+        echo "$1" >> "$HOME/.config/subsystem/linked-cmds"
         ;;
     -u|--unlink)
         shift
@@ -100,13 +100,13 @@ case $1 in
             help
             echo "No command to unlink provided."
             exit 1
-        elif ! grep -q "$1" "$HOME/.config/containershell/linked-cmds"; then
+        elif ! grep -q "$1" "$HOME/.config/subsystem/linked-cmds"; then
             echo "Command $1 isn't linked."
             exit 1
         fi
         echo "Unlinking command $1."
         podman exec -it "subsystem-$SUBSYS_ID" rm -f /usr/bin/"$1"
-        sed -i "/$1/d" "$HOME/.config/containershell/linked-cmds"
+        sed -i "/$1/d" "$HOME/.config/subsystem/linked-cmds"
         ;;
     *)
         if [[ -z "$*" ]]; then

@@ -33,27 +33,30 @@ first-time() {
 Hello there!
 
 Your shell is currently running inside a containerized environment.
-Whatever you do inside this environment won't affect your host system.
-Well, besides changes to your home directory - those definitely stick.
-Commands relating to container management (e.g. distrobox) are already
-linked into this environment, and will run on the host when invoked.
+Changes you make to this environment besides changes to your home
+directory will be wiped on system reboot/shutdown and user logout.
+Commands relating to container management (distrobox, docker, podman)
+are linked into this environment, so they can be run without issue.
 
-To suppress this lovely notice, please run the following:
-touch ~/.config/containershell/suppress-notice
+To edit startup commands for this environment, run:
+nano ~/.config/subsystem/ignition
 
-To see how to run/link/unlink commands from the host, run the following:
+To suppress this lovely notice, execute:
+touch ~/.config/subsystem/suppress-notice
+
+To see how to execute/link/unlink commands from the host, execute:
 synergy --help
 
 EOF
 }
 
 errmsg() {
-    journalctl --user --no-pager -lxeu subsystem > "$HOME/.containershell-failure"
+    journalctl --user --no-pager -lxeu subsystem > "$HOME/.subsystem-failure"
     cat <<EOF
 Oops,
 
 Your containerized environment failed to start.
-Logs have been stored in ~/.containershell-failure.
+Logs have been stored in ~/.subsystem-failure.
 Don't worry - a reboot should fix things.
 For now, here's a regular shell on the host - be careful.
 
@@ -71,14 +74,9 @@ elif [[ "$EUID" == "0" ]]; then
     return
 fi
 
-# if it doesn't exist, create the configuration dir
-if [[ ! -d "$HOME/.config/containershell" ]]; then
-    mkdir -p "$HOME/.config/containershell"
-fi
-
 # if it exists, clean out the previous failure log
-if [[ -f "$HOME/.containershell-failure" ]]; then
-    rm -f "$HOME/.containershell-failure"
+if [[ -f "$HOME/.subsystem-failure" ]]; then
+    rm -f "$HOME/.subsystem-failure"
 fi
 
 # check if subsystem is active and exec into subsystem, otherwise fail

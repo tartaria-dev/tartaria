@@ -19,13 +19,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
 
-# this script is started on subsystem init
-# setup tasks are done here
+# this script contains tasks started on subsystem startup
+# changes will be applied once you log out and then back in
+
+### BEGIN USER CONFIGURATION
+
+# example: install a package (requires internet connection on host system)
+# pacman -S npm
+
+### END USER CONFIGURATION
+
+# configure fastest arch repos
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+pacman -Sy >/dev/null 2>&1 || true
 
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
-    echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/nopasswd-for-subsystem
+    echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
 fi
 
-# keep subsystem alive, DO NOT REMOVE
+# keep subsystem alive
 sleep infinity

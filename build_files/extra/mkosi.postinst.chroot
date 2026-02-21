@@ -21,7 +21,6 @@ ldconfig
 
 # setup fish prompt
 mkdir -p /etc/fish
-echo -e '\nset -gx container subsystem' >> /etc/fish/config.fish
 echo -e '\nalias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
 echo -e '\nalias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
 echo -e '\nalias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
