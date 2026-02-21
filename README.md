@@ -8,18 +8,19 @@
 
 
 ## What's Tartaria?
-Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage.
-Bundled with:
+Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage, bundled with:
 
 - the standard CachyOS kernel (`linux-cachyos`),
 - AppArmor application security enabled by default,
 - an opinionated and mostly GTK-based app suite,
 - a containerized shell powered by a minimal Arch container,
 - the Niri scrollable tiling Wayland compositor,
-- and the modern, fluid Noctalia desktop shell,
+- and the modern, fluid Noctalia desktop shell.
 
 Tartaria aims to provide a modern and unobtrusive experience for its users that lets them get their work done.
+
 Not many apps or extra bells and whistles are installed by default, as extra configuration is left up to the user.
+
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
 
