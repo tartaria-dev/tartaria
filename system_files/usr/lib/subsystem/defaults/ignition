@@ -1,33 +1,8 @@
 #!/bin/bash
-
 # SPDX-License-Identifier: GPL-3.0-only
-#
-# This file is part of the Tartaria project:
-#    https://github.com/tartaria-dev/tartaria
-#
-# Copyright (C) 2026 Tartaria Developers
-#
-# Tartaria is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3
-# as published by the Free Software Foundation.
-#
-# Tartaria is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
 
-# this script contains tasks started on subsystem startup
-# changes will be applied once you log out and then back in
-
-### BEGIN USER CONFIGURATION
-
-# example: install a package (requires internet connection on host system)
-# pacman -S npm
-
-### END USER CONFIGURATION
+# this script contains tasks performed on subsystem startup
+# changes will be applied once your subsystem is restarted, e.g. logging out and back in
 
 # configure fastest arch repos
 reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
@@ -37,6 +12,13 @@ pacman -Sy >/dev/null 2>&1 || true
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
     echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
 fi
+
+### -----BEGIN USER CONFIGURATION-----
+
+# example: install a package (requires internet connection on host system)
+# pacman -S npm
+
+### -----END USER CONFIGURATION-----
 
 # keep subsystem alive
 sleep infinity
