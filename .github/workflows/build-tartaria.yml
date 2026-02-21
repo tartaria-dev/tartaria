@@ -10,6 +10,7 @@ on:
       - "**/cleanup.yml"
       - "**/dependabot.yml"
       - "**/renovate.json5"
+      - "**/artifacthub-repo.yml"
   schedule:
     - cron: "05 10 * * *" # 10:05am UTC everyday
   push:
@@ -21,6 +22,7 @@ on:
       - "**/cleanup.yml"
       - "**/dependabot.yml"
       - "**/renovate.json5"
+      - "**/artifacthub-repo.yml"
   workflow_dispatch:
 
 env:
