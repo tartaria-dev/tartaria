@@ -29,12 +29,12 @@ echo "Checking configurations."
 if [[ ! -f "$HOME/.config/containers/storage.conf" ]]; then
     echo "Creating storage config."
     cp -f /usr/lib/subsystem/defaults/storage.conf "$HOME/.config/containers/storage.conf"
-    sed -i "s/PLACEHOLDER/$MSDIR/g" "$HOME/.config/containers/storage.conf"
+    sed -i "s|PLACEHOLDER|$MSDIR|g" "$HOME/.config/containers/storage.conf"
 elif [[ -f "$HOME/.config/containers/storage.conf" ]] && ! grep -qF "$MSDIR/store" "$HOME/.config/containers/storage.conf"; then
     echo "Replacing storage config."
-    mv "$HOME/.config/containers/storage.conf" "$HOME/.config/containers/storage.conf.bk"
+    mv -f "$HOME/.config/containers/storage.conf" "$HOME/.config/containers/storage.conf.bk"
     cp -f /usr/lib/subsystem/defaults/storage.conf "$HOME/.config/containers/storage.conf"
-    sed -i "s/PLACEHOLDER/$MSDIR/g" "$HOME/.config/containers/storage.conf"
+    sed -i "s|PLACEHOLDER|$MSDIR|g" "$HOME/.config/containers/storage.conf"
 fi
 
 # setup subsystem config dir if needed
