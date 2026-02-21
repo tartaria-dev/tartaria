@@ -24,9 +24,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 
 ## How can I switch?
-At the moment, only rebasing is supported - ISO support will come soon.
-
-Rebasing from [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/tree/main) or [Zirconium](https://github.com/zirconium-dev/zirconium/) is highly encouraged.
+At the moment, only rebasing (e.g. from Fedora Silverblue) is supported - ISO support will come soon.
 
 Before you rebase, however, please check if your CPU supports the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level - this is necessary for reasons detailed under the Notice section.
 
