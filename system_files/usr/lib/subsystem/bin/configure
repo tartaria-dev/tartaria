@@ -8,10 +8,7 @@ MSDIR="/tmp/subsystem-$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk 
 readonly MSDIR
 
 # do our checks
-if [[ -z $1 ]]; then
-    echo "Insufficient parameters."
-    exit 1
-elif [[ "$EUID" == "0" ]]; then
+if [[ "$EUID" == "0" ]]; then
     echo "Please do not run this as an administrator."
     exit 1
 elif [[ "$(systemctl is-failed subsystem-stores)" != "active" ]]; then

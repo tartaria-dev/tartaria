@@ -12,9 +12,9 @@ NotifyAccess=all
 SyslogIdentifier=%N
 Environment=PODMAN_SYSTEMD_UNIT=%n
 ExecStartPre=/usr/lib/subsystem/bin/configure
-ExecStart=/usr/bin/bash -c "SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | awk '{print $1}') podman container run --init --rm --cgroups=split --sdnotify=conmon --name "subsystem-$SUBSYS_ID" --hostname subsystem --log-driver journald --workdir %h --env-host --env "SUBSYSTEM_USER=%u" --network host --user 0:0 --userns keep-id -v %h:%h:rslave -v %h/.config/subsystem/ignition:/usr/libexec/ignition:ro -v /run/user/%U:/run/user/%U:ro,rslave subsystem:latest /usr/libexec/ignition"
-ExecStop=/usr/bin/bash -c "SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | awk '{print $1}') podman container rm -i -f -v "subsystem-$SUBSYS_ID""
-ExecStopPost=-/usr/bin/bash -c "SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | awk '{print $1}') podman container rm -i -f -v "subsystem-$SUBSYS_ID""
+ExecStart=/usr/bin/bash -c 'podman container run --init --rm --cgroups=split --sdnotify=conmon --name "subsystem-$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | cut -d" " -f1)" --hostname subsystem --log-driver journald --workdir %h --env-host --env "SUBSYSTEM_USER=%u" --network host --user 0:0 --userns keep-id -v %h:%h:rslave -v %h/.config/subsystem/ignition:/usr/libexec/ignition:ro -v /run/user/%U:/run/user/%U:ro,rslave subsystem:latest /usr/libexec/ignition'
+ExecStop=/usr/bin/bash -o xtrace -c 'podman container rm -i -f -v "subsystem-$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | cut -d" " -f1)"'
+ExecStopPost=-/usr/bin/bash -c 'podman container rm -i -f -v "subsystem-$(echo -n "$(cat /etc/machine-id)%u" | sha256sum | cut -d" " -f1)"'
 Restart=always
 RestartSec=1s
 TimeoutStopSec=15s
