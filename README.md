@@ -11,7 +11,8 @@
 Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage.
 Bundled with:
 
-- the standard CachyOS kernel (`linux-cachyos`)
+- the standard CachyOS kernel (`linux-cachyos`),
+- AppArmor application security enabled by default,
 - an opinionated and mostly GTK-based app suite,
 - a containerized shell powered by a minimal Arch container,
 - the Niri scrollable tiling Wayland compositor,
