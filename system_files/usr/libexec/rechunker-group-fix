@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 # thank your Zirconium devs for this fix :vlone:
 
+# constants
 GSHADOW_FILE="/etc/gshadow"
 GROUP_FILE="/etc/group"
+readonly GSHADOW_FILE
+readonly GROUP_FILE
 
+# check if we aren't root
+if [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
+    exit 77
+fi
+
+# enuerate files
 for f in $(cat $GROUP_FILE); do
    cut -f1 -d':' <(echo $f) | xargs -I{} grep ^"{}" $GSHADOW_FILE &>/dev/null || \
      echo $(cut -f1 -d':' <(echo $f)):'!*::' >> $GSHADOW_FILE

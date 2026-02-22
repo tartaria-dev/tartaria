@@ -1,6 +1,5 @@
 [Unit]
-Description=Timer for Picking Cherries
-ConditionPathExists=/var/lib/cherries
+Description=Timer for pick-cherries.service
 
 [Timer]
 OnUnitActiveSec=1d

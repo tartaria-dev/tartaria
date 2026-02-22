@@ -5,13 +5,9 @@
 ECHO_USER=0
 
 # check if we aren't root or no arg was provided
-if [[ -z "$1" ]]; then
-    echo "[!!!] Insufficient parameters."
-    echo "[i] Usage: $0 (--list)"
-    exit 1
-elif [[ "$EUID" != "0" ]]; then
+if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
-    exit 1
+    exit 77
 fi
 
 # check if we need to list users
