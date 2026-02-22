@@ -31,9 +31,6 @@ elif [[ "$(systemctl is-failed subsystem-config)" != "active" ]]; then
 elif [[ ! -d "$MSDIR" ]]; then
     echo "[!!!!] No subsystem rootfs storage found."
     exit 1
-elif ! findmnt "$MSDIR"/rootfs >/dev/null 2>&1 || ! findmnt "$MSDIR"/basefs >/dev/null 2>&1; then
-    echo "[!!!!] Subsystem rootfs isn't properly mounted."
-    exit 1
 fi
 
 # iterate through args
