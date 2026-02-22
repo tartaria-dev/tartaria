@@ -84,9 +84,9 @@ case $1 in
             echo "[3/4] Mounting subsystem root..."
 
             echo "[i] Cleaning mountpoints..."
-            lsof -t "$MSDIR"/basefs | xargs kill -15
+            lsof -t "$MSDIR"/basefs | xargs -r kill -15
             fusermount -uq "$MSDIR"/basefs || true
-            lsof -t "$MSDIR"/rootfs | xargs kill -15
+            lsof -t "$MSDIR"/rootfs | xargs -r kill -15
             fusermount -uq "$MSDIR"/rootfs || true
             echo "[i] Cleansed mountpoints."
 
