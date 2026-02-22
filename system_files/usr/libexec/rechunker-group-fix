@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # thank your Zirconium devs for this fix :vlone:
 
 GSHADOW_FILE="/etc/gshadow"

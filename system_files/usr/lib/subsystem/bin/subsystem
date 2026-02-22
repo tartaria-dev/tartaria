@@ -1,6 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
+# my beloved: errexit
 set -e
 
 # constants
@@ -9,6 +10,7 @@ SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}'
 USER_SUBUID=$(grep "^$USER:" /etc/subuid | cut -d: -f3)
 USER_SUBGID=$(grep "^$USER:" /etc/subgid | cut -d: -f3)
 USER_UID=$(id -u)
+
 readonly MSDIR
 readonly SUBSYS_ID
 readonly USER_SUBUID
@@ -17,68 +19,47 @@ readonly USER_UID
 
 # do our checks
 if [[ -z $1 ]]; then
-    echo "[!!!!] Insufficient parameters."
-    exit 1
+    echo "[!!!] Insufficient parameters."
+    echo "[i] Usage: $0 start|stop"
+    exit 64
 elif [[ "$EUID" == "0" ]]; then
-    echo "[!!!!] Please do not run this as an administrator."
-    exit 1
+    echo "[!!!] Please do not run this as an administrator."
+    exit 77
+elif ! grep -q "$USER" /etc/subuid || ! grep -q "$USER" /etc/subgid; then
+    echo "[!!!] $USER does not have sub{uid,gid}s configured."
+    exit 78
 elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
-    echo "[!!!!] Environment isn't properly set up."
-    exit 1
+    echo "[!!!] Environment isn't properly set up."
+    exit 71
 elif [[ "$(systemctl is-failed subsystem-config)" != "active" ]]; then
-    echo "[!!!!] Configuration management has failed/is inactive."
-    exit 1  
+    echo "[!!!] Configuration management has failed/is inactive."
+    exit 69
 elif [[ ! -d "$MSDIR" ]]; then
-    echo "[!!!!] No subsystem rootfs storage found."
-    exit 1
+    echo "[!!!] No subsystem rootfs storage found."
+    exit 66
 fi
 
 # iterate through args
 case $1 in
-    mountfs)
-        echo "Mounting subsystem filesystem..."
-
-        # mount base fs if needed
-        if ! findmnt "$MSDIR"/basefs >/dev/null; then
-            squashfuse -o uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
-        else
-            echo "[!] Base FS already mounted."
-        fi
-
-        # mount writable root fs if needed
-        if ! findmnt "$MSDIR"/rootfs >/dev/null; then
-            fuse-overlayfs -o lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
-        else
-            echo "[!] Root FS already mounted."
-        fi
-
-        echo "Filesystem mounting done."
-        ;;
-
-    umountfs)
-        echo "Unmounting subsystem filesystem..."
-
-        # unmount base fs if needed
-        if findmnt "$MSDIR"/basefs >/dev/null; then
-            fusermount3 -u "$MSDIR"/basefs
-        else
-            echo "[!] Base FS already unmounted."
-        fi
-
-        # unmount writable root fs if needed
-        if findmnt "$MSDIR"/rootfs >/dev/null; then
-            fusermount3 -u "$MSDIR"/rootfs
-        else
-            echo "[!] Root FS already unmounted."
-        fi
-
-        echo "Filesystem unmounting done."
-        ;;
-
     start)
+        # log some crap
+        echo "[1/4] Preparing..."
+
+        # create subsystem root dirs
+        mkdir -p /var/home/"$USER"/.local/share/subsystem/{rootfs,basefs,fsdata,.work}
+        mkdir -p /var/home/"$USER"/.config/subsystem
+
+        # copy over default ignition config if needed
+        if [[ ! -f "/var/home/$USER/.config/subsystem/ignition" ]]; then
+            cp -f /usr/lib/subsystem/defaults/ignition /var/home/"$USER"/.config/subsystem/
+        fi
+
+        # log some crap
+        echo "[1/4] Preparation done."
+
         # if subsystem doesn't exist, create it
         if ! podman container exists "subsystem-$SUBSYS_ID"; then
-            echo "Creating subsystem..."
+            echo "[2/4] Creating subsystem..."
             podman container create --init \
                 --name "subsystem-$SUBSYS_ID" \
                 --hostname subsystem \
@@ -99,34 +80,73 @@ case $1 in
                 -v "$HOME/.config/subsystem/ignition":/usr/libexec/ignition:ro \
                 --rootfs "$MSDIR/rootfs" \
                 /usr/libexec/ignition
-            echo "Subsystem created."
+            echo "[2/4] Subsystem created."
+        else
+            echo "[2/4] Subsystem already created, skipping creation."
         fi
         
         # start subsystem if not already started
         if ! podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q .; then
-            echo "Starting subsystem..."
-            /usr/lib/subsystem/bin/subsystem mountfs
+            echo "[3/4] Mounting subsystem root..."
+
+            echo "[i] Cleaning mountpoints..."
+            lsof -t "$MSDIR"/basefs | xargs kill -15
+            fusermount -uq "$MSDIR"/basefs || true
+            lsof -t "$MSDIR"/rootfs | xargs kill -15
+            fusermount -uq "$MSDIR"/rootfs || true
+            echo "[i] Cleansed mountpoints."
+
+            echo "[i] Mounting lower filesystem..."
+            squashfuse -o uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
+            echo "[i] Mounted lower filesystem."
+
+            echo "[i] Mounting upper filesystem..."
+            fuse-overlayfs -o lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
+            echo "[i] Mounted upper filesystem."
+
+            echo "[3/4] Subsystem root mounted."
+
+            echo "[4/4] Starting subsystem..."
             podman container start "subsystem-$SUBSYS_ID"
-            echo "Started subsystem."
+            echo "[4/4] Started subsystem."
         else
-            echo "[!] Subsystem already started."
+            echo "[!!!] Subsystem already started."
+            exit 69
         fi
         ;;
 
     stop)
         # if subsystem isn't already stopped, stop it
         if podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q . ; then
-            echo "Stopping subsystem..."
+            echo "[1/2] Stopping subsystem..."
             podman container stop -i "subsystem-$SUBSYS_ID"
-            /usr/lib/subsystem/bin/subsystem unmountfs
-            echo "Stopped subsystem."
+            echo "[1/2] Stopped subsystem."
+
+            echo "[2/2] Unmounting subsystem root..."
+
+            echo "[i] Cleansing upper filesystem moutpoint."
+            lsof -t "$MSDIR"/rootfs | xargs -r kill -15
+            echo "[i] Unmounting upper filesystem..."
+            fusermount3 -uq "$MSDIR"/rootfs || true
+            echo "[i] Unmounted upper filesystem."
+
+            echo "[i] Cleansing lower filesystem mountpoint."
+            lsof -t "$MSDIR"/basefs | xargs -r kill -15
+            echo "[i] Unmounting lower filesystem..."
+            fusermount3 -uq "$MSDIR"/basefs || true
+            echo "[i] Unmounted lower filesystem."
+
+            echo "[2/2] Subsystem root unmounted."
         else
-            echo "[!] Subsystem already stopped."
+            echo "[!!!] Subsystem already stopped."
+            exit 69
         fi
         ;;
 
     *)
-        echo "[!!!!] Unrecognized parameter $1."
-        exit 1
+        # you fool! you didn't pass the correct argument, dammit! you utter fool!
+        echo "[!!!] Unrecognized parameter $1."
+        echo "[i] Usage: $0 start|stop"
+        exit 64
         ;;
 esac

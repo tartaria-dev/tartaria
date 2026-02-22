@@ -1,2 +1,1 @@
-enable subsystem-config.service
 enable kdeconnect-firewalld-bypass.service

@@ -5,11 +5,12 @@
 ECHO_USER=0
 
 # check if we aren't root or no arg was provided
-if [[ "$EUID" != "0" ]]; then
-    echo "We are not root, abort!!"
+if [[ -z "$1" ]]; then
+    echo "[!!!] Insufficient parameters."
+    echo "[i] Usage: $0 (--list)"
     exit 1
-elif [[ -z "$1" ]]; then
-    echo "Usage: $0 'command to run'"
+elif [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
     exit 1
 fi
 
