@@ -31,12 +31,6 @@ elif ! grep -q "$USER" /etc/subuid || ! grep -q "$USER" /etc/subgid; then
 elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
     echo "[!!!] Environment isn't properly set up."
     exit 71
-elif [[ "$(systemctl is-failed subsystem-config)" != "active" ]]; then
-    echo "[!!!] Configuration management has failed/is inactive."
-    exit 69
-elif [[ ! -d "$MSDIR" ]]; then
-    echo "[!!!] No subsystem rootfs storage found."
-    exit 66
 fi
 
 # iterate through args
