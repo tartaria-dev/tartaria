@@ -21,9 +21,10 @@ ldconfig
 
 # setup fish prompt
 mkdir -p /etc/fish
+echo -e '\nset fish_greeting' >> /etc/fish/config.fish
 echo -e '\nalias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
-echo -e '\nalias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
-echo -e '\nalias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
+echo -e 'alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
+echo -e 'alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
 echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
 
 # disable pacman sandboxing
