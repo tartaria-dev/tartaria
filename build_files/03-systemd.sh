@@ -20,7 +20,7 @@ systemctl enable \
     incrond.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
-    subsystem-stores.service \
+    subsystem-config.service \
     tuned-ppd.service \
     tuned.service \
     usr-share-tartaria-cherries.mount \
@@ -30,7 +30,7 @@ systemctl enable \
 # system-preset
 systemctl preset \
     systemd-resolved.service \
-    subsystem-stores.service \
+    subsystem-config.service \
     kdeconnect-firewalld-bypass.service
 
 # user

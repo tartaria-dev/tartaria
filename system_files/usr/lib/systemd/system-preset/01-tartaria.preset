@@ -1,2 +1,2 @@
-enable subsystem-stores.service
+enable subsystem-config.service
 enable kdeconnect-firewalld-bypass.service

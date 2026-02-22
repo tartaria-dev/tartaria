@@ -1,0 +1,135 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+set -e
+
+# constants
+MSDIR="$HOME/.local/share/subsystem"
+SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+USER_SUBUID=$(grep "^$USER:" /etc/subuid | cut -d: -f3)
+USER_SUBGID=$(grep "^$USER:" /etc/subgid | cut -d: -f3)
+USER_UID=$(id -u)
+readonly MSDIR
+readonly SUBSYS_ID
+readonly USER_SUBUID
+readonly USER_SUBGID
+readonly USER_UID
+
+# do our checks
+if [[ -z $1 ]]; then
+    echo "[!!!!] Insufficient parameters."
+    exit 1
+elif [[ "$EUID" == "0" ]]; then
+    echo "[!!!!] Please do not run this as an administrator."
+    exit 1
+elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
+    echo "[!!!!] Environment isn't properly set up."
+    exit 1
+elif [[ "$(systemctl is-failed subsystem-config)" != "active" ]]; then
+    echo "[!!!!] Configuration management has failed/is inactive."
+    exit 1  
+elif [[ ! -d "$MSDIR" ]]; then
+    echo "[!!!!] No subsystem rootfs storage found."
+    exit 1
+elif ! findmnt "$MSDIR"/rootfs >/dev/null 2>&1 || ! findmnt "$MSDIR"/basefs >/dev/null 2>&1; then
+    echo "[!!!!] Subsystem rootfs isn't properly mounted."
+    exit 1
+fi
+
+# iterate through args
+case $1 in
+    mountfs)
+        echo "Mounting subsystem filesystem..."
+
+        # mount base fs if needed
+        if ! findmnt "$MSDIR"/basefs >/dev/null; then
+            squashfuse -o uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
+        else
+            echo "[!] Base FS already mounted."
+        fi
+
+        # mount writable root fs if needed
+        if ! findmnt "$MSDIR"/rootfs >/dev/null; then
+            fuse-overlayfs -o lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
+        else
+            echo "[!] Root FS already mounted."
+        fi
+
+        echo "Filesystem mounting done."
+        ;;
+
+    umountfs)
+        echo "Unmounting subsystem filesystem..."
+
+        # unmount base fs if needed
+        if findmnt "$MSDIR"/basefs >/dev/null; then
+            fusermount3 -u "$MSDIR"/basefs
+        else
+            echo "[!] Base FS already unmounted."
+        fi
+
+        # unmount writable root fs if needed
+        if findmnt "$MSDIR"/rootfs >/dev/null; then
+            fusermount3 -u "$MSDIR"/rootfs
+        else
+            echo "[!] Root FS already unmounted."
+        fi
+
+        echo "Filesystem unmounting done."
+        ;;
+
+    start)
+        # if subsystem doesn't exist, create it
+        if ! podman container exists "subsystem-$SUBSYS_ID"; then
+            echo "Creating subsystem..."
+            podman container create --init \
+                --name "subsystem-$SUBSYS_ID" \
+                --hostname subsystem \
+                --log-driver journald \
+                --cgroups=split \
+                --sdnotify=conmon \
+                --workdir "$HOME" \
+                --env-host \
+                --env "SUBSYSTEM_USER=$USER" \
+                --env "container=subsystem" \
+                --network host \
+                --user 0:0 \
+                --userns keep-id \
+                --tmpfs /tmp \
+                --tmpfs /run \
+                -v "$HOME":"$HOME":rslave \
+                -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+                -v "$HOME/.config/subsystem/ignition":/usr/libexec/ignition:ro \
+                --rootfs "$MSDIR/rootfs" \
+                /usr/libexec/ignition
+            echo "Subsystem created."
+        fi
+        
+        # start subsystem if not already started
+        if ! podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q .; then
+            echo "Starting subsystem..."
+            /usr/lib/subsystem/bin/subsystem mountfs
+            podman container start "subsystem-$SUBSYS_ID"
+            echo "Started subsystem."
+        else
+            echo "[!] Subsystem already started."
+        fi
+        ;;
+
+    stop)
+        # if subsystem isn't already stopped, stop it
+        if podman container ps --quiet --filter "name=subsystem-$SUBSYS_ID" | grep -q . ; then
+            echo "Stopping subsystem..."
+            podman container stop -i "subsystem-$SUBSYS_ID"
+            /usr/lib/subsystem/bin/subsystem unmountfs
+            echo "Stopped subsystem."
+        else
+            echo "[!] Subsystem already stopped."
+        fi
+        ;;
+
+    *)
+        echo "[!!!!] Unrecognized parameter $1."
+        exit 1
+        ;;
+esac

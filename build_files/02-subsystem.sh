@@ -18,16 +18,12 @@ chmod +x mkosi.extra/usr/libexec/host-spawn
 # build arch rootfs
 mkosi build
 
-# import rootfs into false store
-mkdir -p /store
-podman --root /store import ./output/image.tar.zst subsystem:latest
-
-# compress store
-mkdir -p /usr/lib/subsystem/store
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L store /usr/lib/subsystem/store/store.dsk /store >/dev/null
+# compress rootfs
+mkdir -p /usr/lib/subsystem/rootfs
+mksquashfs /workdir/output/rootfs /usr/lib/subsystem/rootfs/base.dsk -comp zstd -Xcompression-level 19 -b 128K -noappend -always-use-fragments > /dev/null
 
 # cleanup
 cd /
-rm -rf /{workdir,store}
+rm -rf /workdir
 
 echo "::endgroup::"

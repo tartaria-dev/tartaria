@@ -15,8 +15,7 @@ first-time() {
 Hello there!
 
 Your shell is currently running inside a containerized environment.
-Changes you make to this environment besides changes to your home
-directory will be wiped on system reboot/shutdown and user logout.
+Changes you make besides those to your homedir won't affect the host.
 Commands relating to container management (distrobox, docker, podman)
 are linked into this environment, so they can be run without issue.
 

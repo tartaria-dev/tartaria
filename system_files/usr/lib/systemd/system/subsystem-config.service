@@ -1,0 +1,14 @@
+[Unit]
+Description=Subsystem configuration management
+After=local-fs.target
+BindsTo=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/subsystem/bin/configure
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target default.target
