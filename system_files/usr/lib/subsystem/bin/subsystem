@@ -58,7 +58,7 @@ case $1 in
         squashfuse -o uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
         echo "[i] Mounting upper filesystem."
         fuse-overlayfs -o lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
-        echo "[2/3] Subsystem root mounted."
+        echo "[2/3] Mounted subsystem root."
 
         # start subsystem
         echo "[3/3] Starting subsystem..."
@@ -111,7 +111,7 @@ case $1 in
         else
             echo "[!] Lower filesystem isn't mounted."
         fi
-        echo "[2/2] Subsystem root unmounted."
+        echo "[2/2] Unmounted subsystem root."
         ;;
 
     *)
