@@ -15,7 +15,7 @@ ExecStart=/usr/lib/subsystem/bin/subsystem start
 ExecStop=/usr/lib/subsystem/bin/subsystem stop
 Restart=always
 RestartSec=1s
-TimeoutStopSec=15s
+TimeoutStopSec=35s
 
 [Install]
 WantedBy=graphical-session.target
