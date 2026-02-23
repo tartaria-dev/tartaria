@@ -55,9 +55,9 @@ case $1 in
         lsof -t "$MSDIR"/rootfs | xargs -r kill -15
         fusermount3 -uq "$MSDIR"/rootfs || true
         echo "[i] Mounting lower filesystem."
-        squashfuse -o uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
+        squashfuse -o allow_other,uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
         echo "[i] Mounting upper filesystem."
-        fuse-overlayfs -o lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
+        fuse-overlayfs -o allow_other,lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
         echo "[2/3] Mounted subsystem root."
 
         # start subsystem
