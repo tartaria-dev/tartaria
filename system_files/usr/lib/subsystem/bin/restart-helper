@@ -1,0 +1,89 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# set errexit & pipefail
+set -eo pipefail
+
+# do our checks
+if [[ $* != *--lockfile=* ]] || [[ $* != *--subsysid=* ]]; then
+    echo "[!!!] Arguments --lockfile or --subsysid were not used."
+    echo "[i] Usage: $0 --lockfile=/PATH/TO/LOCKFILE.lock --subsysid=ID"
+    exit 64
+elif [[ "$EUID" == "0" ]]; then
+    echo "[!!!] Please do not run this as an administrator."
+    exit 77
+fi
+
+# parse arguments
+for arg in "$@"; do
+    case $arg in
+        --lockfile=*)
+            LOCKFILE="${arg#*=}"
+            MSDIR=$(dirname "$LOCKFILE")
+            readonly LOCKFILE
+            readonly MSDIR
+            ;;
+        --subsysid=*)
+            SUBSYS_ID="${arg#*=}"
+            readonly SUBSYS_ID
+            ;;
+        *)
+            echo "[i] Argument $arg not known, ignoring."
+            ;;
+    esac
+done
+
+# set constants
+USER_UID=$(id -u)
+FAILED=0
+
+# utilities
+startctr() {
+    podman container run \
+        --init \
+        --rm \
+        --detach \
+        --cgroups=split \
+        --env-host \
+        --name "subsystem-$SUBSYS_ID" \
+        --hostname subsystem \
+        --log-driver journald \
+        --env "SUBSYSTEM_USER=$USER" \
+        --env "container=subsystem" \
+        --network host \
+        --user 0:0 \
+        --userns keep-id \
+        --tmpfs /tmp \
+        --tmpfs /run \
+        --workdir "$HOME" \
+        -v "$HOME":"$HOME":rslave \
+        -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+        --rootfs "$MSDIR/rootfs" \
+        /usr/libexec/ignition
+}
+
+# watch subsystem container based on lockfile presence
+while [[ -f $LOCKFILE ]]; do
+    while podman ps --filter "name=subsystem-$SUBSYS_ID" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$SUBSYS_ID$"; do
+        sleep 1
+    done
+
+    [[ -f $LOCKFILE ]] || break
+
+    echo "[---] Container exited, restarting."
+
+    if ! startctr; then
+        FAILED=$(( FAILED + 1 ))
+        echo "[!!!] Failed to restart subsystem, failed restart counter is at $FAILED."
+    else
+        FAILED=0
+        echo "[---] Restarted subsystem successfully."
+    fi
+
+    if [[ "$FAILED" -ge "5" ]]; then
+        echo "[!!!] Reached 5 consecutive failed restarts."
+        exit 1
+    fi
+done
+
+exit 0

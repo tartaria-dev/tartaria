@@ -1,13 +1,13 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# set errexit
-set -e
+# set errexit & pipefail
+set -eo pipefail
 
 # do our checks
 if [[ -z $1 ]]; then
     echo "[!!!] Insufficient parameters."
-    echo "[i] Usage: $0 start|stop"
+    echo "[---] Usage: $0 start|stop"
     exit 64
 elif [[ "$EUID" == "0" ]]; then
     echo "[!!!] Please do not run this as an administrator."
@@ -27,26 +27,30 @@ USER_UID=$(id -u)
 readonly MSDIR
 readonly SUBSYS_ID
 readonly USER_UID
+export NOTIFY_SOCKET
 
 # iterate through args
 case $1 in
     start)
         # ensure all subsystem dirs/configs exist
-        echo "[1/3] Preparing..."
-        echo "[i] Cleansing mounts."
+        systemd-notify --status="Preparing..."
+        echo "[1/4] Preparing..."
+        echo "[---] Cleansing mounts."
         pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
-        echo "[i] Creating directories."
+        echo "[---] Creating directories."
         mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
         mkdir -p "$HOME"/.config/subsystem
-        echo "[1/3] Preparation done."
+        echo "[1/4] Preparation done."
 
         # clean mountpoints and mount subsystem root
-        echo "[2/3] Mounting subsystem root..."
+        systemd-notify --status="Mounting susbsytem root..."
+        echo "[2/4] Mounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem --mount --store="$MSDIR" --user="$USER"
-        echo "[2/3] Mounted subsystem root."
+        echo "[2/4] Mounted subsystem root."
 
         # start subsystem
-        echo "[3/3] Starting subsystem..."
+        systemd-notify --status="Starting subsystem..."
+        echo "[3/4] Starting subsystem..."
         podman container rm -ifv "subsystem-$SUBSYS_ID"
         podman container run \
             --init \
@@ -57,7 +61,6 @@ case $1 in
             --name "subsystem-$SUBSYS_ID" \
             --hostname subsystem \
             --log-driver journald \
-            --restart=always \
             --env "SUBSYSTEM_USER=$USER" \
             --env "container=subsystem" \
             --network host \
@@ -70,17 +73,26 @@ case $1 in
             -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
             --rootfs "$MSDIR/rootfs" \
             /usr/libexec/ignition
-        echo "[3/3] Started subsystem."
+        echo "[3/4] Started subsystem."
+
+        # dispath restart helper
+        systemd-notify --ready --status="Watching for restarts..."
+        echo "[4/4] Dispatching restart helper."
+        touch "$MSDIR"/.keepalive.lock
+        /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
         ;;
 
     stop)
         # stop subsystem
+        systemd-notify --stopping --status="Stopping subsystem..."
         echo "[1/2] Stopping subsystem..."
+        rm -f "$MSDIR"/.keepalive.lock
         podman container stop -it 30 "subsystem-$SUBSYS_ID"
         podman container rm -ifv "subsystem-$SUBSYS_ID"
         echo "[1/2] Stopped subsystem."
 
         # unmount subsystem root
+        systemd-notify --status="Unmounting subsystem root..."
         echo "[2/2] Unmounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."
@@ -93,3 +105,5 @@ case $1 in
         exit 64
         ;;
 esac
+
+exit 0

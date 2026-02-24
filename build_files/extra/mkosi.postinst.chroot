@@ -27,6 +27,9 @@ echo -e 'alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.tx
 echo -e 'alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
 echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
 
+# make ignition executable
+chmod +x /usr/libexec/ignition
+
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
