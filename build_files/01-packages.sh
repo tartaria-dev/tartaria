@@ -51,7 +51,6 @@ declare -a packages=(
     erofs-utils
     exfatprogs
     f2fs-tools
-    fuse-overlayfs
     gpart
     gparted
     jfsutils
@@ -59,8 +58,6 @@ declare -a packages=(
     mtools
     nilfs-utils
     ntfs-3g
-    squashfs-tools
-    squashfuse
     udftools
     xfsprogs
 
