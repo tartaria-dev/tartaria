@@ -1,6 +1,0 @@
-polkit.addRule(function(action, subject) {
-    if (action.id == "org.freedesktop.policykit.exec" &&
-        action.lookup("program") == "/usr/libexec/enter-subsystem") {
-        return polkit.Result.YES;
-    }
-});

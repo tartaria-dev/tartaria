@@ -5,6 +5,7 @@ set -ouex pipefail
 
 # set correct permissions on polkit rules dir
 chmod 750 /etc/polkit-1
+chgrp -R polkitd /etc/polkit-1
 
 # configure useradd defaults
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
