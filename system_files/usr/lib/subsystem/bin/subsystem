@@ -32,6 +32,10 @@ export NOTIFY_SOCKET
 # iterate through args
 case $1 in
     start)
+        # trap failure incase starting fails or we receive SIGTERM
+        trap 'echo "[!!!] Received SIGTERM, calling stop process." && /usr/lib/subsystem/bin/stop' SIGTERM
+        trap 'echo "[!!!] Startup process failed." && /usr/lib/subsystem/bin/subsystem stop' EXIT
+
         # ensure all subsystem dirs/configs exist
         systemd-notify --status="Preparing..."
         echo "[1/4] Preparing..."
@@ -75,14 +79,21 @@ case $1 in
             /usr/libexec/ignition
         echo "[3/4] Started subsystem."
 
-        # dispath restart helper
-        systemd-notify --ready --status="Watching for restarts..."
+        # dispatch restart helper
+        systemd-notify --ready --status="Monitoring subsystem..."
         echo "[4/4] Dispatching restart helper."
         touch "$MSDIR"/.keepalive.lock
         /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
+
+        # reset traps
+        trap - EXIT SIGTERM
         ;;
 
     stop)
+        # trap failure incase stopping fails
+        trap '' SIGTERM
+        trap 'echo "[!!!] Stop process failed. Manual intervention may be required."' EXIT
+
         # stop subsystem
         systemd-notify --stopping --status="Stopping subsystem..."
         echo "[1/2] Stopping subsystem..."
@@ -96,6 +107,9 @@ case $1 in
         echo "[2/2] Unmounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."
+
+        # reset trap
+        trap - EXIT SIGTERM
         ;;
 
     *)
