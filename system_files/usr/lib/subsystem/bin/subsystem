@@ -1,21 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# my beloved: errexit
+# set errexit
 set -e
-
-# constants
-MSDIR="$HOME/.local/share/subsystem"
-SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
-USER_SUBUID=$(grep "^$USER:" /etc/subuid | cut -d: -f3)
-USER_SUBGID=$(grep "^$USER:" /etc/subgid | cut -d: -f3)
-USER_UID=$(id -u)
-
-readonly MSDIR
-readonly SUBSYS_ID
-readonly USER_SUBUID
-readonly USER_SUBGID
-readonly USER_UID
 
 # do our checks
 if [[ -z $1 ]]; then
@@ -33,31 +20,29 @@ elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
     exit 71
 fi
 
+# set constants
+MSDIR="$HOME/.local/share/subsystem"
+SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+USER_UID=$(id -u)
+readonly MSDIR
+readonly SUBSYS_ID
+readonly USER_UID
+
 # iterate through args
 case $1 in
     start)
         # ensure all subsystem dirs/configs exist
         echo "[1/3] Preparing..."
+        echo "[i] Cleansing mounts."
+        pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
         echo "[i] Creating directories."
-        mkdir -p /var/home/"$USER"/.local/share/subsystem/{rootfs,basefs,fsdata,.work}
-        mkdir -p /var/home/"$USER"/.config/subsystem
-        if [[ ! -f "/var/home/$USER/.config/subsystem/ignition" ]]; then
-            echo "[i] Copying ignition config."
-            cp -f /usr/lib/subsystem/defaults/ignition /var/home/"$USER"/.config/subsystem/
-        fi
+        mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
+        mkdir -p "$HOME"/.config/subsystem
         echo "[1/3] Preparation done."
 
         # clean mountpoints and mount subsystem root
         echo "[2/3] Mounting subsystem root..."
-        echo "[i] Cleansing mountpoints."
-        lsof -t "$MSDIR"/basefs | xargs -r kill -15
-        fusermount3 -uq "$MSDIR"/basefs || true
-        lsof -t "$MSDIR"/rootfs | xargs -r kill -15
-        fusermount3 -uq "$MSDIR"/rootfs || true
-        echo "[i] Mounting lower filesystem."
-        squashfuse -o allow_other,uid="$USER_SUBUID",gid="$USER_SUBGID" /usr/lib/subsystem/rootfs/base.dsk "$MSDIR"/basefs
-        echo "[i] Mounting upper filesystem."
-        fuse-overlayfs -o allow_other,lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
+        pkexec /usr/lib/subsystem/bin/filesystem --mount --store="$MSDIR" --user="$USER"
         echo "[2/3] Mounted subsystem root."
 
         # start subsystem
@@ -66,12 +51,13 @@ case $1 in
         podman container run \
             --init \
             --rm \
+            --detach \
             --cgroups=split \
-            --sdnotify=conmon \
             --env-host \
             --name "subsystem-$SUBSYS_ID" \
             --hostname subsystem \
             --log-driver journald \
+            --restart=always \
             --env "SUBSYSTEM_USER=$USER" \
             --env "container=subsystem" \
             --network host \
@@ -82,7 +68,6 @@ case $1 in
             --workdir "$HOME" \
             -v "$HOME":"$HOME":rslave \
             -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
-            -v "$HOME/.config/subsystem/ignition":/usr/libexec/ignition:ro \
             --rootfs "$MSDIR/rootfs" \
             /usr/libexec/ignition
         echo "[3/3] Started subsystem."
@@ -97,26 +82,13 @@ case $1 in
 
         # unmount subsystem root
         echo "[2/2] Unmounting subsystem root..."
-        if findmnt "$MSDIR"/rootfs >/dev/null; then
-            echo "[i] Unmounting upper filesystem."
-            lsof -t "$MSDIR"/rootfs | xargs -r kill -15
-            fusermount3 -uq "$MSDIR"/rootfs
-        else
-            echo "[!] Upper filesystem isn't mounted."
-        fi
-        if findmnt "$MSDIR"/basefs >/dev/null; then
-            echo "[i] Unmounting lower filesystem."
-            lsof -t "$MSDIR"/basefs | xargs -r kill -15
-            fusermount3 -uq "$MSDIR"/basefs || true
-        else
-            echo "[!] Lower filesystem isn't mounted."
-        fi
+        pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."
         ;;
 
     *)
         # you fool! you didn't pass the correct argument, dammit! you utter fool!
-        echo "[!!!] Unrecognized parameter $1."
+        echo "[!!!] Unrecognized argument $1."
         echo "[i] Usage: $0 start|stop"
         exit 64
         ;;

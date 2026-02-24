@@ -4,13 +4,6 @@
 # this script contains tasks performed on subsystem startup
 # changes will be applied once your subsystem is restarted, e.g. logging out and back in
 
-### -----BEGIN USER CONFIGURATION-----
-
-# example:
-# touch /etc/i-am-working
-
-### -----END USER CONFIGURATION-----
-
 # configure fastest arch repos and update databases
 reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
 pacman -Sy >/dev/null 2>&1 || true
@@ -18,6 +11,13 @@ pacman -Sy >/dev/null 2>&1 || true
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
     echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
+fi
+
+# source user configs
+if [[ -d /etc/ignition.d/ ]]; then
+	for script in /etc/ignition.d/*.sh; do
+		bash "$script" || true
+	done
 fi
 
 # keep subsystem alive

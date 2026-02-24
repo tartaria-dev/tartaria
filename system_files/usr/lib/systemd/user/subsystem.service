@@ -5,16 +5,15 @@ RequiresMountsFor=%t/containers
 RequiresMountsFor=/run/user/%U
 
 [Service]
-Type=notify
+Type=oneshot
+RemainAfterExit=yes
 Delegate=yes
-KillMode=mixed
-NotifyAccess=all
 SyslogIdentifier=%N
 Environment=PODMAN_SYSTEMD_UNIT=%n
 ExecStart=/usr/lib/subsystem/bin/subsystem start
-ExecStop=/usr/lib/subsystem/bin/subsystem stop
-Restart=always
-RestartSec=1s
+ExecStop=-/usr/lib/subsystem/bin/subsystem stop
+Restart=on-failure
+RestartSec=2s
 TimeoutStopSec=35s
 
 [Install]
