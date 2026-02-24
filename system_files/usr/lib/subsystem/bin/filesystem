@@ -5,8 +5,17 @@
 set -e
 
 # do our checks
-if [[ $* =~ --mount|--unmount ]] || [[ $* != *--store=* ]] || [[ $* != *--user=* ]]; then
-    echo "[!!!] Insufficient parameters."
+MOUNT_FLAG_COUNT=$(grep -co "\-\-mount" <<< "$*")
+UNMOUNT_FLAG_COUNT=$(grep -co "\-\-unmount" <<< "$*")
+readonly MOUNT_FLAG_COUNT
+readonly UNMOUNT_FLAG_COUNT
+
+if [[ $MOUNT_FLAG_COUNT -gt 1 ]] || [[ $UNMOUNT_FLAG_COUNT -gt 1 ]] || [[ $((MOUNT_FLAG_COUNT + UNMOUNT_FLAG_COUNT)) -ne 1 ]]; then
+    echo "[!!!] No mount action defined or incorrect usage of --mount|--unmount."
+    echo "[i] Usage: $0 --mount|--unmount --store=/PATH/TO/STORE --user=USER"
+    exit 64
+elif [[ $* != *--store=* ]] || [[ $* != *--user=* ]]; then
+    echo "[!!!] Arguments --store|--user were not used."
     echo "[i] Usage: $0 --mount|--unmount --store=/PATH/TO/STORE --user=USER"
     exit 64
 elif [[ "$EUID" != "0" ]]; then
