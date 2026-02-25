@@ -14,20 +14,19 @@ first-time() {
     cat <<EOF
 Hello there!
 
-Your shell is currently running inside a containerized environment.
-Changes you make besides those to your homedir won't affect the host.
+Your shell is currently running inside a subsystem.
+Changes besides those to your homedir won't affect the host.
 Commands relating to container management (distrobox, docker, podman)
-are linked into this environment, so they can be run without issue.
+are already linked into this subsystem.
 
-To edit startup commands for this environment, run:
-nano ~/.config/subsystem/ignition
+To see options for managing your subsystem, execute:
+ignition --help
+
+To see how to execute/link/unlink commands on/from the host, execute:
+synergy --help
 
 To suppress this lovely notice, execute:
 touch ~/.config/subsystem/suppress-notice
-
-To see how to execute/link/unlink commands from the host, execute:
-synergy --help
-
 EOF
 }
 
@@ -36,10 +35,10 @@ errmsg() {
     cat <<EOF
 Oops,
 
-Your containerized environment failed to start.
+Your subsystem has failed to start.
 Logs have been stored in ~/.subsystem-failure.
-Don't worry - a reboot should fix things.
-For now, here's a regular shell on the host - be careful.
+If logging out and back in doesn't fix things,
+manual investigation may be required.
 
 EOF
 }

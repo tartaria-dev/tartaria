@@ -33,25 +33,18 @@ export NOTIFY_SOCKET
 case $1 in
     start)
         # trap EXIT
-        trap 'echo "[!!!] Error occurred, cleaning up." && /usr/lib/subsystem/bin/subsystem stop' EXIT
+        trap 'echo "[!!!] Error occurred, cleaning up." && systemd-notify --status="Start process failed." && /usr/lib/subsystem/bin/subsystem stop' EXIT
 
-        # ensure all subsystem dirs/configs exist
-        systemd-notify --status="Preparing..."
-        echo "[1/4] Preparing..."
-        echo "[---] Creating directories."
-        mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
-        mkdir -p "$HOME"/.config/subsystem
-        echo "[1/4] Preparation done."
-
-        # clean mountpoints and mount subsystem root
+        # mount subsystem root
         systemd-notify --status="Mounting susbsytem root..."
-        echo "[2/4] Mounting subsystem root..."
+        echo "[1/3] Mounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER"
-        echo "[2/4] Mounted subsystem root."
+        echo "[1/3] Mounted subsystem root."
 
         # start subsystem
         systemd-notify --status="Starting subsystem..."
-        echo "[3/4] Starting subsystem..."
+        echo "[2/3] Starting subsystem..."
+        mkdir -p "$HOME"/.config/subsystem
         podman container rm -ifv "subsystem-$SUBSYS_ID"
         podman container run \
             --init \
@@ -72,13 +65,15 @@ case $1 in
             --workdir "$HOME" \
             -v "$HOME":"$HOME":rslave \
             -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+            -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+            -v /usr/lib/subsystem/bin/synergy:/usr/libexec/synergy:ro \
             --rootfs "$MSDIR/rootfs" \
             /usr/libexec/ignition
-        echo "[3/4] Started subsystem."
+        echo "[2/3] Started subsystem."
 
         # dispatch restart helper
         systemd-notify --ready --status="Monitoring subsystem..."
-        echo "[4/4] Dispatching restart helper."
+        echo "[3/3] Dispatching restart helper."
         touch "$MSDIR"/.keepalive.lock
         systemd-cat /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
 
@@ -88,7 +83,7 @@ case $1 in
 
     stop)
         # trap failure incase stopping fails
-        trap 'echo "[!!!] Stop process failed. Manual intervention may be required."' EXIT
+        trap 'echo "[!!!] Stop process failed. Manual intervention may be required." && systemd-notify --status="Stop process failed."' EXIT
 
         # stop subsystem
         systemd-notify --stopping --status="Stopping subsystem..."

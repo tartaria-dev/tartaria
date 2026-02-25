@@ -64,6 +64,9 @@ case $ACTION in
         # trap EXIT
         trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$TARGETUSR"' EXIT
 
+        # ensure required dirs exist
+        mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
+
         # (re)mount lower filesystem
         if ! findmnt "$MSDIR"/basefs >/dev/null; then
             echo "[i] Mounting lower filesystem."

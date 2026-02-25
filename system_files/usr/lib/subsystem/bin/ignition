@@ -1,8 +1,14 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# this script contains tasks performed on subsystem startup
-# changes will be applied once your subsystem is restarted, e.g. logging out and back in
+# do our checks
+if [[ "$EUID" == "0" ]]; then
+    echo "[!!!] Please do not run this as an administrator."
+    exit 77
+elif [[ ! -f /run/.containerenv ]]; then
+	echo "[!!!] Running outside of a subsystem."
+	exit 64
+fi
 
 # configure fastest arch repos and update databases
 reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
@@ -10,7 +16,7 @@ pacman -Sy >/dev/null 2>&1 || true
 
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
-    echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
+	echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
 fi
 
 # source user configs

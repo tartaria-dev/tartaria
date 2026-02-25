@@ -60,6 +60,8 @@ startctr() {
         --workdir "$HOME" \
         -v "$HOME":"$HOME":rslave \
         -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+        -v /usr/lib/subsystem/bin/synergy:/usr/libexec/synergy:ro \
         --rootfs "$MSDIR/rootfs" \
         /usr/libexec/ignition
 }
@@ -80,12 +82,17 @@ while [[ -f $LOCKFILE ]]; do
         FAILED=$(( FAILED + 1 ))
         echo "[!] Failed to restart subsystem-$SUBSYS_ID, failure counter is at $FAILED."
     else
-        FAILED=0
-        echo "[i] Restarted subsystem-$SUBSYS_ID successfully."
+        if ! podman ps --filter "name=subsystem-$SUBSYS_ID" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$SUBSYS_ID$"; then
+            FAILED=$(( FAILED + 1 ))
+            echo "[!] Failed to start subsystem-$SUBSYS_ID, failure counter is at $FAILED."
+        else
+            FAILED=0
+            echo "[i] Restarted subsystem-$SUBSYS_ID successfully."
+        fi
     fi
 
     if [[ "$FAILED" -ge "5" ]]; then
-        echo "[!!!] Reached 5 consecutive failed restarts."
+        echo "[!!!] Reached 5 or more consecutive failed restarts."
         exit 1
     fi
 done

@@ -3,8 +3,7 @@
 
 set -e
 
-# allow access to various utilities on the host
-ln -sT /usr/libexec/host-spawn /usr/bin/synergy
+# allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
 ln -sT /usr/libexec/host-spawn /usr/bin/podman
 ln -sT /usr/libexec/host-spawn /usr/bin/docker

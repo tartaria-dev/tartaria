@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the Tartaria project:
+#    https://github.com/tartaria-dev/tartaria
+#
+# Copyright (C) 2026 Tartaria Developers
+#
+# Tartaria is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# Tartaria is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Tartaria; if not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+# utilities
+help() {
+    cat <<EOF
+usage:
+    synergy [options...] <command>
+
+synopsis:
+    execute, link, or unlink commands from the host system
+
+options:
+    -h, --help                      show this help message
+    -r, --root                      execute <command> as root, requires user authentication
+    -l, --link                      link a command from the host
+    -u, --unlink                    unlink a command linked from the host                        
+
+unrecognized options will be treated as a command to execute on the host, e.g. "bash"
+EOF
+}
+
+# do our checks
+if [[ "$EUID" == "0" ]]; then
+    echo "[!!!] Please do not run this as an administrator."
+    exit 77
+elif [[ ! -f /run/.containerenv ]]; then
+	echo "[!!!] Please do not run this outside of a subsystem."
+	exit 64
+fi
+
+# iterate through args
+case $1 in
+    -h|--help)
+        # help msg
+        help
+        ;;
+    -r|--root)
+        # shift args
+        shift
+
+        # check if a command was provided
+        if [[ -z "$*" ]]; then
+            help
+            echo "[!!!] No command provided."
+            exit 1
+        fi
+
+        # execute cmd as root
+        /usr/libexec/host-spawn pkexec bash -c "$@"
+        ;;
+    -l|--link)
+        # shift args
+        shift
+
+        # run checks
+        if [[ -z "$1" ]]; then
+            echo "[!!!] No command to link provided."
+            help
+            exit 1
+        elif ! /usr/libexec/host-spawn which "$1" >/dev/null; then
+            echo "[!!!] Command $1 not found."
+            exit 1
+        elif [[ $(realpath /usr/bin/"$1") == /usr/libexec/host-spawn ]]; then
+            echo "[!!!] Command $1 is already linked."
+            exit 1
+        elif command -v "$1" >/dev/null 2>&1; then
+            echo "[!!!] Command $1 already exists."
+            exit 1
+        fi
+
+        # link command
+        echo "[1/1] Linking command $1..."
+        sudo ln -sT /usr/libexec/host-spawn /usr/local/bin/"$1"
+        echo "[1/1] Linked command $1 to /usr/local/bin/$1"
+        ;;
+    -u|--unlink)
+        # shift args
+        shift
+
+        # run checks
+        if [[ -z "$1" ]]; then
+            echo "[!!!] No command to unlink provided."
+            help
+            exit 1
+        elif [[ $(realpath /usr/bin/"$1") != /usr/libexec/host-spawn ]]; then
+            echo "[!!!] Command $1 isn't linked."
+            exit 1
+        fi
+
+        # unlink command
+        echo "[1/1] Unlinking command $1..."
+        sudo rm -f /usr/bin/"$1"
+        echo "[1/1] Unlinked command $1"
+        ;;
+    *)
+        # run checks
+        if [[ -z "$*" ]]; then
+            echo "[!!!] No command provided."
+            help
+            exit 1
+        fi
+
+        # execute cmd normally
+        /usr/libexec/host-spawn bash -c "$@"
+        ;;
+esac
