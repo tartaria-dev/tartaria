@@ -15,7 +15,7 @@ elif [[ "$EUID" == "0" ]]; then
 elif ! grep -q "$USER" /etc/subuid || ! grep -q "$USER" /etc/subgid; then
     echo "[!!!] $USER does not have sub{uid,gid}s configured."
     exit 78
-elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
+elif [[ -z $PODMAN_SYSTEMD_UNIT ]] || [[ -z $NOTIFY_SOCKET ]]; then
     echo "[!!!] Environment isn't properly set up."
     exit 71
 fi
@@ -39,7 +39,7 @@ case $1 in
         systemd-notify --status="Preparing..."
         echo "[1/4] Preparing..."
         echo "[---] Cleansing mounts."
-        pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
+        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
         echo "[---] Creating directories."
         mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
         mkdir -p "$HOME"/.config/subsystem
@@ -48,7 +48,7 @@ case $1 in
         # clean mountpoints and mount subsystem root
         systemd-notify --status="Mounting susbsytem root..."
         echo "[2/4] Mounting subsystem root..."
-        pkexec /usr/lib/subsystem/bin/filesystem --mount --store="$MSDIR" --user="$USER"
+        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER"
         echo "[2/4] Mounted subsystem root."
 
         # start subsystem
@@ -82,7 +82,7 @@ case $1 in
         systemd-notify --ready --status="Monitoring subsystem..."
         echo "[4/4] Dispatching restart helper."
         touch "$MSDIR"/.keepalive.lock
-        /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
+        systemd-cat /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
 
         # reset traps
         trap - EXIT
@@ -103,7 +103,7 @@ case $1 in
         # unmount subsystem root
         systemd-notify --status="Unmounting subsystem root..."
         echo "[2/2] Unmounting subsystem root..."
-        pkexec /usr/lib/subsystem/bin/filesystem --unmount --store="$MSDIR" --user="$USER"
+        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."
 
         # reset trap

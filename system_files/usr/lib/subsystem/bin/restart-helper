@@ -74,14 +74,14 @@ while [[ -f $LOCKFILE ]]; do
 
     [[ -f $LOCKFILE ]] || break
 
-    echo "[---] subsystem-$SUBSYS_ID exited, restarting."
+    echo "[i] subsystem-$SUBSYS_ID exited, restarting."
 
     if ! startctr; then
         FAILED=$(( FAILED + 1 ))
-        echo "[!!!] Failed to restart subsystem-$SUBSYS_ID, failed restart counter is at $FAILED."
+        echo "[!] Failed to restart subsystem-$SUBSYS_ID, failure counter is at $FAILED."
     else
         FAILED=0
-        echo "[---] Restarted subsystem-$SUBSYS_ID successfully."
+        echo "[i] Restarted subsystem-$SUBSYS_ID successfully."
     fi
 
     if [[ "$FAILED" -ge "5" ]]; then
