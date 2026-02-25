@@ -7,7 +7,7 @@ set -eo pipefail
 # do our checks
 if [[ $* != *--lockfile=* ]] || [[ $* != *--subsysid=* ]]; then
     echo "[!!!] Arguments --lockfile or --subsysid were not used."
-    echo "[i] Usage: $0 --lockfile=/PATH/TO/LOCKFILE.lock --subsysid=ID"
+    echo "[---] Usage: $0 --lockfile=/PATH/TO/LOCKFILE.lock --subsysid=ID"
     exit 64
 elif [[ "$EUID" == "0" ]]; then
     echo "[!!!] Please do not run this as an administrator."
@@ -23,10 +23,12 @@ for arg in "$@"; do
             readonly LOCKFILE
             readonly MSDIR
             ;;
+
         --subsysid=*)
             SUBSYS_ID="${arg#*=}"
             readonly SUBSYS_ID
             ;;
+
         *)
             echo "[i] Argument $arg not known, ignoring."
             ;;

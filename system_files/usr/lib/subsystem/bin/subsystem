@@ -32,9 +32,8 @@ export NOTIFY_SOCKET
 # iterate through args
 case $1 in
     start)
-        # trap failure incase starting fails or we receive SIGTERM
-        trap 'echo "[!!!] Received SIGTERM, calling stop process." && /usr/lib/subsystem/bin/stop' SIGTERM
-        trap 'echo "[!!!] Startup process failed." && /usr/lib/subsystem/bin/subsystem stop' EXIT
+        # trap EXIT
+        trap 'echo "[!!!] Error occurred, cleaning up." && /usr/lib/subsystem/bin/subsystem stop' EXIT
 
         # ensure all subsystem dirs/configs exist
         systemd-notify --status="Preparing..."
@@ -86,12 +85,11 @@ case $1 in
         /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
 
         # reset traps
-        trap - EXIT SIGTERM
+        trap - EXIT
         ;;
 
     stop)
         # trap failure incase stopping fails
-        trap '' SIGTERM
         trap 'echo "[!!!] Stop process failed. Manual intervention may be required."' EXIT
 
         # stop subsystem
@@ -109,7 +107,7 @@ case $1 in
         echo "[2/2] Unmounted subsystem root."
 
         # reset trap
-        trap - EXIT SIGTERM
+        trap - EXIT
         ;;
 
     *)
