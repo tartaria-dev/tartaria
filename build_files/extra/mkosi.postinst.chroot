@@ -1,15 +1,25 @@
 #!/usr/bin/env bash
 # post-installation script for mkosi rootfs generation
 
+# set errexit
 set -e
+
+# install yay and ble.sh
+useradd -m builder
+echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers/6767677667.conf
+cd /home/builder
+sudo -u builder git clone https://aur.archlinux.org/yay.git
+cd yay
+sudo -u builder makepkg -si --noconfirm
+sudo -u builder yay -Sy --noconfirm blesh-git
+cd /
+rm -rf /home/builder /etc/sudoers/6767677667.conf
+userdel -r builder
 
 # allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
 ln -sT /usr/libexec/host-spawn /usr/bin/podman
 ln -sT /usr/libexec/host-spawn /usr/bin/docker
-
-# set root shell to fish
-usermod -s /bin/fish root
 
 # generate locales
 echo -e "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nja_JP.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" > /etc/locale.gen
@@ -18,16 +28,9 @@ locale-gen
 # update dynamic linker cache
 ldconfig
 
-# setup fish prompt
-mkdir -p /etc/fish
-echo -e '\nset fish_greeting' >> /etc/fish/config.fish
-echo -e '\nalias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
-echo -e 'alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
-echo -e 'alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"' >> /etc/fish/config.fish
-echo -e '\nif status is-interactive\n    starship init fish | source\n    atuin init fish | source\nend' >> /etc/fish/config.fish
-
-# make ignition executable
-chmod +x /usr/libexec/ignition
+# setup bash prompt
+cat /etc/bashrc-replace >> /etc/bash.bashrc
+rm -f /etc/bashrc-replace
 
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
