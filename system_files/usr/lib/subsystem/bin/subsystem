@@ -38,8 +38,6 @@ case $1 in
         # ensure all subsystem dirs/configs exist
         systemd-notify --status="Preparing..."
         echo "[1/4] Preparing..."
-        echo "[---] Cleansing mounts."
-        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
         echo "[---] Creating directories."
         mkdir -p "$MSDIR"/{rootfs,basefs,fsdata,.work}
         mkdir -p "$HOME"/.config/subsystem
@@ -48,7 +46,7 @@ case $1 in
         # clean mountpoints and mount subsystem root
         systemd-notify --status="Mounting susbsytem root..."
         echo "[2/4] Mounting subsystem root..."
-        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER"
+        pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER"
         echo "[2/4] Mounted subsystem root."
 
         # start subsystem
@@ -103,7 +101,7 @@ case $1 in
         # unmount subsystem root
         systemd-notify --status="Unmounting subsystem root..."
         echo "[2/2] Unmounting subsystem root..."
-        systemd-cat pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
+        pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."
 
         # reset trap
