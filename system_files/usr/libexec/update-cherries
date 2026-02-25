@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # love meeeeeeee
-set -e
+set -eo pipefail
+
+# trap EXIT
+trap 'echo "[!!!] Something went wrong."' EXIT
 
 # check if we aren't root
 if [[ "$EUID" != "0" ]]; then
@@ -16,10 +19,16 @@ REMOTE_ID=$(podman image inspect docker://ghcr.io/tartaria-dev/cherries:latest -
 readonly LOCAL_ID
 readonly REMOTE_ID
 
+# check if ids are present
+if [[ -z $LOCAL_ID ]] || [[ -z $REMOTE_ID ]]; then
+    echo "[!] We don't seem to have an internet connection. Exiting..."
+    exit 0
+fi
+
 # compare ids
 echo "[1/4] Checking if cherries have grown..."
 if [[ "$LOCAL_ID" == "$REMOTE_ID" ]] && [[ -f /etc/.cherries-are-picked ]]; then
-    echo "[1/4] Cherries have not grown yet, exiting."
+    echo "[!] Cherries have not grown yet, exiting..."
     exit 0
 else
     echo "[1/4] Cherries have grown."
