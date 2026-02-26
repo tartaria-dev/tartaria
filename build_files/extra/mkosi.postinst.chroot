@@ -8,7 +8,7 @@ pacman-key --init
 pacman-key --populate archlinux
 
 # install packages
-pacman -U --noconfirm --needed /packages/*
+pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
 
 # allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
