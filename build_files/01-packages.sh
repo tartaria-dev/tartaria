@@ -215,5 +215,5 @@ declare -a packages=(
     sysprof
 )
 
-pacman -Syq --noconfirm --needed "${packages[@]}" >/dev/null
+pacman -Sy --noconfirm --needed "${packages[@]}" >/dev/null
 pacman -U --noconfirm --needed /packages/mainsys/*.pkg.tar.zst >/dev/null
