@@ -1,4 +1,4 @@
-# base image for main image
+# base image
 FROM archlinux:latest
 
 # load in main build/system files
@@ -9,8 +9,8 @@ COPY build_files /build/
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 
 # fetch Cherries and precompiled AUR packages
-COPY --from=ghcr.io/tartaria-dev/packages:latest /system_files/ /packages/
-COPY --from=ghcr.io/tartaria-dev/cherries:latest /system_files/ /usr/share/tartaria/cherries/
+COPY --from=ghcr.io/tartaria-dev/packages:latest / /packages/
+COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
