@@ -6,14 +6,15 @@ set -e
 
 # install yay and ble.sh
 useradd -m builder
-echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers/6767677667.conf
+mkdir -p /etc/sudoers.d
+echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/6767677667.conf
 cd /home/builder
 sudo -u builder git clone https://aur.archlinux.org/yay.git
 cd yay
 sudo -u builder makepkg -si --noconfirm
 sudo -u builder yay -Sy --noconfirm blesh-git
 cd /
-rm -rf /home/builder /etc/sudoers/6767677667.conf
+rm -rf /home/builder /etc/sudoers.d/6767677667.conf
 userdel -r builder
 
 # allow access to containerization utils on the host
