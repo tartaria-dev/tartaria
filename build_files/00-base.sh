@@ -22,6 +22,7 @@ sed -i \
 
 # init keys
 pacman-key --init
+pacman-key --populate archlinux
 
 # add cachyos repo
 pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
