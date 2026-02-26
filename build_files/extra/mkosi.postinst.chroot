@@ -6,18 +6,6 @@ set -ouex pipefail
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
-# init keys
-pacman-key --init
-pacman-key --populate archlinux
-
-# ensure system is updated
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null
-pacman -Syuq >/dev/null
-
-# install packages
-pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
-pacman -Scc --noconfirm >/dev/null
-
 # allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
 ln -sT /usr/libexec/host-spawn /usr/bin/podman
