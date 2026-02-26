@@ -7,6 +7,8 @@ set -ouex pipefail
 pacman-key --init
 pacman-key --populate archlinux
 
+ls /packages/ || { echo "ERROR: no packages found"; exit 1; }
+
 # install packages
 pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
 
