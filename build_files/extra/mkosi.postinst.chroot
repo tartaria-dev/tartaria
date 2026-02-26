@@ -3,21 +3,12 @@
 
 set -ouex pipefail
 
-# setup build user
-useradd -m builder
-echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-installer
+# init keys
+pacman-key --init
+pacman-key --populate archlinux
 
-# build and install yay
-runuser -l builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
-                cd ~/yay && \
-                makepkg -si --noconfirm"
-
-# install ble.sh with yay
-runuser -l builder -c "yay -S --noconfirm blesh-git"
-
-# cleanup yay install
-rm -f /etc/sudoers.d/10-installer
-userdel -r builder
+# install packages
+pacman -U --noconfirm --needed /packages/*
 
 # allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
