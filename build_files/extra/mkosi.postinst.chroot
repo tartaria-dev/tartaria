@@ -9,10 +9,10 @@ useradd -m builder
 mkdir -p /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/6767677667.conf
 cd /home/builder
-sudo -u builder git clone https://aur.archlinux.org/yay.git
+su builder -c git clone https://aur.archlinux.org/yay.git
 cd yay
-sudo -u builder makepkg -si --noconfirm
-sudo -u builder yay -Sy --noconfirm blesh-git
+su builder -c builder makepkg -si --noconfirm
+su builder -c builder yay -Sy --noconfirm blesh-git
 cd /
 rm -rf /home/builder /etc/sudoers.d/6767677667.conf
 userdel -r builder
