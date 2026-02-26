@@ -8,16 +8,15 @@ useradd -m builder
 echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-installer
 
 # build and install yay
-su - builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
+runuser -l builder -c "git clone https://aur.archlinux.org/yay.git ~/yay && \
                 cd ~/yay && \
                 makepkg -si --noconfirm"
 
-# install ble.sh
-su - builder -c "yay -S --noconfirm blesh-git"
+# install ble.sh with yay
+runuser -l builder -c "yay -S --noconfirm blesh-git"
 
 # cleanup yay install
-rm -rf /home/builder /etc/sudoers.d/10-installer
-pkill -u builder
+rm -f /etc/sudoers.d/10-installer
 userdel -r builder
 
 # allow access to containerization utils on the host
@@ -39,5 +38,5 @@ rm -f /etc/bashrc-replace
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
-# cleanup rootfs before import
+# cleanup
 rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
