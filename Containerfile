@@ -5,10 +5,8 @@ FROM archlinux:latest
 COPY system_files /
 COPY build_files /build/
 
-# fetch Brew
+# fetch Brew, Cherries (our lovely dotfiles), and our AUR pkgs
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
-
-# fetch Cherries (our lovely dotfiles) and our AUR pkgs
 COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 COPY --from=ghcr.io/tartaria-dev/packages:latest / /packages/
 

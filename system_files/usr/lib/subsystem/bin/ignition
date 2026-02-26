@@ -10,7 +10,7 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-# configure fastest arch repos and update databases
+# configure fastest arch repos and update databases if internet is connected (hence "|| true")
 reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
 pacman -Sy >/dev/null 2>&1 || true
 
