@@ -9,6 +9,9 @@ sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 # init keys
 pacman-key --init
 pacman-key --populate archlinux
+
+# ensure system is updated
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null
 pacman -Syuq >/dev/null
 
 # install packages
