@@ -6,11 +6,10 @@ set -ouex pipefail
 # init keys
 pacman-key --init
 pacman-key --populate archlinux
-pacman -Syuq >/dev/null
+pacman -Syuq --cachedir /tmp/pacman-cache >/dev/null
 
 # install packages
-mkdir -p /var/cache/pacman/pkg
-pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
+pacman -U --noconfirm --needed --cachedir /tmp/pacman-cache /packages/*.pkg.tar.zst >/dev/null
 pacman -Scc --noconfirm >/dev/null
 
 # allow access to containerization utils on the host
