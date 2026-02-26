@@ -3,13 +3,16 @@
 
 set -ouex pipefail
 
+# disable pacman sandboxing
+sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
+
 # init keys
 pacman-key --init
 pacman-key --populate archlinux
-pacman -Syuq --cachedir /tmp/pacman-cache >/dev/null
+pacman -Syuq >/dev/null
 
 # install packages
-pacman -U --noconfirm --needed --cachedir /tmp/pacman-cache /packages/*.pkg.tar.zst >/dev/null
+pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
 pacman -Scc --noconfirm >/dev/null
 
 # allow access to containerization utils on the host
@@ -27,9 +30,6 @@ ldconfig
 # setup bash prompt
 cat /etc/bashrc-replace >> /etc/bash.bashrc
 rm -f /etc/bashrc-replace
-
-# disable pacman sandboxing
-sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
 # cleanup
 rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
