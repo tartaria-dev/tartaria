@@ -216,4 +216,4 @@ declare -a packages=(
 )
 
 pacman -Syq --noconfirm --needed "${packages[@]}" >/dev/null
-pacman -U --noconfirm --needed /packages/*.pkg.tar.zst >/dev/null
+pacman -U --noconfirm --needed /packages/mainsys/*.pkg.tar.zst >/dev/null

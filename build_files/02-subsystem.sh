@@ -15,6 +15,10 @@ mkdir -p mkosi.extra/usr/libexec
 wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O mkosi.extra/usr/libexec/host-spawn
 chmod +x mkosi.extra/usr/libexec/host-spawn
 
+# import subsystem packages
+mkdir mkosi.extra/packages
+cp -rf /packages/subsys/* mkosi.extra/packages/
+
 # build arch rootfs
 mkosi build
 
