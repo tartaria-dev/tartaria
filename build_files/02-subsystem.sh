@@ -19,7 +19,7 @@ chmod +x mkosi.extra/usr/libexec/host-spawn
 mkosi build
 
 # install extra pkgs into rootfs
-pacman -U --root /workdir/output/rootfs --noconfirm --neeeded /packages/subsys/*
+pacman -U --root /workdir/output/rootfs --noconfirm --needed /packages/subsys/*
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
