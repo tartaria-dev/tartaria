@@ -59,8 +59,6 @@ startctr() {
         --tmpfs /run \
         --workdir "$HOME" \
         -v "$HOME":"$HOME":rslave \
-        -v /usr/share/icons:/usr/share/icons:ro \
-        -v /usr/share/glib-2.0/schemas:/usr/share/glib-2.0/schemas:ro \
         -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
         -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
         -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
