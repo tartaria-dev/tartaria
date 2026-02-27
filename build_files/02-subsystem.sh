@@ -19,11 +19,11 @@ chmod +x mkosi.extra/usr/libexec/host-spawn
 mkosi build
 
 # install extra pkgs into rootfs
-pacman -U --root /workdir/output/rootfs --noconfirm /packages/subsys/* >/dev/null
+pacman -U --root /workdir/output/image --noconfirm /packages/subsys/* >/dev/null
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /workdir/output/rootfs >/dev/null
+mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /workdir/output/image >/dev/null
 
 # cleanup
 cd /
