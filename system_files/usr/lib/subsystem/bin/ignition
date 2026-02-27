@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # do our checks
-if [[ "$EUID" == "0" ]]; then
-    echo "[!!!] Please do not run this as an administrator."
+if [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
     exit 77
 elif [[ ! -f /run/.containerenv ]]; then
 	echo "[!!!] Running outside of a subsystem."
