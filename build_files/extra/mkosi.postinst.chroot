@@ -3,6 +3,10 @@
 
 set -ouex pipefail
 
+# init keys
+pacman-key --init
+pacman-key --populate archlinux
+
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
