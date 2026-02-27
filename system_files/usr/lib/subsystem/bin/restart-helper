@@ -51,17 +51,17 @@ startctr() {
         --hostname subsystem \
         --log-driver journald \
         --env "SUBSYSTEM_USER=$USER" \
-        --env "GSETTINGS_SCHEMA_DIR=/usr/share/glib-2.0/schemas" \
         --network host \
         --user 0:0 \
         --userns keep-id \
-        --tmpfs /tmp \
         --tmpfs /run \
         --workdir "$HOME" \
-        -v "$HOME":"$HOME":rslave \
-        -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
-        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
-        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+        -v "$HOME":"$HOME":rslave,rbind \
+        -v /dev:/dev:rslave,nosuid,rbind \
+        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
+        -v /run/user/"$USER_UID":/run/user/"$USER_UID":rslave,nosuid,nodev,rbind \
+        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro,rprivate \
+        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro,rprivate \
         --rootfs "$MSDIR/rootfs" \
         /usr/libexec/ignition
 }
