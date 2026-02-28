@@ -22,9 +22,9 @@ locale-gen
 # update dynamic linker cache
 ldconfig
 
-# setup bash prompt
-cat /etc/bashrc-replace >> /etc/bash.bashrc
-rm -f /etc/bashrc-replace
+# setup zsh prompt
+cat /etc/zshrc-addons >> /etc/zsh/zshrc
+rm -f /etc/zshrc-addons
 
 # cleanup
 rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}

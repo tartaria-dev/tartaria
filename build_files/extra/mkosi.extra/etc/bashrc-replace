@@ -1,8 +1,0 @@
-alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
-alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
-alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
-
-if [[ $- == *i* ]]; then
-    source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
-    eval "$(atuin init zsh)"
-fi
