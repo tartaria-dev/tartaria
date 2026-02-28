@@ -16,6 +16,9 @@ elif [[ "$EUID" == "0" ]]; then
     return
 fi
 
+# tell user we're doing stuff
+echo "[---] Starting up..."
+
 # if it exists, clean out the previous failure log
 if [[ -f "$HOME/.subsystem-failure" ]]; then
     rm -f "$HOME/.subsystem-failure"
@@ -23,7 +26,18 @@ fi
 
 # check if subsystem is active and exec into subsystem, otherwise fail
 if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
-    exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
+    if ! podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh -c "echo"; then
+        cat <<EOF
+Oops,
+
+Something went wrong and your subsystem isn't
+accessible via an interactive shell right now.
+Returning to host shell (bash).
+
+EOF
+    else
+        podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
+    fi
 else
     journalctl --user --no-pager -lxeu subsystem > "$HOME/.subsystem-failure"
     cat <<EOF
@@ -31,8 +45,7 @@ Oops,
 
 Your subsystem has failed to start.
 Logs have been stored in ~/.subsystem-failure.
-If logging out and back in doesn't fix things,
-manual investigation may be required.
+Returning to host shell (bash).
 
 EOF
 fi
