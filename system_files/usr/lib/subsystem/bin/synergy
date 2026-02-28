@@ -50,7 +50,8 @@ case $1 in
         fi
 
         # execute cmd as root
-        /usr/libexec/host-spawn pkexec bash -c "$@"
+        # shellcheck disable=SC2068
+        /usr/libexec/host-spawn pkexec command $@
         ;;
     -l|--link)
         # shift args
@@ -86,14 +87,14 @@ case $1 in
             echo "[!!!] No command to unlink provided."
             help
             exit 1
-        elif [[ $(realpath /usr/bin/"$1") != /usr/libexec/host-spawn ]]; then
+        elif [[ $(realpath /usr/local/bin/"$1") != /usr/libexec/host-spawn ]]; then
             echo "[!!!] Command $1 isn't linked."
             exit 1
         fi
 
         # unlink command
         echo "[1/1] Unlinking command $1..."
-        sudo rm -f /usr/bin/"$1"
+        sudo rm -f /usr/local/bin/"$1"
         echo "[1/1] Unlinked command $1"
         ;;
     *)
@@ -105,6 +106,7 @@ case $1 in
         fi
 
         # execute cmd normally
-        /usr/libexec/host-spawn bash -c "$@"
+        # shellcheck disable=SC2068
+        /usr/libexec/host-spawn command $@
         ;;
 esac
