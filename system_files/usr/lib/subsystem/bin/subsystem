@@ -41,7 +41,7 @@ elif [[ "$EUID" == "0" ]]; then
 elif ! grep -q "$USER" /etc/subuid || ! grep -q "$USER" /etc/subgid; then
     echo "[!!!] $USER does not have sub{uid,gid}s configured."
     exit 78
-elif [[ -z $PODMAN_SYSTEMD_UNIT ]] || [[ -z $NOTIFY_SOCKET ]]; then
+elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
     echo "[!!!] Environment isn't properly set up."
     exit 71
 fi
