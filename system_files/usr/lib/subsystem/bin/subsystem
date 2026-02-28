@@ -49,11 +49,8 @@ fi
 # set constants
 MSDIR="$HOME/.local/share/subsystem"
 SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
-USER_UID=$(id -u)
 readonly MSDIR
 readonly SUBSYS_ID
-readonly USER_UID
-export NOTIFY_SOCKET
 
 # iterate through args
 case $1 in
@@ -62,13 +59,11 @@ case $1 in
         trap 'echo "[!!!] Error occurred, cleaning up." && systemd-notify --status="Start process failed." && /usr/lib/subsystem/bin/subsystem stop' EXIT
 
         # mount subsystem root
-        systemd-notify --status="Mounting susbsytem root..."
         echo "[1/3] Mounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER"
         echo "[1/3] Mounted subsystem root."
 
         # start subsystem
-        systemd-notify --status="Starting subsystem..."
         echo "[2/3] Starting subsystem..."
         mkdir -p "$HOME"/.config/subsystem
         podman container rm -ifv "subsystem-$SUBSYS_ID"
@@ -76,7 +71,6 @@ case $1 in
         echo "[2/3] Started subsystem."
 
         # dispatch restart helper
-        systemd-notify --ready --status="Monitoring subsystem..."
         echo "[3/3] Dispatching restart helper."
         touch "$MSDIR"/.keepalive.lock
         systemd-cat /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID"
@@ -90,7 +84,6 @@ case $1 in
         trap 'echo "[!!!] Stop process failed. Manual intervention may be required." && systemd-notify --status="Stop process failed."' EXIT
 
         # stop subsystem
-        systemd-notify --stopping --status="Stopping subsystem..."
         echo "[1/2] Stopping subsystem..."
         rm -f "$MSDIR"/.keepalive.lock
         podman container stop -it 30 "subsystem-$SUBSYS_ID"
@@ -98,7 +91,6 @@ case $1 in
         echo "[1/2] Stopped subsystem."
 
         # unmount subsystem root
-        systemd-notify --status="Unmounting subsystem root..."
         echo "[2/2] Unmounting subsystem root..."
         pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER"
         echo "[2/2] Unmounted subsystem root."

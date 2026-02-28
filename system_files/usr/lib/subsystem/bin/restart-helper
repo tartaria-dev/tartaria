@@ -62,7 +62,6 @@ for arg in "$@"; do
 done
 
 # set constants
-USER_UID=$(id -u)
 FAILED=0
 
 # watch subsystem container based on lockfile presence
@@ -81,6 +80,7 @@ while [[ -f $LOCKFILE ]]; do
         FAILED=$(( FAILED + 1 ))
         echo "[!!] Failed to restart subsystem-$SUBSYS_ID, failure counter is at $FAILED."
     else
+        sleep 1
         if ! podman ps --filter "name=subsystem-$SUBSYS_ID" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$SUBSYS_ID$"; then
             FAILED=$(( FAILED + 1 ))
             echo "[!!] Failed to start subsystem-$SUBSYS_ID, failure counter is at $FAILED."

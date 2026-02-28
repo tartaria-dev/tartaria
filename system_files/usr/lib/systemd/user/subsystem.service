@@ -5,10 +5,7 @@ RequiresMountsFor=%t/containers
 RequiresMountsFor=/run/user/%U
 
 [Service]
-Type=notify
-Delegate=yes
-SyslogIdentifier=%N
-NotifyAccess=all
+Type=oneshot
 Environment=PODMAN_SYSTEMD_UNIT=%n
 ExecStart=/usr/lib/subsystem/bin/subsystem start
 ExecStop=-/usr/lib/subsystem/bin/subsystem stop
