@@ -28,8 +28,11 @@ for arg in "$@"; do
 
         --user=*)
             TARGETUSR="${arg#*=}"
+            USER_UID=$(id -u "$TARGETUSR")
             USER_SUBUID=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
             USER_SUBGID=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f2)
+            readonly TARGETUSR
+            readonly USER_UID
             readonly USER_SUBUID
             readonly USER_SUBGID
             if [[ -z $USER_SUBUID ]] || [[ -z $USER_SUBGID ]]; then
@@ -72,8 +75,17 @@ case $ACTION in
         else
             echo "[i] Remounting lower filesystem."
             fuser -mk -15 "$MSDIR"/basefs || true
-            umount -q "$MSDIR"/basefs
-            mount --map-users 0:"$USER_SUBUID":1 --map-groups 0:"$USER_SUBGID":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR/basefs"
+            mount --map-users 0:"$USER_SUBUID":1 --map-groups 0:"$USER_SUBGID":1 -o ro,acl,loop,user_xattr,remount -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR/basefs"
+        fi
+
+        # (re)mount filesystem data
+        if ! findmnt "$MSDIR"/fsdata >/dev/null; then
+            echo "[i] Mounting filesystem data."
+            mount --map-users "$USER_UID":"$USER_SUBUID":1 --map-groups "$USER_UID":"$USER_SUBGID":1 --bind "$MSDIR/fsdata" "$MSDIR/fsdata"
+        else
+            echo "[i] Remounting filesystem data."
+            fuser -mk -15 "$MSDIR"/fsdata || true
+            mount --map-users "$USER_UID":"$USER_SUBUID":1 --map-groups "$USER_UID":"$USER_SUBGID":1 -o remount --bind "$MSDIR/fsdata" "$MSDIR/fsdata"
         fi
 
         # (re)mount upper filesystem
@@ -83,8 +95,7 @@ case $ACTION in
         else
             echo "[i] Remounting upper filesystem."
             fuser -mk -15 "$MSDIR"/rootfs || true
-            umount -q "$MSDIR"/rootfs
-            mount -t overlay overlay -o index=off,lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
+            mount -t overlay overlay -o remount,index=off,lowerdir="$MSDIR"/basefs,upperdir="$MSDIR"/fsdata,workdir="$MSDIR"/.work "$MSDIR"/rootfs
         fi
 
         # reset traps
@@ -99,6 +110,13 @@ case $ACTION in
             echo "[i] Unmounting upper filesystem."
             fuser -mk -15 "$MSDIR"/rootfs || true
             umount -q "$MSDIR"/rootfs
+        fi
+
+        # unmount filesystem data
+        if findmnt "$MSDIR"/fsdata >/dev/null; then
+            echo "[i] Unmounting filesystem data."
+            fuser -mk -15 "$MSDIR"/fsdata || true
+            umount -q "$MSDIR"/fsdata
         fi
 
         # unmount lower filesystem
