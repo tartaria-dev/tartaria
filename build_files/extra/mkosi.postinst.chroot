@@ -23,6 +23,7 @@ locale-gen
 ldconfig
 
 # setup zsh prompt
+touch /etc/zsh/zshrc
 cat /etc/zshrc-addons >> /etc/zsh/zshrc
 rm -f /etc/zshrc-addons
 
