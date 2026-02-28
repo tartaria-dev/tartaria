@@ -21,14 +21,14 @@ readonly REMOTE_ID
 
 # check if ids are present
 if [[ -z $LOCAL_ID ]] || [[ -z $REMOTE_ID ]]; then
-    echo "[!] We don't seem to have an internet connection. Exiting..."
+    echo "[!!] We don't seem to have an internet connection. Exiting..."
     exit 0
 fi
 
 # compare ids
 echo "[1/4] Checking if cherries have grown..."
 if [[ "$LOCAL_ID" == "$REMOTE_ID" ]] && [[ -f /etc/.cherries-are-picked ]]; then
-    echo "[!] Cherries have not grown yet, exiting..."
+    echo "[!!] Cherries have not grown yet, exiting..."
     exit 0
 else
     echo "[1/4] Cherries have grown."

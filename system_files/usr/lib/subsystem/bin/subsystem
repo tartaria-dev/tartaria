@@ -4,6 +4,32 @@
 # set errexit & pipefail
 set -eo pipefail
 
+# utilities
+start-subsystem() {
+    podman container run \
+        --init \
+        --rm \
+        --detach \
+        --cgroups=split \
+        --env-host \
+        --name "subsystem-$SUBSYS_ID" \
+        --hostname subsystem \
+        --log-driver journald \
+        --env "SUBSYSTEM_USER=$USER" \
+        --network host \
+        --user 0:0 \
+        --userns keep-id \
+        --tmpfs /run \
+        --workdir "$HOME" \
+        -v "$HOME":"$HOME":rslave \
+        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
+        -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+        --rootfs "$MSDIR/rootfs" \
+        /usr/libexec/ignition
+}
+
 # do our checks
 if [[ -z $1 ]]; then
     echo "[!!!] Insufficient parameters."
@@ -46,29 +72,7 @@ case $1 in
         echo "[2/3] Starting subsystem..."
         mkdir -p "$HOME"/.config/subsystem
         podman container rm -ifv "subsystem-$SUBSYS_ID"
-        podman container run \
-            --init \
-            --rm \
-            --detach \
-            --cgroups=split \
-            --env-host \
-            --name "subsystem-$SUBSYS_ID" \
-            --hostname subsystem \
-            --log-driver journald \
-            --env "SUBSYSTEM_USER=$USER" \
-            --network host \
-            --user 0:0 \
-            --userns keep-id \
-            --tmpfs /run \
-            --workdir "$HOME" \
-            -v "$HOME":"$HOME":rslave,rbind \
-            -v /dev:/dev:rslave,nosuid,rbind \
-            -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
-            -v /run/user/"$USER_UID":/run/user/"$USER_UID":rslave,nosuid,nodev,rbind \
-            -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro,rprivate \
-            -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro,rprivate \
-            --rootfs "$MSDIR/rootfs" \
-            /usr/libexec/ignition
+        start-subsystem
         echo "[2/3] Started subsystem."
 
         # dispatch restart helper

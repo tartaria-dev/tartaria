@@ -32,6 +32,10 @@ for arg in "$@"; do
             USER_SUBGID=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f2)
             readonly USER_SUBUID
             readonly USER_SUBGID
+            if [[ -z $USER_SUBUID ]] || [[ -z $USER_SUBGID ]]; then
+                echo "[!!!] $TARGETUSR does not have sub{uid,gid}s configured."
+                exit 78
+            fi
             ;;
 
         mount)
@@ -51,12 +55,6 @@ for arg in "$@"; do
             ;;
     esac
 done
-
-# ensure target user has sub{uid,gid}s configured
-if [[ -z $USER_SUBUID ]] || [[ -z $USER_SUBGID ]]; then
-    echo "[!!!] $TARGETUSR does not have sub{uid,gid}s configured."
-    exit 78
-fi
 
 # run mount/unmount action
 case $ACTION in

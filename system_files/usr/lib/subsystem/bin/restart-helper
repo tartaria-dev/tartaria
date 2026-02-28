@@ -4,6 +4,32 @@
 # set errexit & pipefail
 set -eo pipefail
 
+# utilities
+start-subsystem() {
+    podman container run \
+        --init \
+        --rm \
+        --detach \
+        --cgroups=split \
+        --env-host \
+        --name "subsystem-$SUBSYS_ID" \
+        --hostname subsystem \
+        --log-driver journald \
+        --env "SUBSYSTEM_USER=$USER" \
+        --network host \
+        --user 0:0 \
+        --userns keep-id \
+        --tmpfs /run \
+        --workdir "$HOME" \
+        -v "$HOME":"$HOME":rslave \
+        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
+        -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
+        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+        --rootfs "$MSDIR/rootfs" \
+        /usr/libexec/ignition
+}
+
 # do our checks
 if [[ $* != *--lockfile=* ]] || [[ $* != *--subsysid=* ]]; then
     echo "[!!!] Arguments --lockfile or --subsysid were not used."
@@ -39,33 +65,6 @@ done
 USER_UID=$(id -u)
 FAILED=0
 
-# utilities
-startctr() {
-    podman container run \
-        --init \
-        --rm \
-        --detach \
-        --cgroups=split \
-        --env-host \
-        --name "subsystem-$SUBSYS_ID" \
-        --hostname subsystem \
-        --log-driver journald \
-        --env "SUBSYSTEM_USER=$USER" \
-        --network host \
-        --user 0:0 \
-        --userns keep-id \
-        --tmpfs /run \
-        --workdir "$HOME" \
-        -v "$HOME":"$HOME":rslave,rbind \
-        -v /dev:/dev:rslave,nosuid,rbind \
-        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
-        -v /run/user/"$USER_UID":/run/user/"$USER_UID":rslave,nosuid,nodev,rbind \
-        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro,rprivate \
-        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro,rprivate \
-        --rootfs "$MSDIR/rootfs" \
-        /usr/libexec/ignition
-}
-
 # watch subsystem container based on lockfile presence
 echo "[---] Monitoring subsystem-$SUBSYS_ID."
 
@@ -76,15 +75,15 @@ while [[ -f $LOCKFILE ]]; do
 
     [[ -f $LOCKFILE ]] || break
 
-    echo "[i] subsystem-$SUBSYS_ID exited, restarting."
+    echo "[i] subsystem-$SUBSYS_ID exited, restarting..."
 
-    if ! startctr; then
+    if ! start-subsystem; then
         FAILED=$(( FAILED + 1 ))
-        echo "[!] Failed to restart subsystem-$SUBSYS_ID, failure counter is at $FAILED."
+        echo "[!!] Failed to restart subsystem-$SUBSYS_ID, failure counter is at $FAILED."
     else
         if ! podman ps --filter "name=subsystem-$SUBSYS_ID" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$SUBSYS_ID$"; then
             FAILED=$(( FAILED + 1 ))
-            echo "[!] Failed to start subsystem-$SUBSYS_ID, failure counter is at $FAILED."
+            echo "[!!] Failed to start subsystem-$SUBSYS_ID, failure counter is at $FAILED."
         else
             FAILED=0
             echo "[i] Restarted subsystem-$SUBSYS_ID successfully."
