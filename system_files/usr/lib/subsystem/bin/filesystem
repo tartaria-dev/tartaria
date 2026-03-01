@@ -28,11 +28,9 @@ for arg in "$@"; do
 
         --user=*)
             TARGETUSR="${arg#*=}"
-            USER_UID=$(id -u "$TARGETUSR")
             USER_SUBUID=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
             USER_SUBGID=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f2)
             readonly TARGETUSR
-            readonly USER_UID
             readonly USER_SUBUID
             readonly USER_SUBGID
             if [[ -z $USER_SUBUID ]] || [[ -z $USER_SUBGID ]]; then
@@ -71,27 +69,18 @@ case $ACTION in
         # (re)mount lower filesystem
         if ! findmnt "$MSDIR"/lower >/dev/null; then
             echo "[i] Mounting lower filesystem."
-            mount --map-users 0:"$USER_SUBUID":1 --map-groups 0:"$USER_SUBGID":1 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
+            mount --map-users 0:"$USER_SUBUID":65536 --map-groups 0:"$USER_SUBGID":65536 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
         else
             echo "[i] Remounting lower filesystem."
-            mount --map-users 0:"$USER_SUBUID":1 --map-groups 0:"$USER_SUBGID":1 -o ro,acl,loop,user_xattr,remount -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
-        fi
-
-        # (re)mount upper filesystem
-        if ! findmnt "$MSDIR"/fsdata >/dev/null; then
-            echo "[i] Mounting upper filesystem."
-            mount --map-users "$USER_UID":"$USER_SUBUID":1 --map-groups "$USER_UID":"$USER_SUBGID":1 --bind "$MSDIR"/upper "$MSDIR"/upper
-        else
-            echo "[i] Remounting upper filesystem."
-            mount --map-users "$USER_UID":"$USER_SUBUID":1 --map-groups "$USER_UID":"$USER_SUBGID":1 -o remount --bind "$MSDIR"/upper "$MSDIR"/upper
+            mount --map-users 0:"$USER_SUBUID":65536 --map-groups 0:"$USER_SUBGID":65536 -o ro,acl,loop,user_xattr,remount -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
         fi
 
         # (re)mount rootfs
         if ! findmnt "$MSDIR"/rootfs >/dev/null; then
-            echo "[i] Mounting rootfs."
+            echo "[i] Mounting upper filesystem."
             mount -t overlay overlay -o index=off,lowerdir="$MSDIR"/lower,upperdir="$MSDIR"/upper/upper-data,workdir="$MSDIR"/upper/upper-work "$MSDIR"/rootfs
         else
-            echo "[i] Remounting rootfs."
+            echo "[i] Remounting upper filesystem."
             mount -t overlay overlay -o remount,index=off,lowerdir="$MSDIR"/lower,upperdir="$MSDIR"/upper/upper-data,workdir="$MSDIR"/upper/upper-work "$MSDIR"/rootfs
         fi
 
@@ -104,14 +93,8 @@ case $ACTION in
 
         # unmount upper filesystem
         if findmnt "$MSDIR"/rootfs >/dev/null; then
-            echo "[i] Unmounting rootfs."
-            umount -q "$MSDIR"/rootfs
-        fi
-
-        # unmount filesystem data
-        if findmnt "$MSDIR"/upper >/dev/null; then
             echo "[i] Unmounting upper filesystem."
-            umount -q "$MSDIR"/upper
+            umount -q "$MSDIR"/rootfs
         fi
 
         # unmount lower filesystem
