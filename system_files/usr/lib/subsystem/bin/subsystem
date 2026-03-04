@@ -21,36 +21,38 @@ elif [[ -z $PODMAN_SYSTEMD_UNIT ]]; then
 fi
 
 # set constants
-MSDIR="$HOME/.local/share/subsystem"
-SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
-readonly MSDIR
-readonly SUBSYS_ID
+HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+RFSDIR="/tmp/subsystem-$HASH"
+readonly HASH
+readonly RFSDIR
 
 # utilities
 start-subsystem() {
-    podman container rm -ifv "subsystem-$SUBSYS_ID"
-    podman container run \
-        --init \
-        --rm \
-        --detach \
-        --cgroups=split \
-        --env-host \
-        --name "subsystem-$SUBSYS_ID" \
-        --hostname subsystem \
-        --log-driver journald \
-        --env "SUBSYSTEM_USER=$USER" \
-        --network host \
-        --user 0:0 \
-        --userns keep-id \
-        --tmpfs /run \
-        --workdir "$HOME" \
-        -v "$HOME":"$HOME":rslave \
-        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
-        -v "/run/user/$USER_UID":"/run/user/$USER_UID":ro,rslave \
-        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
-        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
-        --rootfs "$MSDIR/rootfs" \
-        /usr/libexec/ignition
+    if ! podman container exists "subsystem-$HASH"; then
+        podman container create \
+            --init \
+            --detach \
+            --cgroups=split \
+            --env-host \
+            --name "subsystem-$HASH" \
+            --hostname subsystem \
+            --log-driver journald \
+            --env "SUBSYSTEM_USER=$USER" \
+            --network host \
+            --user 0:0 \
+            --userns keep-id \
+            --tmpfs /run \
+            --workdir "$HOME" \
+            -v "$HOME":"$HOME":rslave \
+            -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
+            -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
+            -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+            -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+            --rootfs "$RFSDIR":O \
+            /usr/libexec/ignition
+    fi
+
+    podman container start "subsystem-$HASH"
 }
 
 # iterate through args
@@ -61,7 +63,7 @@ case $1 in
 
         # mount subsystem root
         echo "[1/3] Mounting subsystem root..."
-        pkexec /usr/lib/subsystem/bin/filesystem mount --store="$MSDIR" --user="$USER" | cat
+        pkexec /usr/lib/subsystem/bin/filesystem mount --user="$USER" --rfsdir="$RFSDIR" | cat
         echo "[1/3] Mounted subsystem root."
 
         # start subsystem
@@ -70,10 +72,10 @@ case $1 in
         start-subsystem
         echo "[2/3] Started subsystem."
 
-        # dispatch restart helper
-        echo "[3/3] Dispatching restart helper."
-        touch "$MSDIR"/.keepalive.lock
-        /usr/lib/subsystem/bin/restart-helper --lockfile="$MSDIR/.keepalive.lock" --subsysid="$SUBSYS_ID" | cat
+        # dispatch helper
+        echo "[3/3] Dispatching helper."
+        touch "$RFSDIR"/.keepalive.lock
+        /usr/lib/subsystem/bin/helper --lockfile="$RFSDIR/.keepalive.lock" --hash="$HASH" | cat
 
         # reset traps
         trap - EXIT
@@ -85,14 +87,13 @@ case $1 in
 
         # stop subsystem
         echo "[1/2] Stopping subsystem..."
-        rm -f "$MSDIR"/.keepalive.lock
-        podman container stop -it 30 "subsystem-$SUBSYS_ID"
-        podman container rm -ifv "subsystem-$SUBSYS_ID"
+        rm -f "$RFSDIR"/.keepalive.lock
+        podman container stop -it 30 "subsystem-$HASH"
         echo "[1/2] Stopped subsystem."
 
         # unmount subsystem root
         echo "[2/2] Unmounting subsystem root..."
-        pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$USER" | cat
+        pkexec /usr/lib/subsystem/bin/filesystem unmount --user="$USER" --rfsdir="$RFSDIR" | cat
         echo "[2/2] Unmounted subsystem root."
 
         # reset trap

@@ -7,11 +7,11 @@ set -eo pipefail
 # do our checks
 if [[ "$1" != "mount" ]] && [[ "$1" != "unmount" ]]; then
     echo "[!!!] No mount action defined."
-    echo "[---] Usage: $0 mount|unmount --store=/PATH/TO/STORE --user=USER"
+    echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
     exit 64
 elif [[ $* != *--store=* ]] || [[ $* != *--user=* ]]; then
-    echo "[!!!] Arguments --store or --user were not used."
-    echo "[---] Usage: $0 mount|unmount --store=/PATH/TO/STORE --user=USER"
+    echo "[!!!] Arguments --user or --rfsdir were not used."
+    echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
     exit 64
 elif [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
@@ -21,24 +21,6 @@ fi
 # parse arguments
 for arg in "$@"; do
     case $arg in
-        --store=*)
-            MSDIR="${arg#*=}"
-            readonly MSDIR
-            ;;
-
-        --user=*)
-            TARGETUSR="${arg#*=}"
-            USER_SUBUID=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
-            USER_SUBGID=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f2)
-            readonly TARGETUSR
-            readonly USER_SUBUID
-            readonly USER_SUBGID
-            if [[ -z $USER_SUBUID ]] || [[ -z $USER_SUBGID ]]; then
-                echo "[!!!] $TARGETUSR does not have sub{uid,gid}s configured."
-                exit 78
-            fi
-            ;;
-
         mount)
             [[ "$arg" != "$1" ]] && continue
             ACTION=mount
@@ -51,6 +33,29 @@ for arg in "$@"; do
             readonly ACTION
             ;;
 
+        --user=*)
+            TARGETUSR="${arg#*=}"
+            USER_SUBUID_START=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
+            USER_SUBGID_START=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
+            USER_SUBUID_RANGE=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f3)
+            USER_SUBGID_RANGE=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f3)
+            readonly TARGETUSR
+            readonly USER_SUBUID_START
+            readonly USER_SUBGID_START
+            readonly USER_SUBUID_RANGE
+            readonly USER_SUBGID_RANGE
+
+            if [[ -z $USER_SUBUID_START ]] || [[ -z $USER_SUBGID_START ]] || [[ -z $USER_SUBUID_RANGE ]] || [[ -z $USER_SUBGID_RANGE ]]; then
+                echo "[!!!] $TARGETUSR does not have sub{uid,gid}s configured properly."
+                exit 78
+            fi
+            ;;
+
+        --rfsdir=*)
+            RFSDIR="${arg#*=}"
+            readonly RFSDIR
+            ;;
+
         *)
             echo "[i] Argument $arg not known, ignoring."
             ;;
@@ -61,27 +66,19 @@ done
 case $ACTION in
     mount)
         # trap EXIT
-        trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$MSDIR" --user="$TARGETUSR"' EXIT
+        trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$RFSDIR" --user="$TARGETUSR"' EXIT
 
-        # ensure required dirs exist
-        mkdir -p "$MSDIR"/{rootfs,lower,upper/{upper-data,upper-work}}
+        # ensure mountpoint exists
+        mkdir -p "$RFSDIR"
 
-        # (re)mount lower filesystem
-        if ! findmnt "$MSDIR"/lower >/dev/null; then
-            echo "[i] Mounting lower filesystem."
-            mount --map-users 0:"$USER_SUBUID":65536 --map-groups 0:"$USER_SUBGID":65536 -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
+        # (re)mount filesystem
+        if ! findmnt "$RFSDIR" >/dev/null; then
+            echo "[i] Mounting filesystem."
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"
         else
-            echo "[i] Remounting lower filesystem."
-            mount --map-users 0:"$USER_SUBUID":65536 --map-groups 0:"$USER_SUBGID":65536 -o ro,acl,loop,user_xattr,remount -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$MSDIR"/lower
-        fi
-
-        # (re)mount rootfs
-        if ! findmnt "$MSDIR"/rootfs >/dev/null; then
-            echo "[i] Mounting upper filesystem."
-            mount -t overlay overlay -o index=off,lowerdir="$MSDIR"/lower,upperdir="$MSDIR"/upper/upper-data,workdir="$MSDIR"/upper/upper-work "$MSDIR"/rootfs
-        else
-            echo "[i] Remounting upper filesystem."
-            mount -t overlay overlay -o remount,index=off,lowerdir="$MSDIR"/lower,upperdir="$MSDIR"/upper/upper-data,workdir="$MSDIR"/upper/upper-work "$MSDIR"/rootfs
+            echo "[i] Remounting filesystem."
+            umount -q "$RFSDIR"
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"
         fi
 
         # reset traps
@@ -91,16 +88,13 @@ case $ACTION in
         # trap EXIT
         trap 'echo "[!!!] Error occured in unmounting process, manual intervention is required."' EXIT
 
-        # unmount upper filesystem
-        if findmnt "$MSDIR"/rootfs >/dev/null; then
-            echo "[i] Unmounting upper filesystem."
-            umount -q "$MSDIR"/rootfs
-        fi
-
-        # unmount lower filesystem
-        if findmnt "$MSDIR"/lower >/dev/null; then
-            echo "[i] Unmounting lower filesystem."
-            umount -q "$MSDIR"/lower
+        # unmount filesystem
+        if findmnt "$RFSDIR" >/dev/null; then
+            echo "[i] Unmounting filesystem."
+            umount -q "$RFSDIR"
+            rm -rf "$RFSDIR"
+        else 
+            echo "[!!] Filesystem appears to be unmounted already, ignoring."
         fi
 
         # reset traps
@@ -108,7 +102,7 @@ case $ACTION in
         ;;
     *)
         echo "[!!!] No action defined."
-        echo "[---] Usage: $0 mount|unmount --store=/PATH/TO/STORE --user=USER"
+        echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
         exit 64
         ;;
 esac
