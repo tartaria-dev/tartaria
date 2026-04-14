@@ -1,3 +1,6 @@
+# chunky
+ARG CHUNKAH_CONFIG_STR
+
 # base image
 FROM archlinux:latest
 
@@ -22,5 +25,16 @@ RUN --mount=type=tmpfs,dst=/tmp \
 # proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
 LABEL containers.bootc=1
 
-# lint bootc image, don't remove
+# lint bootc image
 RUN bootc container lint
+
+# rechunk image
+FROM quay.io/coreos/chunkah AS chunkah
+ARG CHUNKAH_CONFIG_STR
+RUN --mount=from=builder,src=/,target=/chunkah,ro \
+    --mount=type=bind,target=/run/src,rw \
+        chunkah build > /run/src/out.ociarchive
+
+# shrimple
+FROM oci-archive:out.ociarchive
+ENTRYPOINT ["git"]
