@@ -94,6 +94,8 @@ jobs:
             io.artifacthub.package.license=Apache-2.0
             io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}
             io.artifacthub.package.prerelease=false
+            containers.bootc=1
+            ostree.bootable=1
           sep-tags: " "
           sep-annotations: " "
 

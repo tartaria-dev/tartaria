@@ -19,10 +19,7 @@ RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/04-extras.sh && \
     bash /build/05-finalize.sh
 
-# proper labeling for bootc images, see https://bootc-dev.github.io/bootc/bootc-images.html#standard-metadata-for-bootc-compatible-images
-LABEL containers.bootc=1
-
-# lint bootc image
+# lint image
 RUN bootc container lint
 
 # rechunk image
