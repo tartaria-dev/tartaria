@@ -196,6 +196,7 @@ declare -a packages=(
     cachyos/scx-manager
     cachyos/scx-scheds
     decibels
+    flatseal
     frameworkintegration
     gnome-calculator
     gnome-calendar
