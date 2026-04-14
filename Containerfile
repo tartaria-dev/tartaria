@@ -1,8 +1,5 @@
-# empty chunkah config
-ARG CHUNKAH_CONFIG_STR
-
 # base image
-FROM archlinux:latest AS image
+FROM archlinux:latest AS final
 
 # load in main build/system files
 COPY system_files /
@@ -31,7 +28,7 @@ RUN bootc container lint
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
-RUN --mount=from=image,src=/,target=/chunkah,ro \
+RUN --mount=from=final,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
         chunkah build --skip-special-files > /run/src/out.ociarchive
 
