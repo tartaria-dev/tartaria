@@ -33,7 +33,7 @@ FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
 RUN --mount=from=image,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
-        chunkah build > /run/src/out.ociarchive
+        chunkah build --skip-special-files > /run/src/out.ociarchive
 
 # finalize
 FROM oci-archive:out.ociarchive
