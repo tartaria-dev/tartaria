@@ -1,8 +1,8 @@
-# chunky
+# empty chunkah config
 ARG CHUNKAH_CONFIG_STR
 
 # base image
-FROM archlinux:latest
+FROM archlinux:latest AS image
 
 # load in main build/system files
 COPY system_files /
@@ -31,10 +31,10 @@ RUN bootc container lint
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
-RUN --mount=from=builder,src=/,target=/chunkah,ro \
+RUN --mount=from=image,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
         chunkah build > /run/src/out.ociarchive
 
-# shrimple
+# finalize
 FROM oci-archive:out.ociarchive
 ENTRYPOINT ["git"]

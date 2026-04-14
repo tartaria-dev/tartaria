@@ -103,6 +103,7 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
+          extra-args: --skip-unused-stages=false
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
