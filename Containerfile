@@ -8,7 +8,7 @@ COPY build_files /build/
 # fetch Brew, Cherries (our lovely dotfiles), and our AUR pkgs
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
-COPY --from=ghcr.io/tartaria-dev/packages:latest / /packages/
+COPY --from=ghcr.io/tartaria-dev/branches:latest / /packages/
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
