@@ -25,7 +25,7 @@ if [[ -f "$HOME/.subsystem-failure" ]]; then
 fi
 
 # check if subsystem is active and exec into subsystem, otherwise fail
-if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
+if [[ "$(systemctl --user is-failed subsystem)" == "activating" ]]; then
     if ! podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh -c "echo"; then
         cat <<EOF
 Oops,
