@@ -36,7 +36,7 @@ Returning to host shell (bash).
 
 EOF
     else
-        podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
+        exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
     fi
 else
     journalctl --user --no-pager -lxeu subsystem > "$HOME/.subsystem-failure"
