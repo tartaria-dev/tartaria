@@ -26,26 +26,18 @@ fi
 
 # check if subsystem is active and exec into subsystem, otherwise fail
 if [[ "$(systemctl --user is-failed subsystem)" == "activating" ]]; then
-    if ! podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh -c "echo"; then
-        cat <<EOF
-Oops,
-
-Something went wrong and your subsystem isn't
-accessible via an interactive shell right now.
-Returning to host shell (bash).
-
-EOF
-    else
-        exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
-    fi
+    exec podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh
 else
-    journalctl --user --no-pager -lxeu subsystem > "$HOME/.subsystem-failure"
     cat <<EOF
 Oops,
 
-Your subsystem has failed to start.
-Logs have been stored in ~/.subsystem-failure.
-Returning to host shell (bash).
+Your subsystem has failed to start, or something else went wrong.
+Logs containing relevant information can be viewed with the following command:
+
+journalctl --user -xeu subsystem
+
+Manual intervention/debugging may be required.
+Falling back to host shell (bash)...
 
 EOF
 fi
