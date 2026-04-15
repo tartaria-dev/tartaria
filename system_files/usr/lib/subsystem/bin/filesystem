@@ -9,8 +9,9 @@ if [[ "$1" != "mount" ]] && [[ "$1" != "unmount" ]]; then
     echo "[!!!] No mount action defined."
     echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
     exit 64
-elif [[ $* != *--store=* ]] || [[ $* != *--user=* ]]; then
+elif [[ $* != *--user=* ]] || [[ $* != *--rfsdir=* ]]; then
     echo "[!!!] Arguments --user or --rfsdir were not used."
+    echo "[!!!] Both arguments and their respective values are required for this command to function."
     echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
     exit 64
 elif [[ "$EUID" != "0" ]]; then
