@@ -51,7 +51,7 @@ case $1 in
 
         # execute cmd as root
         # shellcheck disable=SC2068
-        /usr/libexec/host-spawn pkexec command $@
+        /usr/libexec/host-spawn pkexec $@
         ;;
     -l|--link)
         # shift args
@@ -107,6 +107,6 @@ case $1 in
 
         # execute cmd normally
         # shellcheck disable=SC2068
-        /usr/libexec/host-spawn command $@
+        /usr/libexec/host-spawn $@
         ;;
 esac
