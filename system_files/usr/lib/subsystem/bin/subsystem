@@ -31,7 +31,6 @@ start-subsystem() {
     if ! podman container exists "subsystem-$HASH"; then
         podman container create \
             --init \
-            --detach \
             --cgroups=split \
             --env-host \
             --name "subsystem-$HASH" \
@@ -48,7 +47,7 @@ start-subsystem() {
             -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
             -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
             -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
-            --rootfs "$RFSDIR":O \
+            --rootfs "$RFSDIR"/root:O \
             /usr/libexec/ignition
     fi
 

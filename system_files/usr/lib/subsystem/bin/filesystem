@@ -71,6 +71,7 @@ case $ACTION in
 
         # ensure mountpoint exists
         mkdir -p "$RFSDIR"/root
+        chown "$TARGETUSR":"$TARGETUSR" "$RFSDIR"
 
         # (re)mount filesystem
         if ! findmnt "$RFSDIR"/root >/dev/null; then
