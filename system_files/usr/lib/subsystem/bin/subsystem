@@ -74,8 +74,8 @@ case $1 in
 
         # dispatch helper
         echo "[3/3] Dispatching helper."
-        touch "$RFSDIR"/.keepalive.lock
-        /usr/lib/subsystem/bin/helper --lockfile="$RFSDIR/.keepalive.lock" --hash="$HASH" | cat
+        touch "$RFSDIR"/runtime.lock
+        /usr/lib/subsystem/bin/helper --lockfile="$RFSDIR/runtime.lock" --hash="$HASH" | cat
 
         # reset traps
         trap - EXIT
@@ -87,7 +87,7 @@ case $1 in
 
         # stop subsystem
         echo "[1/2] Stopping subsystem..."
-        rm -f "$RFSDIR"/.keepalive.lock
+        rm -f "$RFSDIR"/runtime.lock
         podman container stop -it 30 "subsystem-$HASH"
         echo "[1/2] Stopped subsystem."
 

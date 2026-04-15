@@ -70,16 +70,16 @@ case $ACTION in
         trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$RFSDIR" --user="$TARGETUSR"' EXIT
 
         # ensure mountpoint exists
-        mkdir -p "$RFSDIR"
+        mkdir -p "$RFSDIR"/root
 
         # (re)mount filesystem
-        if ! findmnt "$RFSDIR" >/dev/null; then
+        if ! findmnt "$RFSDIR"/root >/dev/null; then
             echo "[i] Mounting filesystem."
-            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"/root
         else
             echo "[i] Remounting filesystem."
-            umount -q "$RFSDIR"
-            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"
+            umount -q "$RFSDIR"/root
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"/root
         fi
 
         # reset traps
@@ -90,9 +90,9 @@ case $ACTION in
         trap 'echo "[!!!] Error occured in unmounting process, manual intervention is required."' EXIT
 
         # unmount filesystem
-        if findmnt "$RFSDIR" >/dev/null; then
+        if findmnt "$RFSDIR"/root >/dev/null; then
             echo "[i] Unmounting filesystem."
-            umount -q "$RFSDIR"
+            umount -q "$RFSDIR"/root
             rm -rf "$RFSDIR"
         else 
             echo "[!!] Filesystem appears to be unmounted already, ignoring."
