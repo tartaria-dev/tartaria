@@ -2,13 +2,12 @@ image_name := env("BUILD_IMAGE_NAME", "tartaria")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
 filesystem := env("BUILD_FILESYSTEM", "ext4")
-container_runtime := env("CONTAINER_RUNTIME", `command -v podman >/dev/null 2>&1 && echo podman || echo docker`)
 
 build-containerfile $image_name=image_name:
-    sudo {{container_runtime}} build -f Containerfile -t "{{image_name}}:{{image_tag}}" .
+    sudo podman build -f Containerfile -t "{{image_name}}:{{image_tag}}" .
 
 bootc *ARGS:
-    sudo {{container_runtime}} run \
+    sudo podman run \
         --rm --privileged --pid=host \
         -it \
         -v /sys/fs/selinux:/sys/fs/selinux \
