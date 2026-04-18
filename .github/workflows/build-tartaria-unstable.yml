@@ -13,6 +13,7 @@ on:
       - "**/dependabot.yml"
       - "**/renovate.json5"
       - "**/artifacthub-repo.yml"
+      - "**/build-tartaria-stable.yml"
   push:
     tags-ignore:
       - 'v*'
@@ -25,6 +26,7 @@ on:
       - "**/dependabot.yml"
       - "**/renovate.json5"
       - "**/artifacthub-repo.yml"
+      - "**/build-tartaria-stable.yml"
   workflow_dispatch:
 
 env:
