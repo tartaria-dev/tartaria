@@ -1,0 +1,129 @@
+---
+name: Build Tartaria (stable)
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_DESC: "Arch Linux bootc image with some extra spices (stable)"
+  IMAGE_KEYWORDS: "bootc,archlinux,arch,niri"
+  IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/203742804?s=400&u=d24737bd121e7065274b95479507dabd0125b9ea&v=4"
+  IMAGE_NAME: "${{ github.event.repository.name }}"
+  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
+  DEFAULT_TAG: "stable"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-stable
+  cancel-in-progress: true
+
+jobs:
+  build_push:
+    name: Build Tartaria
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Prepare environment
+        run: |
+          # Lowercase the image uri
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
+          echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Remove unecessary software
+        uses: hastd/free-disk-space@v0.1.2
+
+      - name: Get current date
+        id: date
+        run: |
+          # This generates a timestamp like what is defined on the ArtifactHub documentation
+          # E.G: 2022-02-08T15:38:15Z'
+          # https://artifacthub.io/docs/topics/repositories/container-images/
+          # https://linux.die.net/man/1/date
+          echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
+
+      - name: Set image metadata
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        id: metadata
+        with:
+          tags: |
+            type=raw,value=${{ env.DEFAULT_TAG }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            type=raw,value={{date 'YYYYMMDD'}}
+            type=sha,enable=${{ github.event_name == 'pull_request' }}
+            type=ref,event=pr
+          labels: |
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.description=${{ env.IMAGE_DESC }}
+            org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+            org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/${{ github.sha }}/Containerfile
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            io.artifacthub.package.deprecated=false
+            io.artifacthub.package.keywords=${{ env.IMAGE_KEYWORDS }}
+            io.artifacthub.package.license=Apache-2.0
+            io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}
+            io.artifacthub.package.prerelease=false
+            containers.bootc=1
+            ostree.bootable=1
+          sep-tags: " "
+          sep-annotations: " "
+
+      - name: Build image
+        id: build_image
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
+        with:
+          containerfiles: |
+            ./Containerfile
+          extra-args: --skip-unused-stages=false
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          oci: true
+
+      - name: Login to GHCR
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image to GHCR
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        id: push
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          registry: ${{ env.IMAGE_REGISTRY }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+
+      - name: Sign image
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}"
+          for tag in ${{ steps.metadata.outputs.tags }}; do
+            cosign sign -y --key env://COSIGN_PRIVATE_KEY $IMAGE_FULL:$tag
+          done
+        env:
+          TAGS: ${{ steps.push.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}

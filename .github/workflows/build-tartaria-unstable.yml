@@ -1,6 +1,8 @@
 ---
-name: Build Tartaria
+name: Build Tartaria (unstable)
 on:
+  schedule:
+    - cron: "05 10 * * *" # 10:05am UTC everyday
   pull_request:
     branches:
       - live
@@ -11,9 +13,9 @@ on:
       - "**/dependabot.yml"
       - "**/renovate.json5"
       - "**/artifacthub-repo.yml"
-  schedule:
-    - cron: "05 10 * * *" # 10:05am UTC everyday
   push:
+    tags-ignore:
+      - 'v*'
     branches:
       - live
     paths-ignore:
@@ -26,15 +28,15 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "Arch Linux bootc image with the standard CachyOS v3 kernel, Niri, Noctalia Shell, a containerized shell powered by a minimal Arch container, and an opinionated, mostly GTK-based app suite, made for the general user"
+  IMAGE_DESC: "Arch Linux bootc image with some extra spices (unstable)"
   IMAGE_KEYWORDS: "bootc,archlinux,arch,niri"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/203742804?s=400&u=d24737bd121e7065274b95479507dabd0125b9ea&v=4"
   IMAGE_NAME: "${{ github.event.repository.name }}"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
-  DEFAULT_TAG: "latest"
+  DEFAULT_TAG: "unstable"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-unstable
   cancel-in-progress: true
 
 jobs:

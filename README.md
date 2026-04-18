@@ -24,6 +24,13 @@ Not many apps or extra bells and whistles are installed by default, as extra con
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
 
+## Versions
+Two versions of Tartaria are built within this repository:
+
+- `stable`: A version of Tartaria built every time a release is published, which is generally considered stable and is recommended for usage.
+- `unstable`: A version of Tartaria built every time a change is made, which is generally considered very unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+
+
 ## How can I switch?
 At the moment, only rebasing (i.e. from Fedora Silverblue) is supported - ISO support will come soon.
 
@@ -39,7 +46,7 @@ If it did, however, you're good to go!
 
 To rebase, use the following command in your terminal:
 
-`sudo bootc switch ghcr.io/tartaria-dev/tartaria`
+`sudo bootc switch ghcr.io/tartaria-dev/tartaria:stable`
 
 ...and you'll be on your (jolly) way!
 
