@@ -198,20 +198,13 @@ declare -a packages=(
     decibels
     flatseal
     frameworkintegration
-    gnome-calculator
-    gnome-calendar
-    gnome-music
     gnome-text-editor
-    gnome-weather
     gpu-screen-recorder
     hplip
-    impression
     kitty
     loupe
     mission-center
     nautilus
-    papers
-    secrets
     showtime
     sysprof
 )
