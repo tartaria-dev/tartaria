@@ -5,7 +5,7 @@
 set -eo pipefail
 
 # do our checks
-if [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 elif [[ ! -f /run/.containerenv ]]; then

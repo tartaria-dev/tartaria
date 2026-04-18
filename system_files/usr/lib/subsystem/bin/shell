@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # do our checks
-if [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 fi

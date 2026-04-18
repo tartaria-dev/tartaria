@@ -9,7 +9,7 @@ if [[ -z $1 ]]; then
     echo "[!!!] Insufficient parameters."
     echo "[---] Usage: $0 start|stop"
     exit 64
-elif [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+elif [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 elif ! grep -q "$USER" /etc/subuid || ! grep -q "$USER" /etc/subgid; then
