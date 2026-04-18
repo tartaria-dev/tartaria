@@ -4,6 +4,15 @@
 # set errexit & pipefail
 set -eo pipefail
 
+# do our checks
+if [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+    echo "[!!!] Please do not run this as an administrator or system user."
+    exit 77
+elif [[ ! -f /run/.containerenv ]]; then
+	echo "[!!!] Running outside of a subsystem."
+	exit 64
+fi
+
 # utilities
 help() {
     cat <<EOF
@@ -22,15 +31,6 @@ options:
 unrecognized options will be treated as a command to execute on the host, e.g. "bash"
 EOF
 }
-
-# do our checks
-if [[ "$EUID" == "0" ]]; then
-    echo "[!!!] Please do not run this as an administrator."
-    exit 77
-elif [[ ! -f /run/.containerenv ]]; then
-	echo "[!!!] Please do not run this outside of a subsystem."
-	exit 64
-fi
 
 # iterate through args
 case $1 in

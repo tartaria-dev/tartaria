@@ -9,10 +9,13 @@ if [[ $* != *--lockfile=* ]] || [[ $* != *--hash=* ]]; then
     echo "[!!!] Arguments --lockfile or --hash were not used."
     echo "[---] Usage: $0 --lockfile=/PATH/TO/LOCKFILE.lock --hash=HASH"
     exit 64
-elif [[ "$EUID" == "0" ]]; then
-    echo "[!!!] Please do not run this as an administrator."
+elif [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+    echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 fi
+
+# set constants
+FAILED=0
 
 # parse arguments
 for arg in "$@"; do
@@ -34,9 +37,6 @@ for arg in "$@"; do
             ;;
     esac
 done
-
-# set constants
-FAILED=0
 
 # utilities
 start-subsystem() {
