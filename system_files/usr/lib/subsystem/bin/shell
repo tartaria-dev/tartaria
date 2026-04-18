@@ -1,0 +1,62 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# do our checks
+if [[ "$EUID" == "0" ]] || [[ "$EUID" -le "1000" ]]; then
+    echo "[!!!] Please do not run this as an administrator or system user."
+    exit 77
+fi
+
+# constants
+NORM=$(tput sgr0)
+GRAY=$(tput setaf 7)
+RED=$(tput setaf 1)
+SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+TRYCOUNTER=0
+readonly RED
+readonly GRAY
+readonly NORM
+readonly SUBSYS_ID
+
+# exec into subsystem - if not possible, fail and warn user
+if [[ "$(systemctl --user is-failed subsystem)" == "activating" ]]; then
+    while [[ "$TRYCOUNTER" -le "10" ]]; do
+        if podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh; then
+            exit 0
+        else
+            TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))
+        fi
+    done
+
+    if [[ "$TRYCOUNTER" -gt "10" ]]; then
+        clear
+        cat <<EOF
+${RED}Oops,
+
+Something went wrong while trying to enter your subsystem.
+Logs containing relevant information can be viewed with the following command:${NORM}
+
+${GRAY}journalctl --user -xeu subsystem${NORM}
+
+${RED}Manual intervention/debugging may be required.
+Falling back to non-login host shell (bash)...${NORM}
+
+EOF
+        exec bash
+    fi
+else
+    clear
+    cat <<EOF
+${RED}Oops,
+
+Your subystem has failed to start.
+Logs containing relevant information can be viewed with the following command:${NORM}
+
+${GRAY}journalctl --user -xeu subsystem${NORM}
+
+${RED}Manual intervention/debugging may be required.
+Falling back to non-login host shell (bash)...${NORM}
+
+EOF
+    exec bash
+fi
