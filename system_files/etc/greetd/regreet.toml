@@ -15,7 +15,7 @@ reboot = ["systemctl", "reboot"]
 poweroff = ["systemctl", "poweroff"]
 
 [appearance]
-greeting_msg = "Welcome to the Orchard!"
+greeting_msg = "Welcome"
 
 [widget.clock]
 format = "%a %H:%M"
