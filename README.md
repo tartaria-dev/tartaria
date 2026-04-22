@@ -3,7 +3,7 @@
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 <p align="center">
-  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b501237a-7b30-4949-985a-f2314a9107a9" />
+  <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/608f2ed5-77e8-4e25-bad8-e3e0b4812f24" />
 </p>
 
 
