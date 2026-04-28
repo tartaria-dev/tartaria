@@ -19,48 +19,44 @@ Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day u
 
 Tartaria aims to provide a modern and unobtrusive experience for its users that lets them get their work done.
 
-Not many apps or extra bells and whistles are installed by default, as extra configuration is left up to the user.
+Not too many apps or extra bells and whistles are installed by default, as extra configuration is left up to the user.
 
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
 
-## Versions
+## Variants
 Two versions of Tartaria are built within this repository:
 
 - `stable`: A version of Tartaria built weekly, or when a release is published. Considered stable and is recommended for usage.
 - `unstable`: A version of Tartaria built daily, or every time a change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
-Note that all times/dates are based in UTC.
+We also offer two different kernel options, or variants:
+
+- `arch`: Standard Arch kernel, compatible with all devices.
+- `cachy`: Optimized version of the Arch kernel only compatible with CPU's that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture. Only choose this if you know what you are doing.
+
+In total, there are four different variants of Tartaria:
+
+- `stable-arch`
+- `stable-cachy`
+- `unstable-arch`
+- `unstable-cachy`
+
+Note that all times and dates above are based un the UTC timezone.
 
 
 ## How can I switch?
 At the moment, only rebasing (i.e. from Fedora Silverblue) is supported - ISO support will come soon.
 
-Before you rebase, however, please check if your CPU supports the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level - this is necessary for reasons detailed under the Notice section.
-
-You may check by running the following command in your terminal:
-
-`/lib/ld-linux-x86-64.so.2 --help | grep -F "v3 (supported, searched)"`
-
-If the above command produced no output, you cannot run Tartaria. Sorry!
-
-If it did, however, you're good to go!
-
 To rebase, use the following command in your terminal:
 
-`sudo bootc switch ghcr.io/tartaria-dev/tartaria:<version>`
+`sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>`
 
-...and you'll be on your (jolly) way!
+If you are unsure as to what variant to choose, please refer to Variants above.
 
 
-## Notice
-This OS is only compatible and intended for devices with AMD/Intel graphics, and the kernel has optimizations for CPUs supporting the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level.
-
-Due to these kernel optimizations, this custom image will only work on CPUs that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture level.
-
-Support for the [`x86_64-v4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) and [`znver4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture levels is being considered.
-
-Support for NVIDIA graphics will not be looked into currently due to the fact that I lack a machine with an NVIDIA card to support such changes. Those with such hardware are welcome to contribute/make their own fork of Tartaria.
+## NVidia Notice
+Support for NVidia graphics will not be looked into currently due to the fact that I lack a machine with an NVidia card to support such changes. Those with such hardware are welcome to contribute/make their own fork of Tartaria.
 
 
 ## Thanks!
