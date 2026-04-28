@@ -2,7 +2,7 @@
 name: Build Tartaria (unstable)
 on:
   schedule:
-    - cron: "05 10 * * *" # 10:05am UTC everyday
+    - cron: "05 10 * * *"
   pull_request:
     branches:
       - live

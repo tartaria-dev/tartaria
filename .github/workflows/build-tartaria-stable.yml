@@ -2,6 +2,19 @@
 name: Build Tartaria (stable)
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - live
+    paths-ignore:
+      - "**/README.md"
+      - "**/.devcontainer.json"
+      - "**/cleanup.yml"
+      - "**/dependabot.yml"
+      - "**/renovate.json5"
+      - "**/artifacthub-repo.yml"
+      - "**/build-tartaria-unstable.yml"
+  schedule:
+    - cron: "05 10 * * 05"
   release:
     types: [published]
 
