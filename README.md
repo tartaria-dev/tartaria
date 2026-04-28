@@ -30,10 +30,10 @@ Two versions of Tartaria are built within this repository:
 - `stable`: A version of Tartaria built weekly, or when a release is published. Considered stable and is recommended for usage.
 - `unstable`: A version of Tartaria built daily, or every time a change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
-We also offer two different kernel options, or variants:
+We also offer two different kernel options:
 
 - `arch`: Standard Arch kernel, compatible with all devices.
-- `cachy`: Optimized version of the Arch kernel only compatible with CPU's that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture. Only choose this if you know what you are doing.
+- `cachy`: Optimized version of the Arch kernel only compatible with CPUs that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture. Only choose this if you know what you are doing.
 
 In total, there are four different variants of Tartaria:
 
@@ -52,7 +52,7 @@ To rebase, use the following command in your terminal:
 
 `sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>`
 
-If you are unsure as to what variant to choose, please refer to Variants above.
+If you are unsure as to what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
 
 
 ## NVidia Notice
