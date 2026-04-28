@@ -22,6 +22,10 @@ locale-gen
 # update dynamic linker cache
 ldconfig
 
+# fix os-release files
+sed -i "s/Arch/$IMAGE_VARIANT/g" /usr/lib/os-release
+ln -sT /usr/lib/os-release /etc/os-release
+
 # setup zsh prompt
 mkdir -p /etc/zsh
 cat /etc/zshrc-addons >> /etc/zsh/zshrc

@@ -119,6 +119,7 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
             KERN_FLAVOR=${{ matrix.KERN_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.KERN_FLAVOR }}
           oci: true
 
       - name: Login to GHCR

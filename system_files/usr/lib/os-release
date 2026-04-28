@@ -1,5 +1,5 @@
-NAME="Tartaria"
-PRETTY_NAME="Tartaria"
+NAME="Arch"
+PRETTY_NAME="Arch"
 ID=arch
 BUILD_ID=rolling
 ANSI_COLOR="38;2;23;147;209"
