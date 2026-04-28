@@ -27,8 +27,10 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Versions
 Two versions of Tartaria are built within this repository:
 
-- `stable`: A version of Tartaria built every time a release is published, which is generally considered stable and is recommended for usage.
-- `unstable`: A version of Tartaria built every time a change is made, which is generally considered very unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+- `stable`: A version of Tartaria built weekly, or when a release is published. Considered stable and is recommended for usage.
+- `unstable`: A version of Tartaria built daily, or every time a change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+
+Note that all times/dates are based in UTC.
 
 
 ## How can I switch?
@@ -46,7 +48,7 @@ If it did, however, you're good to go!
 
 To rebase, use the following command in your terminal:
 
-`sudo bootc switch ghcr.io/tartaria-dev/tartaria:stable`
+`sudo bootc switch ghcr.io/tartaria-dev/tartaria:<version>`
 
 ...and you'll be on your (jolly) way!
 
@@ -58,7 +60,7 @@ Due to these kernel optimizations, this custom image will only work on CPUs that
 
 Support for the [`x86_64-v4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) and [`znver4`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture levels is being considered.
 
-Support for NVIDIA graphics will not be looked into under any circumstances; I will leave that to the user to integrate into a fork of Tartaria.
+Support for NVIDIA graphics will not be looked into currently due to the fact that I lack a machine with an NVIDIA card to support such changes. Those with such hardware are welcome to contribute/make their own fork of Tartaria.
 
 
 ## Thanks!

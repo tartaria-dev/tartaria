@@ -2,6 +2,8 @@
 name: Build Tartaria (stable)
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "05 10 * * 05"
   release:
     types: [published]
 
