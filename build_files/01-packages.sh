@@ -5,11 +5,21 @@ echo "::group::===========================> Install packages"
 
 set -ouex pipefail
 
+# select kernel to install
+if [[ "$KERN_FLAVOR" == "arch" ]]; then
+    KERN_PKG="linux"
+    readonly KERN_PKG
+elif [[ "$KERN_FLAVOR" == "cachy" ]]; then
+    KERN_PKG="cachyos/linux-cachyos"
+    readonly KERN_PKG
+fi
+
+# define packages to install
 declare -a packages=(
     # ========> system
     base
     bootc/uupd
-    cachyos/linux-cachyos
+    $KERN_PKG
     chaotic-aur/bootc
     cpio
     dbus
@@ -210,5 +220,6 @@ declare -a packages=(
     sysprof
 )
 
+# install packages in one go
 pacman -Sy --noconfirm "${packages[@]}" >/dev/null
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null

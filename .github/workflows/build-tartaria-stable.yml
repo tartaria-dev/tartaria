@@ -32,8 +32,12 @@ concurrency:
 
 jobs:
   build_push:
-    name: Build Tartaria
+    name: Build Tartaria (stable-${{ matrix.KERN_FLAVOR }})
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        KERN_FLAVOR: [arch, cachy]
 
     permissions:
       contents: read
@@ -67,9 +71,9 @@ jobs:
         id: metadata
         with:
           tags: |
-            type=raw,value=${{ env.DEFAULT_TAG }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
-            type=raw,value={{date 'YYYYMMDD'}}
+            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.KERN_FLAVOR }}
+            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.KERN_FLAVOR }}.{{date 'YYYYMMDD'}}
+            type=raw,value=${{ matrix.KERN_FLAVOR }}-{{date 'YYYYMMDD'}}
             type=sha,enable=${{ github.event_name == 'pull_request' }}
             type=ref,event=pr
           labels: |
@@ -102,6 +106,8 @@ jobs:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            KERN_FLAVOR=${{ matrix.KERN_FLAVOR }}
           oci: true
 
       - name: Login to GHCR
