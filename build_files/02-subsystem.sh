@@ -16,7 +16,7 @@ wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spaw
 chmod +x mkosi.extra/usr/libexec/host-spawn
 
 # build arch rootfs
-mkosi -e "IMAGE_VARIANT=$IMAGE_VARIANT" build
+mkosi build --environment "IMAGE_VARIANT=$IMAGE_VARIANT"
 
 # install extra pkgs into rootfs
 pacman -U --root /workdir/output/image --noconfirm /packages/subsys/* >/dev/null
