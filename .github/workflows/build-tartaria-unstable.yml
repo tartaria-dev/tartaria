@@ -44,7 +44,6 @@ concurrency:
 jobs:
   build_push:
     name: Build Tartaria (unstable-${{ matrix.KERN_FLAVOR }})
-    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -65,6 +64,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        with:
+          ref: dev
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.2
