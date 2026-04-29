@@ -33,7 +33,7 @@ concurrency:
 jobs:
   build_push:
     name: Build Tartaria (stable-${{ matrix.KERN_FLAVOR }})
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/live'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
