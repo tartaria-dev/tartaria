@@ -7,7 +7,7 @@
 </p>
 
 
-## What's Tartaria?
+## Description
 Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage, bundled with:
 
 - AppArmor application security enabled by default
@@ -44,7 +44,7 @@ In total, there are four different variants of Tartaria:
 Note that all times and dates above are based un the UTC timezone.
 
 
-## How can I switch?
+## Switching
 At the moment, only rebasing (i.e. from Fedora Silverblue) is supported - ISO support will come soon.
 
 To rebase, use the following command in your terminal:
@@ -54,9 +54,19 @@ To rebase, use the following command in your terminal:
 If you are unsure as to what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
 
 
-## NVidia Notice
-Support for NVidia graphics will not be looked into currently due to the fact that I lack a machine with an NVidia card to support/test such changes. Those with such hardware are welcome to contribute/make their own fork of Tartaria.
+## Forking
+You can absolutely fork this project! There are some extra steps involved, though:
+
+- When forking this repository, select the "live" branch to be cloned from the dropdown - NOT the "dev" branch.
+- Once you've forked this repository, go into the `.github/workflows` folder and delete the file `build-tartaria-unstable.yml`.
+
+The reason for these steps is to delete the workflow for the unstable version of Tartaria entirely, something most users won't need.
+Note that these steps are NOT required, and you may keep the unstable workflow if you choose to.
 
 
-## Thanks!
-Many thanks to the [Bootcrew team](https://discord.gg/52Qcb4x2w3) for making this project possible (and for general help), and the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
+## NVIDIA
+Support for NVIDIA graphics will not be looked into currently due to the fact that I lack a machine with an NVIDIA card to support/test such changes. Those with such hardware are welcome to contribute changes.
+
+
+## Credits to...
+...the [Bootcrew team](https://discord.gg/52Qcb4x2w3) for making this project possible (and for general help), and the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
