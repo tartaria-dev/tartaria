@@ -57,7 +57,7 @@ If you are unsure as to what variant to choose, please refer to [Variants](https
 ## Forking
 You can absolutely fork this project! There are some extra steps involved, though:
 
-- When forking this repository, select the "live" branch to be cloned from the dropdown - NOT the "dev" branch.
+- When forking this repository, ensure the option "Copy the `live` branch only" is selected.
 - Once you've forked this repository, go into the `.github/workflows` folder and delete the file `build-tartaria-unstable.yml`.
 
 The reason for these steps is to delete the workflow for the unstable version of Tartaria entirely, something most users won't need.
