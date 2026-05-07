@@ -14,7 +14,7 @@ on:
       - "**/artifacthub-repo.yml"
       - "**/build-tartaria-unstable.yml"
   schedule:
-    - cron: "05 10 * * 05"
+    - cron: "05 10 * * 3,6"
   release:
     types: [published]
 
