@@ -16,7 +16,7 @@ Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day u
 - The Niri scrollable tiling Wayland compositor
 - The modern, fluid Noctalia desktop shell
 
-Tartaria aims to provide a modern and unobtrusive experience for its users that lets them get their work done.
+Tartaria aims to provide a modern, unobtrusive experience for its users that lets them get their work done.
 
 Not too many apps or extra bells and whistles are installed by default, and extra configuration is left up to the user.
 
@@ -41,31 +41,54 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
-Note that all times and dates above are based un the UTC timezone.
+Note that all times and dates above are based on UTC.
 
 
 ## Switching
-At the moment, only rebasing (i.e. from Fedora Silverblue) is supported - ISO support will come soon.
+At the moment, only rebasing (i.e., from Fedora Silverblue) is supported - ISO support will come soon.
 
 To rebase, use the following command in your terminal:
 
 `sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>`
 
-If you are unsure as to what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
+If you are unsure what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
 
 
 ## Forking
-You can absolutely fork this project! There are some extra steps involved, though:
+You can absolutely fork this project! There are extra steps, though:
 
-- When forking this repository, ensure the option "Copy the `live` branch only" is selected.
-- Once you've forked this repository, go into the `.github/workflows` folder and delete the file `build-tartaria-unstable.yml`.
+- After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-unstable.yml`.
+- Then, edit `build-tartaria-stable.yml` and replace lines 5-7 within the file with the following:
+
+  ```
+    pull_request:
+    branches:
+      - live
+    paths-ignore:
+      - "**/README.md"
+      - "**/.devcontainer.json"
+      - "**/cleanup.yml"
+      - "**/dependabot.yml"
+      - "**/renovate.json5"
+      - "**/artifacthub-repo.yml"
+  push:
+    branches:
+      - live
+    paths-ignore:
+      - "**/README.md"
+      - "**/.devcontainer.json"
+      - "**/cleanup.yml"
+      - "**/dependabot.yml"
+      - "**/renovate.json5"
+      - "**/artifacthub-repo.yml"
+  ```
 
 The reason for these steps is to delete the workflow for the unstable version of Tartaria entirely, something most users won't need.
-Note that these steps are NOT required, and you may keep the unstable workflow if you choose to.
+Note that these steps are NOT required; you may keep the unstable workflow if you choose to.
 
 
 ## NVIDIA
-Support for NVIDIA graphics will not be looked into currently due to the fact that I lack a machine with an NVIDIA card to support/test such changes. Those with such hardware are welcome to contribute changes.
+Support for NVIDIA graphics will not be looked into currently since I lack a machine with an NVIDIA card to support/test such changes. Those with such hardware are welcome to contribute changes.
 
 
 ## Credits to...
