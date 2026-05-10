@@ -5,13 +5,35 @@ echo "::group::===========================> Install packages"
 
 set -ouex pipefail
 
-# select kernel to install
-if [[ "$KERN_FLAVOR" == "arch" ]]; then
+# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
+if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
     KERN_PKG="linux"
+    CACHY_PKGS=" "
+    NVIDIA_PKGS=" "
     readonly KERN_PKG
-elif [[ "$KERN_FLAVOR" == "cachy" ]]; then
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
+elif [[ "$IMAGE_FLAVOR" == "arch-nvidia" ]]; then
+    KERN_PKG="linux"
+    CACHY_PKGS=" "
+    NVIDIA_PKGS="nvidia-open nvidia-utils"
+    readonly KERN_PKG
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
+elif [[ "$IMAGE_FLAVOR" == "cachy" ]]; then
     KERN_PKG="cachyos/linux-cachyos"
+    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
+    NVIDIA_PKGS=" "
     readonly KERN_PKG
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
+elif [[ "$IMAGE_FLAVOR" == "cachy-nvidia" ]]; then
+    KERN_PKG="cachyos/linux-cachyos-nvidia-open"
+    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
+    NVIDIA_PKGS="cachyos/nvidia-utils"
+    readonly KERN_PKG
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
 fi
 
 # define packages to install
@@ -86,6 +108,7 @@ declare -a packages=(
     lm_sensors
     libva-intel-driver
     libva-mesa-driver
+    $NVIDIA_PKGS
     vpl-gpu-rt
     vulkan-icd-loader
     vulkan-intel
@@ -204,8 +227,7 @@ declare -a packages=(
     chaotic-aur/qt6ct-kde
     chaotic-aur/valent-git
     chaotic-aur/zen-browser-bin
-    cachyos/scx-manager
-    cachyos/scx-scheds
+    $CACHY_PKGS
     decibels
     flatseal
     frameworkintegration
