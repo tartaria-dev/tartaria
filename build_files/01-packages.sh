@@ -6,12 +6,16 @@ echo "::group::===========================> Install packages"
 set -ouex pipefail
 
 # based on image flavor, install arch/cachy kernel
-if [[ $IMAGE_FLAVOR == arch-* ]]; then
+if [[ $IMAGE_FLAVOR == arch* ]]; then
     KERN_PKG="linux"
+    CACHY_PKGS=" "
     readonly KERN_PKG
-elif [[ $IMAGE_FLAVOR == cachy-* ]]; then
+    readonly CACHY_PKGS
+elif [[ $IMAGE_FLAVOR == cachy* ]]; then
     KERN_PKG="cachyos/linux-cachyos"
+    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
     readonly KERN_PKG
+    readonly CACHY_PKGS
 fi
 
 # based on image flavor, install nvidia drivers
@@ -212,8 +216,7 @@ declare -a packages=(
     chaotic-aur/qt6ct-kde
     chaotic-aur/valent-git
     chaotic-aur/zen-browser-bin
-    cachyos/scx-manager
-    cachyos/scx-scheds
+    $CACHY_PKGS
     decibels
     flatseal
     frameworkintegration
