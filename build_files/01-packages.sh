@@ -6,17 +6,19 @@ echo "::group::===========================> Install packages"
 set -ouex pipefail
 
 # based on image flavor, install arch/cachy kernel
-if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
+if [[ "$IMAGE_FLAVOR" == "arch-*" ]]; then
     KERN_PKG="linux"
     readonly KERN_PKG
-elif [[ "$IMAGE_FLAVOR" == "cachy" ]]; then
+elif [[ "$IMAGE_FLAVOR" == "cachy-*" ]]; then
     KERN_PKG="cachyos/linux-cachyos"
     readonly KERN_PKG
 fi
 
 # based on image flavor, install nvidia drivers
-if [[ "$IMAGE_FLAVOR" == "*nvidia" ]]; then
+if [[ "$IMAGE_FLAVOR" == "*-nvidia" ]]; then
     NVIDIA_PKGS="nvidia-open nvidia-utils"
+else
+    NVIDIA_PKGS=" "
 fi
 
 # define packages to install
