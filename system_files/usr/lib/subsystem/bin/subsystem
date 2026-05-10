@@ -51,10 +51,6 @@ start-subsystem() {
             /usr/libexec/ignition
     fi
 
-    UPPER=$(podman inspect "subsystem-$HASH" --format '{{.GraphDriver.Data.UpperDir}}') && \
-    LOWER=$(podman inspect "subsystem-$HASH" --format '{{.GraphDriver.Data.LowerDir}}') && \
-    find "$UPPER" -type c -links 1 -exec bash -c 'FILE_PATH="${1#$2}"; [ ! -e "$3$FILE_PATH" ] && rm "$1"' -- {} "$UPPER" "$LOWER" \;
-
     podman container start "subsystem-$HASH"
 }
 
