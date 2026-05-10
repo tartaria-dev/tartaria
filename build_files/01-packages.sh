@@ -5,24 +5,35 @@ echo "::group::===========================> Install packages"
 
 set -ouex pipefail
 
-# based on image flavor, install arch/cachy kernel
-if [[ $IMAGE_FLAVOR == arch* ]]; then
+# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
+if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
     KERN_PKG="linux"
     CACHY_PKGS=" "
+    NVIDIA_PKGS=" "
     readonly KERN_PKG
     readonly CACHY_PKGS
-elif [[ $IMAGE_FLAVOR == cachy* ]]; then
+    readonly NVIDIA_PKGS
+if [[ "$IMAGE_FLAVOR" == "arch-nvidia" ]]; then
+    KERN_PKG="linux"
+    CACHY_PKGS=" "
+    NVIDIA_PKGS="nvidia-open nvidia-utils"
+    readonly KERN_PKG
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
+elif [[ "$IMAGE_FLAVOR" == "cachy" ]]; then
     KERN_PKG="cachyos/linux-cachyos"
     CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
+    NVIDIA_PKGS=" "
     readonly KERN_PKG
     readonly CACHY_PKGS
-fi
-
-# based on image flavor, install nvidia drivers
-if [[ $IMAGE_FLAVOR == *-nvidia ]]; then
-    NVIDIA_PKGS="nvidia-open nvidia-utils"
-else
-    NVIDIA_PKGS=" "
+    readonly NVIDIA_PKGS
+elif [[ "$IMAGE_FLAVOR" == "cachy-nvidia" ]]; then
+    KERN_PKG="cachyos/linux-cachyos-nvidia-open"
+    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
+    NVIDIA_PKGS="cachyos/nvidia-open cachyos/nvidia-utils"
+    readonly KERN_PKG
+    readonly CACHY_PKGS
+    readonly NVIDIA_PKGS
 fi
 
 # define packages to install
