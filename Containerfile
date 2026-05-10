@@ -11,7 +11,7 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 COPY --from=ghcr.io/tartaria-dev/branches:latest / /packages/
 
 # import kernel flavor arg
-ARG KERN_FLAVOR
+ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 # run main build scripts

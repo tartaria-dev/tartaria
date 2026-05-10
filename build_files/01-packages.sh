@@ -5,13 +5,18 @@ echo "::group::===========================> Install packages"
 
 set -ouex pipefail
 
-# select kernel to install
-if [[ "$KERN_FLAVOR" == "arch" ]]; then
+# based on image flavor, install arch/cachy kernel
+if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
     KERN_PKG="linux"
     readonly KERN_PKG
-elif [[ "$KERN_FLAVOR" == "cachy" ]]; then
+elif [[ "$IMAGE_FLAVOR" == "cachy" ]]; then
     KERN_PKG="cachyos/linux-cachyos"
     readonly KERN_PKG
+fi
+
+# based on image flavor, install nvidia drivers
+if [[ "$IMAGE_FLAVOR" == "*nvidia" ]]; then
+    NVIDIA_PKGS="nvidia-open nvidia-utils"
 fi
 
 # define packages to install
@@ -86,6 +91,7 @@ declare -a packages=(
     lm_sensors
     libva-intel-driver
     libva-mesa-driver
+    $NVIDIA_PKGS
     vpl-gpu-rt
     vulkan-icd-loader
     vulkan-intel
