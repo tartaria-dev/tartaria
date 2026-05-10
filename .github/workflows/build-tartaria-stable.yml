@@ -2,17 +2,9 @@
 name: Build Tartaria (stable)
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - live
-    paths-ignore:
-      - "**/README.md"
-      - "**/.devcontainer.json"
-      - "**/cleanup.yml"
-      - "**/dependabot.yml"
-      - "**/renovate.json5"
-      - "**/artifacthub-repo.yml"
-      - "**/build-tartaria-unstable.yml"
+  push:
+    tags:
+      - "v*"
   schedule:
     - cron: "05 10 * * 3,6"
   release:
@@ -53,6 +45,14 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout latest tag
+        run: |
+          latest=$(git tag --list 'v*' --sort=-version:refname | head -1)
+          echo "Checking out latest tag: $latest"
+          git checkout "$latest"
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.2
@@ -113,7 +113,7 @@ jobs:
 
       - name: Login to GHCR
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -121,7 +121,7 @@ jobs:
 
       - name: Push image to GHCR
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         id: push
         env:
           REGISTRY_USER: ${{ github.actor }}
@@ -135,10 +135,10 @@ jobs:
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
 
       - name: Sign image
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}"
           for tag in ${{ steps.metadata.outputs.tags }}; do
