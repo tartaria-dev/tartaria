@@ -1,9 +1,6 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# set errexit & pipefail
-set -eo pipefail
-
 # do our checks
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
@@ -13,9 +10,11 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-# configure fastest arch repos and update databases if internet is connected (hence "|| true")
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
-pacman -Sy >/dev/null 2>&1 || true
+# set constants
+directory='/var/lib/pacman/local'
+pkg_pattern='-[0-9]+([.:][0-9]+)*-[0-9]+$'
+readonly directory
+readonly pkg_pattern
 
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
@@ -23,11 +22,42 @@ if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
 fi
 
 # source user configs
+echo "[1/3] Sourcing user configurations."
 if [[ -d /etc/ignition.d/ ]]; then
 	for script in /etc/ignition.d/*.sh; do
-		bash "$script" || true
+		echo "[i] Sourcing script $script."
+		. "$script" || true
 	done
 fi
 
+# attempt to configure fastest arch repos
+echo "[2/3] Attempting to configure repositories."
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+pacman -Sy >/dev/null 2>&1 || true
+
+# fix duplicate pkg entries
+echo "[3/3] Attempting to fix duplicate package entries."
+cp -r "$directory" "$directory.bak"
+cd "$directory" || exit 1
+printf '%s\n' * | grep -E ".+$pkg_pattern" | sed -E "s/$pkg_pattern//" | sort | uniq -d | while read -r pkg; do
+    echo "[i] Package: $pkg"
+    echo ""
+
+    mapfile -t versions < <(printf '%s\n' * | grep -E "^$pkg$pkg_pattern$" | sort -V)
+
+    echo "[i] Versions:"
+    echo "${versions[*]}"
+    echo ""
+
+    for (( i=0; i<${#versions[@]}-1; i++ )); do
+        v="${versions[$i]}"
+        echo "[i] Removing: $v"
+        rm -rf "$v"
+    done
+
+    echo ""
+done
+
 # keep subsystem alive
+echo "[---] Startup done."
 sleep infinity
