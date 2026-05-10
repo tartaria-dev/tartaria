@@ -221,5 +221,5 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -Sy --noconfirm "${packages[@]}" >/dev/null
+pacman -Sy --noconfirm "${packages[@]}"
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
