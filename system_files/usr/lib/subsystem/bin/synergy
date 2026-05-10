@@ -28,7 +28,7 @@ options:
     -l, --link                      link a command from the host
     -u, --unlink                    unlink a command linked from the host                        
 
-unrecognized options will be treated as a command to execute on the host, e.g. "bash"
+unrecognized options will be treated as a string to execute on the host within a seperate bash shell, e.g. "echo foo"
 EOF
 }
 
