@@ -13,7 +13,7 @@ if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
     readonly KERN_PKG
     readonly CACHY_PKGS
     readonly NVIDIA_PKGS
-if [[ "$IMAGE_FLAVOR" == "arch-nvidia" ]]; then
+elif [[ "$IMAGE_FLAVOR" == "arch-nvidia" ]]; then
     KERN_PKG="linux"
     CACHY_PKGS=" "
     NVIDIA_PKGS="nvidia-open nvidia-utils"
