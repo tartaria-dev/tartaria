@@ -32,7 +32,6 @@ start-subsystem() {
         podman container create \
             --init \
             --cgroups=split \
-            --env-host \
             --name "subsystem-$HASH" \
             --hostname subsystem \
             --log-driver journald \
@@ -41,8 +40,8 @@ start-subsystem() {
             --user 0:0 \
             --userns keep-id \
             --tmpfs /run \
-            --workdir "$HOME" \
-            -v "$HOME":"$HOME":rslave \
+            --workdir "/home/$USER" \
+            -v "$HOME":"/home/$USER":rslave \
             -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
             -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
             -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \

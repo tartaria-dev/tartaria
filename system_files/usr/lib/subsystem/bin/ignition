@@ -31,12 +31,16 @@ if [[ -d /etc/ignition.d/ ]]; then
 fi
 
 # attempt to configure fastest arch repos
-echo "[2/3] Attempting to configure repositories."
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
-pacman -Sy >/dev/null 2>&1 || true
+echo "[2/3] Configuring repositories."
+if [[ ! -f /etc/.ignition-repo-conf-done ]]; then
+    reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+    pacman -Sy >/dev/null 2>&1 || true
+    mkdir -p /etc/ignition
+    touch /etc/.ignition-repo-conf-done
+fi
 
 # fix duplicate pkg entries
-echo "[3/3] Attempting to fix duplicate package entries."
+echo "[3/3] Fixing duplicate package entries."
 cp -r "$directory" "$directory.bak"
 cd "$directory" || exit 1
 printf '%s\n' * | grep -E ".+$pkg_pattern" | sed -E "s/$pkg_pattern//" | sort | uniq -d | while read -r pkg; do
