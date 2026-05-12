@@ -61,7 +61,7 @@ You can absolutely fork this project! There are extra steps, though:
 - Then, edit `build-tartaria-stable.yml` and replace lines 5-7 within the file with the following:
 
   ```
-    pull_request:
+  pull_request:
     branches:
       - live
     paths-ignore:
