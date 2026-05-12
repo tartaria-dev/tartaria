@@ -145,6 +145,7 @@ declare -a packages=(
     udisks2
 
     # ========> containers
+    crun
     distrobox
     docker
     docker-buildx
