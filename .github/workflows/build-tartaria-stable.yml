@@ -7,8 +7,6 @@ on:
       - "v*"
   schedule:
     - cron: "05 10 * * 3,6"
-  release:
-    types: [published]
 
 env:
   IMAGE_DESC: "Arch Linux bootc image with some extra spices (stable)"
