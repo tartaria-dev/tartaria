@@ -41,7 +41,7 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
-Each variant also has a corresponding variant with NVIDIA gpu support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-cachy-nvidia`).
+Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-cachy-nvidia`).
 
 Note that all times and dates above are based on UTC.
 
@@ -57,7 +57,7 @@ If you are unsure what variant to choose, please refer to [Variants](https://git
 
 
 ## Forking
-You can absolutely fork this project! There are extra steps, though:
+You can absolutely fork this project! There are some extra steps, though:
 
 - After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-unstable.yml`.
 - Then, edit `build-tartaria-stable.yml` and replace lines 5-7 within the file with the following:
