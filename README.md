@@ -41,7 +41,8 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
-Each variant also has a corresponding variant with NVidia support, just suffix `-nvidia` to the variant name (e.g. stable-cachy-**nvidia**).
+Each variant also has a corresponding variant with NVIDIA gpu support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-cachy-nvidia`).
+
 Note that all times and dates above are based on UTC.
 
 
