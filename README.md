@@ -26,7 +26,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Variants
 Two versions of Tartaria are built within this repository:
 
-- `stable`: A version of Tartaria built weekly, or when a release is published. Considered stable and is recommended for usage.
+- `stable`: A version of Tartaria built twice a week on Wed/Sat, or when a release is published, based on the latest repository tag. Considered stable and is recommended for usage.
 - `unstable`: A version of Tartaria built daily, or every time a change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
 We also offer two different kernel options:
@@ -41,6 +41,7 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
+Each variant also has a corresponding variant with NVidia support, just suffix `-nvidia` to the variant name (e.g. stable-cachy-**nvidia**).
 Note that all times and dates above are based on UTC.
 
 
@@ -85,10 +86,6 @@ You can absolutely fork this project! There are extra steps, though:
 
 The reason for these steps is to delete the workflow for the unstable version of Tartaria entirely, something most users won't need.
 Note that these steps are NOT required; you may keep the unstable workflow if you choose to.
-
-
-## NVIDIA
-Support for NVIDIA graphics will not be looked into currently since I lack a machine with an NVIDIA card to support/test such changes. Those with such hardware are welcome to contribute changes.
 
 
 ## Credits to...

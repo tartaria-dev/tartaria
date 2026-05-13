@@ -24,12 +24,12 @@ concurrency:
 
 jobs:
   build_push:
-    name: Build Tartaria (stable-${{ matrix.KERN_FLAVOR }})
+    name: Build Tartaria (stable-${{ matrix.IMAGE_FLAVOR }})
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        KERN_FLAVOR: [arch, cachy]
+        IMAGE_FLAVOR: [arch, arch-nvidia, cachy, cachy-nvidia]
 
     permissions:
       contents: read
@@ -71,9 +71,9 @@ jobs:
         id: metadata
         with:
           tags: |
-            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.KERN_FLAVOR }}
-            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.KERN_FLAVOR }}.{{date 'YYYYMMDD'}}
-            type=raw,value=${{ matrix.KERN_FLAVOR }}-{{date 'YYYYMMDD'}}
+            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.IMAGE_FLAVOR }}
+            type=raw,value=${{ env.DEFAULT_TAG }}-${{ matrix.IMAGE_FLAVOR }}.{{date 'YYYYMMDD'}}
+            type=raw,value=${{ matrix.IMAGE_FLAVOR }}-{{date 'YYYYMMDD'}}
             type=sha,enable=${{ github.event_name == 'pull_request' }}
             type=ref,event=pr
           labels: |
@@ -107,8 +107,8 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
-            KERN_FLAVOR=${{ matrix.KERN_FLAVOR }}
-            IMAGE_VARIANT=stable-${{ matrix.KERN_FLAVOR }}
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=stable-${{ matrix.IMAGE_FLAVOR }}
           oci: true
 
       - name: Login to GHCR
