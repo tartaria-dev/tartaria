@@ -18,7 +18,7 @@ Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day u
 
 Tartaria aims to provide a modern, unobtrusive experience for its users that lets them get their work done.
 
-Not too many apps or extra bells and whistles are installed by default, and extra configuration is left up to the user.
+Not too many apps or extra bells and whistles are installed by default, as extra configuration is left up to the user.
 
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
