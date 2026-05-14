@@ -189,7 +189,6 @@ declare -a packages=(
     accountsservice
     archlinux-xdg-menu
     brightnessctl
-    cage
     chaotic-aur/bibata-cursor-theme
     chaotic-aur/darkly-qt6-git
     chaotic-aur/matugen-git
