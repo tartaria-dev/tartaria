@@ -47,7 +47,7 @@ Note that all times and dates above are based on UTC.
 
 
 ## Switching
-At the moment, only rebasing (i.e., from Fedora Silverblue) is supported - ISO support will come soon.
+At the moment, only rebasing is supported - ISO support will come soon. Rebasing from Fedora Silverblue/Kinoite, Aurora, or Bluefin is recommended to prevent unwanted issues from coming up, although it doesn't matter.
 
 To rebase, use the following command in your terminal:
 
