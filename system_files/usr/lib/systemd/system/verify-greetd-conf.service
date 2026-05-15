@@ -1,0 +1,12 @@
+[Unit]
+Description=Verify greetd configs
+Wants=local-fs.target
+After=local-fs.target
+Before=greetd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/verify-greetd-configs
+
+[Install]
+WantedBy=multi-user.target
