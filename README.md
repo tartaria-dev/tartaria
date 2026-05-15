@@ -16,7 +16,7 @@ Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day u
 - The Niri scrollable tiling Wayland compositor
 - The modern, fluid Noctalia desktop shell
 
-Overall, Tartaria aims to provide a sleek, modern, unobtrusive experience for its users that lets them get their work done.
+Overall, Tartaria aims to provide a sleek, modern, unobtrusive experience that lets you get your work done.
 
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
