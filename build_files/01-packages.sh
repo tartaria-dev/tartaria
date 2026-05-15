@@ -40,9 +40,9 @@ fi
 declare -a packages=(
     # ========> system
     base
+    bootc/bootc
     bootc/uupd
     $KERN_PKG
-    chaotic-aur/bootc
     cpio
     dbus
     dbus-glib
