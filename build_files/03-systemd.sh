@@ -16,20 +16,21 @@ systemctl enable \
     greetd.service \
     kdeconnect-firewalld-bypass.service \
     NetworkManager.service \
-    polkit.service \
     incrond.service \
+    polkit.service \
+    pick-cherries.timer \
     rechunker-group-fix.service \
     refresh-font-cache.service \
     tuned-ppd.service \
     tuned.service \
-    usr-share-tartaria-cherries.mount \
     uupd.timer \
-    pick-cherries.timer
+    usr-share-tartaria-cherries.mount \
+    verify-greetd-configs.service
 
 # system-preset
 systemctl preset \
-    systemd-resolved.service \
-    kdeconnect-firewalld-bypass.service
+    kdeconnect-firewalld-bypass.service \
+    systemd-resolved.service
 
 # user
 systemctl --global enable \
@@ -38,8 +39,8 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     opentabletdriver.service \
-    udiskie.service \
     subsystem.service \
+    udiskie.service \
     wl-clip-persist.service
     
 # user-preset
@@ -48,8 +49,8 @@ systemctl preset --global \
     chezmoi-update.timer \
     flathub-user.service \
     noctalia-shell.service \
-    udiskie.service \
     subsystem.service \
+    udiskie.service \
     wl-clip-persist.service
 
 # user-wants for Niri

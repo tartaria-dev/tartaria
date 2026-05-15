@@ -1,0 +1,23 @@
+[background]
+path = "/usr/share/tartaria/wallpapers/cherry_tree.png"
+fit = "Fill"
+
+[GTK]
+application_prefer_dark_theme = true
+cursor_theme_name = "Bibata-Original-Ice"
+cursor_blink = true
+font_name = "Maple Mono 16"
+icon_theme_name = "default-icons-grey-dark"
+theme_name = "Orchis-Dark"
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "Welcome"
+
+[widget.clock]
+format = "%a %H:%M"
+resolution = "500ms"
+label_width = 150
