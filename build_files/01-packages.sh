@@ -40,9 +40,9 @@ fi
 declare -a packages=(
     # ========> system
     base
+    bootc/bootc
     bootc/uupd
     $KERN_PKG
-    chaotic-aur/bootc
     cpio
     dbus
     dbus-glib
@@ -189,11 +189,6 @@ declare -a packages=(
     accountsservice
     archlinux-xdg-menu
     brightnessctl
-    chaotic-aur/bibata-cursor-theme
-    chaotic-aur/darkly-qt6-git
-    chaotic-aur/matugen-git
-    chaotic-aur/noctalia-shell
-    chaotic-aur/opentabletdriver
     chezmoi
     cliphist
     dgop
@@ -209,7 +204,6 @@ declare -a packages=(
     orca
     orchis-theme
     polkit-kde-agent
-    quickshell
     shared-mime-info
     tuned
     tuned-ppd
@@ -222,24 +216,29 @@ declare -a packages=(
 
     # ========> applications
     ark
-    chaotic-aur/bazaar-git
-    chaotic-aur/distroshelf
-    chaotic-aur/qt6ct-kde
-    chaotic-aur/valent-git
-    chaotic-aur/zen-browser-bin
+    baobab
+    bazaar
     $CACHY_PKGS
     decibels
     flatseal
     frameworkintegration
+    gnome-calculator
+    gnome-calendar
+    gnome-music
     gnome-text-editor
+    gnome-weather
     gpu-screen-recorder
     hplip
+    impression
     kitty
     loupe
     mission-center
     nautilus
+    papers
+    secrets
     showtime
     sysprof
+    thunderbird
 )
 
 # install packages in one go
