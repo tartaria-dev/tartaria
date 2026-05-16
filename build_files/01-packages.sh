@@ -71,6 +71,7 @@ declare -a packages=(
     openssh
     powertop
     python3
+    rsync
     tar
     unzip
     vim
