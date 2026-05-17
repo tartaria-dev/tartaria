@@ -13,41 +13,16 @@ if [[ "$EUID" != "0" ]]; then
     exit 77
 fi
 
-# fetch ids
-LOCAL_ID=$(podman image inspect ghcr.io/tartaria-dev/cherries:latest --format '{{.Id}}' 2>/dev/null || true)
-REMOTE_ID=$(podman image inspect docker://ghcr.io/tartaria-dev/cherries:latest --format '{{.Id}}' || true)
-readonly LOCAL_ID
-readonly REMOTE_ID
-
-# check if ids are present
-if [[ -z $LOCAL_ID ]] || [[ -z $REMOTE_ID ]]; then
-    echo "[!!] We don't seem to have an internet connection, exiting."
-    exit 0
-fi
-
-# compare ids
-echo "[1/4] Checking if cherries have grown."
-if [[ "$LOCAL_ID" == "$REMOTE_ID" ]] && [[ -f /etc/.cherries-are-picked ]]; then
-    echo "[!!] Cherries have not grown yet, exiting."
-    exit 0
-else
-    echo "[1/4] Cherries have grown."
-fi
-
 # pull and mount image
-echo "[2/4] Picking cherries."
+echo "[1/3] Fetching dotfile repository."
 podman pull ghcr.io/tartaria-dev/cherries:latest -q
 MNT=$(podman image mount ghcr.io/tartaria-dev/cherries:latest)
-echo "[2/4] Picked cherries."
 
 # copy over files
-echo "[3/4] Storing cherries."
+echo "[2/3] Syncing fetched copy of repository with local copy."
 mkdir -p /var/lib/cherries
 rsync -avH --delete "$MNT"/system_files/ /var/lib/cherries/
-echo "[3/4] Stored cherries."
 
 # cleanup
-echo "[4/4] Washing cherries."
+echo "[3/3] Cleaning up."
 podman image unmount ghcr.io/tartaria-dev/cherries:latest
-touch /etc/.cherries-are-picked
-echo "[4/4] Cherries washed."
