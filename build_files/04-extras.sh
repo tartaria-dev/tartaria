@@ -8,7 +8,7 @@ chmod 750 /etc/polkit-1
 chgrp -R polkitd /etc/polkit-1
 
 # fix ttys not starting correctly
-ln -s /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
+ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
 
 # configure useradd defaults
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"

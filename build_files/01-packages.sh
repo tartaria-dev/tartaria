@@ -21,16 +21,16 @@ elif [[ "$IMAGE_FLAVOR" == "arch-nvidia" ]]; then
     readonly CACHY_PKGS
     readonly NVIDIA_PKGS
 elif [[ "$IMAGE_FLAVOR" == "cachy" ]]; then
-    KERN_PKG="cachyos/linux-cachyos"
-    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
+    KERN_PKG="linux-cachyos"
+    CACHY_PKGS="scx-manager scx-scheds"
     NVIDIA_PKGS=" "
     readonly KERN_PKG
     readonly CACHY_PKGS
     readonly NVIDIA_PKGS
 elif [[ "$IMAGE_FLAVOR" == "cachy-nvidia" ]]; then
-    KERN_PKG="cachyos/linux-cachyos-nvidia-open"
-    CACHY_PKGS="cachyos/scx-manager cachyos/scx-scheds"
-    NVIDIA_PKGS="cachyos/nvidia-utils"
+    KERN_PKG="linux-cachyos-nvidia-open"
+    CACHY_PKGS="scx-manager scx-scheds"
+    NVIDIA_PKGS="nvidia-utils"
     readonly KERN_PKG
     readonly CACHY_PKGS
     readonly NVIDIA_PKGS
@@ -243,5 +243,5 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -Sy --noconfirm "${packages[@]}" >/dev/null
-pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
+pacman -Sy --noconfirm "${packages[@]}"
+pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst

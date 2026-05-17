@@ -27,7 +27,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        IMAGE_FLAVOR: [arch, arch-nvidia, cachy, cachy-nvidia]
+        include:
+          - IMAGE_FLAVOR: arch
+            containerfile: ./Containerfile.arch
+          - IMAGE_FLAVOR: arch-nvidia
+            containerfile: ./Containerfile.arch
+          - IMAGE_FLAVOR: cachy
+            containerfile: ./Containerfile.cachy
+          - IMAGE_FLAVOR: cachy-nvidia
+            containerfile: ./Containerfile.cachy
 
     permissions:
       contents: read
@@ -98,8 +106,7 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
-          containerfiles: |
-            ./Containerfile
+          containerfiles: ${{ matrix.containerfile }}
           extra-args: --skip-unused-stages=false
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
