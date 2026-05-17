@@ -21,33 +21,33 @@ readonly REMOTE_ID
 
 # check if ids are present
 if [[ -z $LOCAL_ID ]] || [[ -z $REMOTE_ID ]]; then
-    echo "[!!] We don't seem to have an internet connection. Exiting..."
+    echo "[!!] We don't seem to have an internet connection, exiting."
     exit 0
 fi
 
 # compare ids
-echo "[1/4] Checking if cherries have grown..."
+echo "[1/4] Checking if cherries have grown."
 if [[ "$LOCAL_ID" == "$REMOTE_ID" ]] && [[ -f /etc/.cherries-are-picked ]]; then
-    echo "[!!] Cherries have not grown yet, exiting..."
+    echo "[!!] Cherries have not grown yet, exiting."
     exit 0
 else
     echo "[1/4] Cherries have grown."
 fi
 
 # pull and mount image
-echo "[2/4] Picking cherries..."
+echo "[2/4] Picking cherries."
 podman pull ghcr.io/tartaria-dev/cherries:latest -q
 MNT=$(podman image mount ghcr.io/tartaria-dev/cherries:latest)
 echo "[2/4] Picked cherries."
 
 # copy over files
-echo "[3/4] Storing cherries..."
+echo "[3/4] Storing cherries."
 mkdir -p /var/lib/cherries
-rsync -aH --delete "$MNT"/system_files/ /var/lib/cherries/
+rsync -avH --delete "$MNT"/system_files/ /var/lib/cherries/
 echo "[3/4] Stored cherries."
 
 # cleanup
-echo "[4/4] Washing cherries..."
+echo "[4/4] Washing cherries."
 podman image unmount ghcr.io/tartaria-dev/cherries:latest
 touch /etc/.cherries-are-picked
 echo "[4/4] Cherries washed."
