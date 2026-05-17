@@ -9,7 +9,7 @@ rsync -av --delete --filter="protect wallpaper.png" /usr/share/greetd-defaults/ 
 
 # check if wallpaper image exists; if not, use default wallpaper, if yes, use the wallpaper image
 if [[ ! -f /etc/greetd/wallpaper.png ]]; then
-    sed -i 's|path = ".*"|path = "/etc/greetd/wallpaper.png"|g'
+    sed -i 's|path = ".*"|path = "/etc/greetd/wallpaper.png"|g' /etc/greetd/regreet.toml
 else
-    sed -i 's|path = ".*"|path = "/usr/share/tartaria/wallpapers/cherry_tree.png"|g'
+    sed -i 's|path = ".*"|path = "/usr/share/tartaria/wallpapers/cherry_tree.png"|g' /etc/greetd/regreet.toml
 fi
