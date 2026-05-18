@@ -108,7 +108,6 @@ declare -a packages=(
     iio-sensor-proxy
     lm_sensors
     libva-intel-driver
-    libva-mesa-driver
     $NVIDIA_PKGS
     vpl-gpu-rt
     vulkan-icd-loader
@@ -243,5 +242,6 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -Sy --noconfirm "${packages[@]}" --ignore mesa-git
+pacman -Sy --noconfirm "${packages[@]}"
+pacman -Sy --noconfirm libva-mesa-driver
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst
