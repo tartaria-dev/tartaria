@@ -22,7 +22,7 @@ sed -i \
 
 # init keys
 pacman-key --init
-if [[ $IMAGE_FLAVOR == cachy-* ]]; then
+if [[ $IMAGE_FLAVOR == cachy* ]]; then
     pacman-key --populate archlinux cachyos
 else
     pacman-key --populate archlinux

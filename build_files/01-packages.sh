@@ -94,12 +94,6 @@ declare -a packages=(
     udftools
     xfsprogs
 
-    # ========> display & graphics
-    mesa
-    mesa-utils
-    wayland-utils
-    xwayland-satellite
-
     # ========> hardware
     acpid
     amd-ucode
@@ -122,6 +116,12 @@ declare -a packages=(
     vulkan-radeon
     xf86-video-amdgpu
     zram-generator
+
+    # ========> display & graphics
+    mesa
+    mesa-utils
+    wayland-utils
+    xwayland-satellite
 
     # ========> audio
     alsa-firmware
@@ -243,5 +243,5 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -Sy --noconfirm "${packages[@]}"
+pacman -Sy --noconfirm "${packages[@]}" --ignore mesa-git
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst
