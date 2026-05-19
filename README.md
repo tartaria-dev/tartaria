@@ -36,7 +36,7 @@ Two bases of Tartaria are built within this repository:
 Alongside those bases, we offer two different flavors:
 
 - `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel. Compatible with all hardware.
-- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Check that your CPU supports [`x86_64-v3`.](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels)
+- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Check that your CPU supports [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).
 
 In total, there are four different variants of Tartaria:
 
@@ -45,7 +45,7 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
-Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-cachy-nvidia`).
+Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-arch-nvidia`).
 
 Note that all times and dates above are based on UTC.
 
