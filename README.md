@@ -22,15 +22,21 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 
 ## Variants
-Two versions of Tartaria are built within this repository:
+Variants are composed as follows:
+
+```
+tartaria:<base>-<flavor>
+```
+
+Two bases of Tartaria are built within this repository:
 
 - `stable`: A version of Tartaria built twice a week on Wed/Sat, or when a release is published, based on the latest repository tag. Considered stable and recommended for usage.
 - `unstable`: A version of Tartaria built daily, or every time a new change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
-We also offer two different kernel options:
+Alongside those bases, we offer two different flavors:
 
-- `arch`: Standard Arch kernel, compatible with all devices.
-- `cachy`: Optimized version of the Arch kernel only compatible with CPUs that support the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture. Only choose this if you know what you are doing.
+- `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel. Compatible with all hardware.
+- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Check that your CPU supports [`x86_64-v3`.](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels)
 
 In total, there are four different variants of Tartaria:
 
