@@ -36,7 +36,7 @@ Two bases of Tartaria are built within this repository:
 Alongside those bases, we offer two different flavors:
 
 - `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel. Compatible with all hardware.
-- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Check that your CPU supports [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).
+- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Ensure your CPU supports the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture to use this flavor.
 
 In total, there are four different variants of Tartaria:
 
