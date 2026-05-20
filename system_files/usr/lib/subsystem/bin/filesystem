@@ -7,12 +7,12 @@ set -eo pipefail
 # do our checks
 if [[ "$1" != "mount" ]] && [[ "$1" != "unmount" ]]; then
     echo "[!!!] No mount action defined."
-    echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
+    echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH"
     exit 64
 elif [[ $* != *--user=* ]] || [[ $* != *--rfsdir=* ]]; then
     echo "[!!!] Arguments --user or --rfsdir were not used."
     echo "[!!!] Both arguments and their respective values are required for this command to function."
-    echo "[---] Usage: $0 mount|unmount --user=USER --rfsdir=PATH/TO/RFSDIR"
+    echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH"
     exit 64
 elif [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
@@ -54,12 +54,9 @@ for arg in "$@"; do
 
         --hash=*)
             HASH="${arg#*=}"
+            REPODIR="/var/lib/subsystem/$HASH"
             readonly HASH
-            ;;
-
-        --rfsdir=*)
-            RFSDIR="${arg#*=}"
-            readonly RFSDIR
+            readonly REPODIR
             ;;
 
         *)
@@ -72,48 +69,45 @@ done
 case $ACTION in
     mount)
         # trap EXIT
-        trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --store="$RFSDIR" --user="$TARGETUSR"' EXIT
+        trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --user="$TARGETUSR" --hash="$HASH"' EXIT
+
+        # ensure base directories exist
+        mkdir -p "$REPODIR"/{repo,base,content}
 
         # (re)mount base filesystem
-        if ! findmnt "$RFSDIR"/base >/dev/null; then
-            echo "[i] Mounting base filesystem."
-            mkdir -p "$RFSDIR"/base
-            chown -R "$TARGETUSR":"$TARGETUSR" "$RFSDIR"
-            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"/base
+        if ! findmnt "$REPODIR"/base >/dev/null; then
+            echo "[i] Mounting basefs."
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
         else
-            echo "[i] Remounting base filesystem."
-            umount -q "$RFSDIR"/base
-            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$RFSDIR"/base
+            echo "[i] Remounting basefs."
+            umount -q "$REPODIR"/base
+            mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
         fi
 
         # initialize ostree repo and commit rootfs if needed
-        if [[ ! -d "/var/lib/subsystem/repo/$HASH" ]]; then
+        if [[ ! -d "$REPODIR/.initialized" ]]; then
             echo "[i] Initializing rootfs repository."
-            mkdir -p /var/lib/subsystem/repo/"$HASH"
-            chown "$TARGETUSR":"$TARGETUSR" /var/lib/subsystem/repo/"$HASH"
-            ostree --repo="/var/lib/subsystem/repo/$HASH" init --mode=bare
-            ostree --repo="/var/lib/subsystem/repo/$HASH" commit --branch="subsystem-$TARGETUSR" --subject="subsystem snapshot for $TARGETUSR" "$RFSDIR"/base
+            ostree --repo="$REPODIR/repo" init --mode=bare
+            ostree --repo="$REPODIR/repo" commit --branch="subsystem-rootfs-$TARGETUSR" --subject="subsystem rootfs snapshot for $TARGETUSR" "$REPODIR"/base
+            touch "$REPODIR/.initialized"
         fi
 
         # clean checkout destination to ensure checkout accuracy
-        if [[ -d "/var/lib/subsystem/content/$HASH" ]]; then
-            echo "[i] Cleaning previous checkout."
-            rm -rf /var/lib/subsystem/content/"$HASH"/*
-        else
-            echo "[i] Creating checkout destination."
-            mkdir -p /var/lib/subsystem/content/"$HASH"/
-            chown "$TARGETUSR":"$TARGETUSR" /var/lib/subsystem/content/"$HASH"
+        if [[ -n $(find "$REPODIR"/content -maxdepth 0 -not -empty) ]]; then
+            rm -rf "$REPODIR"/content/*
         fi
 
         # checkout commit
-        echo "[i] Checking out and mounting rootfs."
-        ostree --repo="/var/lib/subsystem/repo/$HASH" checkout -H "subsystem-$TARGETUSR" /var/lib/subsystem/content/"$HASH"
-        mount -o ro,bind /var/lib/subsystem/content/"$HASH" /var/lib/subsystem/content/"$HASH"
+        echo "[i] Checking out rootfs."
+        ostree --repo="$REPODIR/repo" checkout -H "subsystem-rootfs-$TARGETUSR" "$REPODIR"/content
 
-        # cleanup
-        echo "[i] Cleaning up."
-        umount -q "$RFSDIR"/base
-        rm -rf "$RFSDIR"/base
+        # lock repodir from runtime modification
+        echo "[i] Locking repository."
+        mount -o ro,bind "$REPODIR" "$REPODIR"
+
+        # unmount basefs
+        echo "[i] Unmounting basefs."
+        umount -q "$REPODIR"/base
         
         # reset traps
         trap - EXIT
@@ -122,24 +116,24 @@ case $ACTION in
         # trap EXIT
         trap 'echo "[!!!] Error occured in unmounting process, manual intervention is required."' EXIT
 
-        # unmount filesystem
-        if findmnt /var/lib/subsystem/content/"$HASH" >/dev/null; then
-            echo "[i] Unmounting rootfs."
-            umount -q /var/lib/subsystem/content/"$HASH"
+        # unlock repository
+        if findmnt "$REPODIR" >/dev/null; then
+            echo "[i] Unlocking repository."
+            umount -q "$REPODIR"
         else 
-            echo "[!!] Filesystem appears to be unmounted already, ignoring."
+            echo "[!!] Repository seems to be unlocked already, ignoring."
         fi
 
         # cleanup
         echo "[i] Cleaning up."
-        rm -rf /var/lib/subsystem/content/"$HASH"/*
+        rm -rf "$REPODIR"/content/*
 
         # reset traps
         trap - EXIT
         ;;
     *)
         echo "[!!!] No action defined."
-        echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH --rfsdir=PATH/TO/RFSDIR"
+        echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH"
         exit 64
         ;;
 esac
