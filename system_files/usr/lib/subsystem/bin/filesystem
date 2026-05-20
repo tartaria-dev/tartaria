@@ -9,8 +9,8 @@ if [[ "$1" != "mount" ]] && [[ "$1" != "unmount" ]]; then
     echo "[!!!] No mount action defined."
     echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH"
     exit 64
-elif [[ $* != *--user=* ]] || [[ $* != *--rfsdir=* ]]; then
-    echo "[!!!] Arguments --user or --rfsdir were not used."
+elif [[ $* != *--user=* ]] || [[ $* != *--hash=* ]]; then
+    echo "[!!!] Arguments --user or --hash were not used."
     echo "[!!!] Both arguments and their respective values are required for this command to function."
     echo "[---] Usage: $0 mount|unmount --user=USER --hash=HASH"
     exit 64
