@@ -4,5 +4,5 @@ enable chezmoi-update.timer
 enable wl-clip-persist.service
 enable iio-niri.service
 enable udiskie.service
-enable subsystem.service
+enable subsystem-containerd.service
 enable noctalia-shell.service

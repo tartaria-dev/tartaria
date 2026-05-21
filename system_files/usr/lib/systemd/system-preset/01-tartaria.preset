@@ -1,1 +1,2 @@
 enable kdeconnect-firewalld-bypass.service
+enable subsystem-filesystemd.service

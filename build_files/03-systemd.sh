@@ -25,11 +25,13 @@ systemctl enable \
     tuned.service \
     uupd.timer \
     usr-share-tartaria-cherries.mount \
-    verify-greetd-configs.service
+    verify-greetd-configs.service \
+    subsystem-filesystemd.service
 
 # system-preset
 systemctl preset \
     kdeconnect-firewalld-bypass.service \
+    subsystem-filesystemd.service \
     systemd-resolved.service
 
 # user
@@ -39,7 +41,7 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     opentabletdriver.service \
-    subsystem.service \
+    subsystem-containerd.service \
     udiskie.service \
     wl-clip-persist.service
     
@@ -49,7 +51,7 @@ systemctl preset --global \
     chezmoi-update.timer \
     flathub-user.service \
     noctalia-shell.service \
-    subsystem.service \
+    subsystem-containerd.service \
     udiskie.service \
     wl-clip-persist.service
 

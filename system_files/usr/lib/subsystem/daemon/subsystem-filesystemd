@@ -1,0 +1,173 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+## set pipefail
+set -o pipefail
+
+## do our checks
+if [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
+    exit 77
+fi
+
+## set arrays
+declare -a operational_users
+
+## utilities
+mount-rootfs() {
+    # trap ERR, SIGTERM
+    trap 'echo "[!!!] Something went wrong while mounting, aborting." && return 1' ERR
+    trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
+
+    # ensure base directories exist
+    mkdir -p "$REPODIR"/{repo,base}
+
+    # (re)mount base filesystem
+    if ! findmnt "$REPODIR"/base >/dev/null; then
+        echo "[1/4] Mounting basefs."
+        mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
+    else
+        echo "[1/4] Remounting basefs."
+        umount -q "$REPODIR"/base
+        mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
+    fi
+
+    # initialize ostree repo and commit rootfs if needed
+    if [[ ! -f "$REPODIR/.initialized" ]]; then
+        echo "[i] Initializing rootfs repository."
+        rm -rf "$REPODIR"/repo/*
+        ostree --repo="$REPODIR/repo" init --mode=bare
+        ostree --repo="$REPODIR/repo" commit --branch="subsystem-rootfs-$TARGETUSR" --subject="subsystem rootfs snapshot for $TARGETUSR" "$REPODIR"/base
+        touch "$REPODIR/.initialized"
+    fi
+
+    # clean checkout destination to ensure checkout accuracy
+    if [[ -d "$REPODIR"/content ]]; then
+        echo "[i] Cleaning previous checkout."
+        rm -rf "$REPODIR"/content
+    fi
+
+    # checkout commit
+    echo "[2/4] Checking out rootfs."
+    ostree --repo="$REPODIR/repo" checkout -H "subsystem-rootfs-$TARGETUSR" "$REPODIR"/content
+
+    # unmount basefs
+    echo "[3/4] Unmounting basefs."
+    umount -q "$REPODIR"/base
+
+    # lock repodir from runtime modification
+    echo "[4/4] Locking repository."
+    mount -o ro,bind "$REPODIR" "$REPODIR"
+
+    # reset traps
+    trap - ERR SIGTERM
+}
+
+umount-rootfs() {
+    # trap ERR, SIGTERM
+    trap 'echo "[!!!] Something went wrong while unmounting, aborting." && return 1' ERR
+    trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
+
+    if [[ ! -d "$REPODIR" ]]; then
+        echo "[!!] Target repository $REPODIR does not exist, ignoring."
+        return
+    fi
+
+    # unlock repository
+    if findmnt "$REPODIR" >/dev/null; then
+        echo "[i] Unlocking repository."
+        umount -q "$REPODIR"
+    else
+        echo "[!!] Repository seems to be unlocked already, ignoring."
+    fi
+
+    # cleanup
+    echo "[i] Cleaning up."
+    rm -rf "$REPODIR"/content
+
+    # reset traps
+    trap - ERR SIGTERM
+}
+
+start-mounts() {
+    # logging
+    echo "[---] Processing rootfs mounts."
+
+    # mount subsystem rootfs for all current users
+    awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd | while read -r TARGETUSR; do
+        if [[ ${operational_users[*]} =~ ${TARGETUSR} ]]; then
+            echo "[i] Already mounted for user $TARGETUSR."
+            continue
+        else
+            echo "[i] Mounting rootfs for user $TARGETUSR."
+            operational_users+=("$TARGETUSR")
+        fi
+
+        HASH=$(echo -n "$(cat /etc/machine-id)$TARGETUSR" | sha256sum | awk '{print $1}')
+        REPODIR="/var/lib/subsystem/$HASH"
+        USER_SUBUID_START=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
+        USER_SUBGID_START=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f2)
+        USER_SUBUID_RANGE=$(grep "^$TARGETUSR:" /etc/subuid | cut -d: -f3)
+        USER_SUBGID_RANGE=$(grep "^$TARGETUSR:" /etc/subgid | cut -d: -f3)
+
+        if [[ -z $USER_SUBUID_START || -z $USER_SUBGID_START || -z $USER_SUBUID_RANGE || -z $USER_SUBGID_RANGE ]]; then
+            echo "[!!!] User $TARGETUSR has improperly configured sub{uid,gid}s, skipping."
+            continue
+        fi
+
+        if ! mount-rootfs; then
+            echo "[i] Mount process failed for user $TARGETUSR."
+        fi
+
+        unset HASH REPODIR USER_SUBUID_START USER_SUBGID_START USER_SUBUID_RANGE USER_SUBGID_RANGE
+    done
+}
+
+stop-mounts() {
+    # umount subsystem rootfs for all current users
+    for TARGETUSR in "${operational_users[@]}"; do
+        echo "[i] Unmounting rootfs for user $TARGETUSR."
+
+        HASH=$(echo -n "$(cat /etc/machine-id)$TARGETUSR" | sha256sum | awk '{print $1}')
+        REPODIR="/var/lib/subsystem/$HASH"
+
+        if ! umount-rootfs; then
+            echo "Unmount process failed for user $TARGETUSR."
+        fi
+
+        unset HASH REPODIR
+    done
+}
+
+monitor() {
+    # trap SIGTERM
+    trap 'kill "$NOTIFY_PID" 2>/dev/null; break' SIGTERM
+
+    # monitor new users and mount for them
+    while true; do
+        inotifywait -m -e close_write /etc/passwd &
+        NOTIFY_PID=$!
+
+        wait $NOTIFY_PID 2>/dev/null
+        
+        if [[ ! -d "/proc/$NOTIFY_PID" && "$NOTIFY_PID" -ne 0 ]]; then
+            break
+        fi
+
+        echo "[---] Refreshing rootfs mounts."
+        start-mounts
+    done
+
+    # reset trap
+    trap - SIGTERM
+}
+
+## main logic
+systemd-notify --status "Starting..."
+start-mounts
+
+systemd-notify --ready --status "Monitoring for new users."
+monitor
+
+systemd-notify --status "Stopping..."
+stop-mounts
