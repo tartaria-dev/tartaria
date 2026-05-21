@@ -72,7 +72,7 @@ case $ACTION in
         trap 'echo "[!!!] Error occured in mounting process, cleaning up." && pkexec /usr/lib/subsystem/bin/filesystem unmount --user="$TARGETUSR" --hash="$HASH"' EXIT
 
         # ensure base directories exist
-        mkdir -p "$REPODIR"/{repo,base,content}
+        mkdir -p "$REPODIR"/{repo,base}
 
         # (re)mount base filesystem
         if ! findmnt "$REPODIR"/base >/dev/null; then
@@ -85,7 +85,7 @@ case $ACTION in
         fi
 
         # initialize ostree repo and commit rootfs if needed
-        if [[ ! -d "$REPODIR/.initialized" ]]; then
+        if [[ ! -f "$REPODIR/.initialized" ]]; then
             echo "[i] Initializing rootfs repository."
             ostree --repo="$REPODIR/repo" init --mode=bare
             ostree --repo="$REPODIR/repo" commit --branch="subsystem-rootfs-$TARGETUSR" --subject="subsystem rootfs snapshot for $TARGETUSR" "$REPODIR"/base
@@ -93,21 +93,21 @@ case $ACTION in
         fi
 
         # clean checkout destination to ensure checkout accuracy
-        if [[ -n $(find "$REPODIR"/content -maxdepth 0 -not -empty) ]]; then
-            rm -rf "$REPODIR"/content/*
+        if [[ -d "$REPODIR"/content ]]; then
+            rm -rf "$REPODIR"/content
         fi
 
         # checkout commit
         echo "[i] Checking out rootfs."
         ostree --repo="$REPODIR/repo" checkout -H "subsystem-rootfs-$TARGETUSR" "$REPODIR"/content
 
-        # lock repodir from runtime modification
-        echo "[i] Locking repository."
-        mount -o ro,bind "$REPODIR" "$REPODIR"
-
         # unmount basefs
         echo "[i] Unmounting basefs."
         umount -q "$REPODIR"/base
+
+        # lock repodir from runtime modification
+        echo "[i] Locking repository."
+        mount -o ro,bind "$REPODIR" "$REPODIR"
         
         # reset traps
         trap - EXIT
@@ -126,7 +126,7 @@ case $ACTION in
 
         # cleanup
         echo "[i] Cleaning up."
-        rm -rf "$REPODIR"/content/*
+        rm -rf "$REPODIR"/content
 
         # reset traps
         trap - EXIT
