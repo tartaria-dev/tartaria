@@ -5,11 +5,9 @@ RequiresMountsFor=%t/containers
 RequiresMountsFor=/run/user/%U
 
 [Service]
-Type=oneshot
-Environment=PODMAN_SYSTEMD_UNIT=%n
-ExecStart=/usr/lib/subsystem/bin/subsystem start
-ExecStop=-/usr/lib/subsystem/bin/subsystem stop
-TimeoutStopSec=45s
+Type=notify
+NotifyAccess=main
+ExecStart=/usr/lib/subsystem/daemon
 
 [Install]
 WantedBy=graphical-session.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Subsystem filesystem management
+After=var.mount
+Requires=var.mount
+
+[Service]
+Type=notify
+NotifyAccess=main
+ExecStart=/usr/lib/subsystem/daemon
+
+[Install]
+WantedBy=multi-user.target
