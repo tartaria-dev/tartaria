@@ -16,7 +16,6 @@ systemctl enable \
     greetd.service \
     kdeconnect-firewalld-bypass.service \
     NetworkManager.service \
-    incrond.service \
     polkit.service \
     pick-cherries.timer \
     rechunker-group-fix.service \
