@@ -90,8 +90,10 @@ else
             shell
         else
             err-servfail
+            exec bash
         fi
     else
         err-servfail
+        exec bash
     fi
 fi

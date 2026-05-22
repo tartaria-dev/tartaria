@@ -23,7 +23,7 @@ start-subsystem() {
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
     # logging
-    echo "[i] Starting subsystem."
+    echo "[---] Starting subsystem."
 
     # make config dir if it doesnt exist
     mkdir -p "$HOME"/.config/subsystem
@@ -52,9 +52,11 @@ start-subsystem() {
     fi
 
     # start container
+    echo "[1/2] Starting container."
     podman container start "subsystem-$HASH"
 
     # set runtime lock
+    echo "[2/2] Creating runtime lock."
     touch "$RTMEDIR"/runtime.lock
 
     # reset traps
@@ -67,12 +69,14 @@ stop-subsystem() {
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
     # logging
-    echo "[i] Stopping subsystem."
+    echo "[---] Stopping subsystem."
 
     # clear runtime lock
+    echo "[1/2] Removing runtime lock."
     rm -f "$RTMEDIR"/runtime.lock
 
     # stop container
+    echo "[2/2] Stopping container."
     podman container stop -it 30 "subsystem-$HASH"
 
     # reset traps
@@ -114,21 +118,21 @@ monitor() (
 
         if $TERM_RECEIVED || [[ ! -f $LOCKFILE ]]; then break; fi
 
-        echo "[i] subsystem-$HASH exited, restarting..."
+        echo "[-i-] subsystem-$HASH exited, restarting..."
 
         if ! start-subsystem; then
             FAILED=$(( FAILED + 1 ))
-            echo "[!!] Failed to restart subsystem-$HASH, failure counter is at $FAILED."
+            echo "[-!-] Failed to restart subsystem-$HASH, failure counter is at $FAILED."
         else
             isleep 1
             if $TERM_RECEIVED; then break; fi
 
             if ! podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
                 FAILED=$(( FAILED + 1 ))
-                echo "[!!] Failed to start subsystem-$HASH, failure counter is at $FAILED."
+                echo "[-!-] Failed to start subsystem-$HASH, failure counter is at $FAILED."
             else
                 FAILED=0
-                echo "[i] Restarted subsystem-$HASH successfully."
+                echo "[-i-] Restarted subsystem-$HASH successfully."
             fi
         fi
 

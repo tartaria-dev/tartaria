@@ -34,7 +34,7 @@ mount-rootfs() {
 
     # initialize ostree repo and commit rootfs if needed
     if [[ ! -f "$REPODIR/.initialized" ]]; then
-        echo "[i] Initializing rootfs repository."
+        echo "[-i-] Initializing rootfs repository."
         rm -rf "$REPODIR"/repo/*
         ostree --repo="$REPODIR/repo" init --mode=bare
         ostree --repo="$REPODIR/repo" commit --branch="subsystem-rootfs-$TARGETUSR" --subject="subsystem rootfs snapshot for $TARGETUSR" "$REPODIR"/base
@@ -43,7 +43,7 @@ mount-rootfs() {
 
     # clean checkout destination to ensure checkout accuracy
     if [[ -d "$REPODIR"/content ]]; then
-        echo "[i] Cleaning previous checkout."
+        echo "[-i-] Cleaning previous checkout."
         rm -rf "$REPODIR"/content
     fi
 
@@ -69,20 +69,20 @@ umount-rootfs() {
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
     if [[ ! -d "$REPODIR" ]]; then
-        echo "[!!] Target repository $REPODIR does not exist, ignoring."
+        echo "[-!-] Target repository $REPODIR does not exist, ignoring."
         return
     fi
 
     # unlock repository
     if findmnt "$REPODIR" >/dev/null; then
-        echo "[i] Unlocking repository."
+        echo "[-i-] Unlocking repository."
         umount -q "$REPODIR"
     else
-        echo "[!!] Repository seems to be unlocked already, ignoring."
+        echo "[-!-] Repository seems to be unlocked already, ignoring."
     fi
 
     # cleanup
-    echo "[i] Cleaning up."
+    echo "[-i-] Cleaning up."
     rm -rf "$REPODIR"/content
 
     # reset traps
@@ -91,15 +91,15 @@ umount-rootfs() {
 
 start-mounts() {
     # logging
-    echo "[---] Processing rootfs mounts."
+    echo "[---] Mounting subsystem rootfs for all users."
 
     # mount subsystem rootfs for all current users
     awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd | while read -r TARGETUSR; do
         if [[ ${operational_users[*]} =~ ${TARGETUSR} ]]; then
-            echo "[i] Already mounted for user $TARGETUSR."
+            echo "[-i-] Already mounted for user $TARGETUSR."
             continue
         else
-            echo "[i] Mounting rootfs for user $TARGETUSR."
+            echo "[-/4] Mounting rootfs for user $TARGETUSR."
             operational_users+=("$TARGETUSR")
         fi
 
@@ -116,17 +116,23 @@ start-mounts() {
         fi
 
         if ! mount-rootfs; then
-            echo "[i] Mount process failed for user $TARGETUSR."
+            echo "[-!-] Mount process failed for user $TARGETUSR."
         fi
 
         unset HASH REPODIR USER_SUBUID_START USER_SUBGID_START USER_SUBUID_RANGE USER_SUBGID_RANGE
     done
+
+    # logging
+    echo "[---] Subsystem rootfs mounting done."
 }
 
 stop-mounts() {
+    # logging
+    echo "[---] Mounting subsystem rootfs for all users."
+
     # umount subsystem rootfs for all current users
     for TARGETUSR in "${operational_users[@]}"; do
-        echo "[i] Unmounting rootfs for user $TARGETUSR."
+        echo "[-i-] Unmounting rootfs for user $TARGETUSR."
 
         HASH=$(echo -n "$(cat /etc/machine-id)$TARGETUSR" | sha256sum | awk '{print $1}')
         REPODIR="/var/lib/subsystem/$HASH"
@@ -137,11 +143,17 @@ stop-mounts() {
 
         unset HASH REPODIR
     done
+
+    # logging
+    echo "[---] Subsystem rootfs unmounting done."
 }
 
 monitor() {
     # trap SIGTERM
     trap 'kill "$NOTIFY_PID" 2>/dev/null; break' SIGTERM
+
+    # logging
+    echo "[---] Monitoring for new users."
 
     # monitor new users and mount for them
     while true; do
@@ -154,9 +166,12 @@ monitor() {
             break
         fi
 
-        echo "[---] Refreshing rootfs mounts."
+        echo "[-i-] New user detected, refreshing rootfs mounts."
         start-mounts
     done
+
+    # logging
+    echo "[---] Beginning shutdown."
 
     # reset trap
     trap - SIGTERM
