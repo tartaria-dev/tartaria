@@ -198,7 +198,7 @@ declare -a packages=(
     gnome-keyring
     greetd
     greetd-regreet
-    incron
+    inotify-tools
     libappindicator
     niri
     orca
