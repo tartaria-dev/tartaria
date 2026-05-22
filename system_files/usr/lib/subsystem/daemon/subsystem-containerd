@@ -47,7 +47,7 @@ start-subsystem() {
             -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
             -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
             -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
-            --rootfs /var/lib/subsystem/content/"$HASH":O \
+            --rootfs /var/lib/subsystem/"$HASH"/content:O \
             /usr/libexec/ignition
     fi
 
