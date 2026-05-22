@@ -6,7 +6,7 @@ Requires=var.mount
 [Service]
 Type=notify
 NotifyAccess=main
-ExecStart=/usr/lib/subsystem/daemon
+ExecStart=/usr/lib/subsystem/daemon/subsystem-filesystemd
 
 [Install]
 WantedBy=multi-user.target

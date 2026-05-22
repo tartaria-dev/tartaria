@@ -7,7 +7,7 @@ RequiresMountsFor=/run/user/%U
 [Service]
 Type=notify
 NotifyAccess=main
-ExecStart=/usr/lib/subsystem/daemon
+ExecStart=/usr/lib/subsystem/daemon/subsystem-containerd
 
 [Install]
 WantedBy=graphical-session.target
