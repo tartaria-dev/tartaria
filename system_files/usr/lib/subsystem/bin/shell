@@ -89,9 +89,9 @@ else
         if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
             shell
         else
-            cat /usr/lib/subsystem/msg/err-service-fail
+            err-servfail
         fi
     else
-        cat /usr/lib/subsystem/msg/err-service-fail
+        err-servfail
     fi
 fi
