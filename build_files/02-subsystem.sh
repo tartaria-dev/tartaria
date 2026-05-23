@@ -23,7 +23,7 @@ pacman -U --root /workdir/output/image --noconfirm /packages/subsys/* >/dev/null
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
-mkfs.erofs -zlz4hc,12 -E all-fragments,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /workdir/output/image >/dev/null
+mkfs.erofs -zzstd,4 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /workdir/output/image >/dev/null
 
 # cleanup
 cd /
