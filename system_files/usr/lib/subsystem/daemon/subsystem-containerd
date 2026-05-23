@@ -1,8 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-## set errexit, pipefail
-set -eo pipefail
+## set errexit, pipefail, errtrace
+set -eo pipefail -o errtrace
 
 ## do our checks
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
