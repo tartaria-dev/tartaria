@@ -12,7 +12,7 @@ fi
 
 ## set constants
 HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
-RTMEDIR="/tmp/subsystem-$HASH"
+RTMEDIR="$HOME/.cache/subsystem-$HASH"
 readonly HASH
 readonly RTMEDIR
 
@@ -24,9 +24,6 @@ start-subsystem() {
 
     # logging
     echo "[---] Starting subsystem."
-
-    # make config dir if it doesnt exist
-    mkdir -p "$HOME"/.config/subsystem
 
     # if container doesn't exist, create it
     if ! podman container exists "subsystem-$HASH"; then
@@ -57,6 +54,7 @@ start-subsystem() {
 
     # set runtime lock
     echo "[2/2] Creating runtime lock."
+    mkdir -p "$RTMEDIR"
     touch "$RTMEDIR"/runtime.lock
 
     # reset traps
@@ -73,7 +71,7 @@ stop-subsystem() {
 
     # clear runtime lock
     echo "[1/2] Removing runtime lock."
-    rm -f "$RTMEDIR"/runtime.lock
+    rm -rf "$RTMEDIR"
 
     # stop container
     echo "[2/2] Stopping container."
