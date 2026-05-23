@@ -19,45 +19,19 @@ mount-rootfs() {
     trap 'echo "[!!!] Something went wrong while mounting, aborting." && return 1' ERR
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
-    # ensure base directories exist
-    mkdir -p "$REPODIR"/{repo,base}
-
-    # (re)mount base filesystem
-    if ! findmnt "$REPODIR"/base >/dev/null; then
-        echo "[1/4] Mounting basefs."
-        mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
-    else
-        echo "[1/4] Remounting basefs."
-        umount -q "$REPODIR"/base
-        mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk "$REPODIR"/base
-    fi
-
-    # initialize ostree repo and commit rootfs if needed
-    if [[ ! -f "$REPODIR/.initialized" ]]; then
-        echo "[-i-] Initializing rootfs repository."
-        rm -rf "$REPODIR"/repo/*
-        ostree --repo="$REPODIR/repo" init --mode=bare
-        ostree --repo="$REPODIR/repo" commit --branch="subsystem-rootfs-$TARGETUSR" --subject="subsystem rootfs snapshot for $TARGETUSR" "$REPODIR"/base
-        touch "$REPODIR/.initialized"
-    fi
-
     # clean checkout destination to ensure checkout accuracy
-    if [[ -d "$REPODIR"/content ]]; then
+    if [[ -d "$REPODIR" ]]; then
         echo "[-i-] Cleaning previous checkout."
-        rm -rf "$REPODIR"/content
+        rm -rf "$REPODIR"
     fi
 
     # checkout commit
-    echo "[2/4] Checking out rootfs."
-    ostree --repo="$REPODIR/repo" checkout -H "subsystem-rootfs-$TARGETUSR" "$REPODIR"/content
-
-    # unmount basefs
-    echo "[3/4] Unmounting basefs."
-    umount -q "$REPODIR"/base
+    echo "[1/2] Checking out rootfs."
+    ostree --repo="$REPODIR/../repo" checkout -H "subsystem-rootfs-$TARGETUSR" "$REPODIR"
 
     # lock repodir from runtime modification
-    echo "[4/4] Locking repository."
-    mount -o ro,bind "$REPODIR" "$REPODIR"
+    echo "[2/2] Mounting rootfs."
+    mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,bind "$REPODIR" "$REPODIR"
 
     # reset traps
     trap - ERR SIGTERM
@@ -73,17 +47,17 @@ umount-rootfs() {
         return
     fi
 
-    # unlock repository
+    # unmount rootfs
+    echo "[1/2] Umounting rootfs."
     if findmnt "$REPODIR" >/dev/null; then
-        echo "[-i-] Unlocking repository."
         umount -q "$REPODIR"
     else
-        echo "[-!-] Repository seems to be unlocked already, ignoring."
+        echo "[-!-] Rootfs unmounted already, ignoring."
     fi
 
     # cleanup
-    echo "[-i-] Cleaning up."
-    rm -rf "$REPODIR"/content
+    echo "[2/2] Cleaning rootfs checkout."
+    rm -rf "$REPODIR"
 
     # reset traps
     trap - ERR SIGTERM
@@ -99,7 +73,7 @@ start-mounts() {
             echo "[-i-] Already mounted for user $TARGETUSR."
             continue
         else
-            echo "[-/4] Mounting rootfs for user $TARGETUSR."
+            echo "[-i-] Mounting rootfs for user $TARGETUSR."
             operational_users+=("$TARGETUSR")
         fi
 
@@ -138,7 +112,7 @@ stop-mounts() {
         REPODIR="/var/lib/subsystem/$HASH"
 
         if ! umount-rootfs; then
-            echo "Unmount process failed for user $TARGETUSR."
+            echo "[!!!] Unmount process failed for user $TARGETUSR."
         fi
 
         unset HASH REPODIR
@@ -158,7 +132,7 @@ monitor() {
     # monitor new users and mount for them
     while true; do
         inotifywait -m -e close_write /etc/passwd &
-        NOTIFY_PID=$!
+        local NOTIFY_PID=$!
 
         wait $NOTIFY_PID 2>/dev/null
         
@@ -177,7 +151,44 @@ monitor() {
     trap - SIGTERM
 }
 
+init() {
+    # logging
+    echo "[---] Checking for initialization."
+
+    # set constants
+    local RSTRING=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 16)
+    readonly RSTRING
+
+    # initialize ostree repo and commit rootfs if needed
+    if [[ ! -f "/var/lib/subsystem/.initialized" ]]; then
+        echo "[1/5] Preparing for initialization."
+        rm -rf /var/lib/subsystem/repo
+        mkdir -p /var/lib/subsystem/repo
+
+        echo "[2/5] Initializing rootfs repository."
+        ostree --repo="/var/lib/subsystem/repo" init --mode=bare
+
+        echo "[3/5] Mounting base rootfs."
+        mkdir -p /tmp/subsystem-"$RSTRING"
+        mount -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk /tmp/subsystem-"$RSTRING"
+
+        echo "[4/5] Commiting base rootfs to repository."
+        ostree --repo="/var/lib/subsystem/repo" commit --branch="subsystem-rootfs-base" --subject="base subsystem rootfs snapshot" /tmp/subsystem-"$RSTRING"
+
+        echo "[5/5] Finalizing."
+        umount -q /tmp/subsystem-"$RSTRING"
+        rm -rf /tmp/subsystem-"$RSTRING"
+        touch /var/lib/subsystem/.initialized
+    fi
+
+    # logging
+    echo "[---] Initialized."
+}
+
 ## main logic
+systemd-notify --status "Initializing..."
+init
+
 systemd-notify --status "Starting..."
 start-mounts
 
@@ -186,3 +197,5 @@ monitor
 
 systemd-notify --status "Stopping..."
 stop-mounts
+
+systemd-notify --status "Stopped."
