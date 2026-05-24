@@ -74,19 +74,19 @@ EOF
 }
 
 ## main logic
-if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
+if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
     shell
 else
-    if [[ "$(systemctl --user is-failed subsystem)" == "activating" ]]; then
+    if [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; then
         tput civvis
 
-        while [[ "$(systemctl --user is-failed subsystem)" == "activating" ]]; do
+        while [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; do
             throbber
         done
 
         tput cnorm
 
-        if [[ "$(systemctl --user is-failed subsystem)" == "active" ]]; then
+        if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
             shell
         else
             err-servfail
