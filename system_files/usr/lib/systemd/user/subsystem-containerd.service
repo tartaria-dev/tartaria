@@ -6,7 +6,7 @@ RequiresMountsFor=/run/user/%U
 
 [Service]
 Type=notify
-NotifyAccess=main
+NotifyAccess=all
 KillSignal=SIGTERM
 ExecStart=/usr/lib/subsystem/daemon/subsystem-containerd
 
