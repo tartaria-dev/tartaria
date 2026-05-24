@@ -100,7 +100,7 @@ start-mounts() {
 
 stop-mounts() {
     # logging
-    echo "[---] Mounting subsystem rootfs for all users."
+    echo "[---] Unounting subsystem rootfs for all users."
 
     # umount subsystem rootfs for all current users
     for TARGETUSR in "${operational_users[@]}"; do
@@ -132,9 +132,7 @@ monitor() {
         inotifywait -m -e close_write /etc/passwd &
         local NOTIFY_PID=$!
 
-        wait $NOTIFY_PID 2>/dev/null
-        
-        if [[ ! -d "/proc/$NOTIFY_PID" && "$NOTIFY_PID" -ne 0 ]]; then
+        if ! wait $NOTIFY_PID 2>/dev/null; then
             break
         fi
 
