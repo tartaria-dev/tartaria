@@ -30,8 +30,8 @@ tartaria:<base>-<flavor>
 
 Two bases of Tartaria are built within this repository:
 
-- `stable`: A version of Tartaria built twice a week on Wed/Sat, or when a release is published, based on the latest repository tag. Considered stable and recommended for usage.
-- `unstable`: A version of Tartaria built daily, or every time a new change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+- `stable`: A base of Tartaria built twice a week on Wednesday and Saturday, and on every new repository tag (new repository tags are made every release). Considered stable and recommended for usage.
+- `unstable`: A base of Tartaria built daily and every time a new change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
 Alongside those bases, we offer two different flavors:
 
@@ -45,7 +45,7 @@ In total, there are four different variants of Tartaria:
 - `unstable-arch`
 - `unstable-cachy`
 
-Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g. `stable-arch-nvidia`).
+Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g., `stable-arch-nvidia`).
 
 Note that all times and dates above are based on UTC.
 
