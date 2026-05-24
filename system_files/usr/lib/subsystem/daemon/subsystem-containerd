@@ -106,7 +106,7 @@ monitor() (
     }
 
     # monitor and always restart subsystem regardless of shutdown/deletion
-    while [[ -f $LOCKFILE ]]; do
+    while [[ -f "$RTMEDIR/runtime.lock" ]]; do
         if $TERM_RECEIVED; then break; fi
 
         while podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; do
@@ -114,7 +114,7 @@ monitor() (
             if $TERM_RECEIVED; then break 2; fi
         done
 
-        if $TERM_RECEIVED || [[ ! -f $LOCKFILE ]]; then break; fi
+        if $TERM_RECEIVED || [[ ! -f "$RTMEDIR/runtime.lock" ]]; then break; fi
 
         echo "[-i-] subsystem-$HASH exited, restarting..."
 
