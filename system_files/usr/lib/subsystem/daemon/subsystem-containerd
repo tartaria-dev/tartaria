@@ -61,6 +61,10 @@ stop-subsystem() {
 }
 
 podman-cmd() {
+    if podman container exists "subsystem-$HASH"; then
+        podman container rm -if "subsystem-$HASH"
+    fi
+
     podman container run \
         --rm \
         --init \
