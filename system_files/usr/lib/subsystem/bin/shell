@@ -56,6 +56,7 @@ ${GRAY}journalctl --user -xeu subsystem${NORM}
 
 ${RED}Manual intervention/debugging may be required.
 Falling back to non-login host shell (bash)...${NORM}
+
 EOF
 }
 
@@ -63,13 +64,14 @@ err-servfail() {
     cat <<EOF
 ${RED}Oops,
 
-Your subystem has failed to start.
+Your subsystem has failed to start.
 Logs containing relevant information can be viewed with the following command:${NORM}
 
 ${GRAY}journalctl --user -xeu subsystem${NORM}
 
 ${RED}Manual intervention/debugging may be required.
 Falling back to non-login host shell (bash)...${NORM}
+
 EOF
 }
 
