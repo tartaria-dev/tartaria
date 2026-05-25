@@ -20,16 +20,21 @@ mount-rootfs() {
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
     # clean checkout destination to ensure checkout accuracy
-    echo "[1/3] Cleaning checkout destination."
-    rm -rf "$REPODIR"
+    echo "[1/4] Preparing rootfs directiories."
+    rm -rf "$REPODIR"/checkout/*
+    mkdir -p "$REPODIR"/{checkout,rootfs,overlay/{data,work}}
 
     # checkout commit
-    echo "[2/3] Checking out rootfs."
-    ostree --repo="$REPODIR/../repo" checkout -H "subsystem-rootfs-base" "$REPODIR"
+    echo "[2/4] Checking out rootfs."
+    ostree --repo="$REPODIR/../repo" checkout -H "subsystem-rootfs-base" "$REPODIR"/checkout
 
     # lock repodir from runtime modification
-    echo "[3/3] Mounting rootfs."
-    mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,bind "$REPODIR" "$REPODIR"
+    echo "[3/4] Locking rootfs checkout."
+    mount --map-users 0:"$USER_SUBUID_START":"$USER_SUBUID_RANGE" --map-groups 0:"$USER_SUBGID_START":"$USER_SUBGID_RANGE" -o ro,bind "$REPODIR"/checkout "$REPODIR"/checkout
+
+    # mount overlayfs
+    echo "[4/4] Mounting rootfs overlay."
+    mount -t overlay overlay -o lowerdir="$REPODIR"/checkout,upperdir="$REPODIR"/overlay/data,workdir="$REPODIR"/overlay/work "$REPODIR"/rootfs
 
     # reset traps
     trap - ERR SIGTERM
@@ -46,16 +51,24 @@ umount-rootfs() {
     fi
 
     # unmount rootfs
-    echo "[1/2] Umounting rootfs."
-    if findmnt "$REPODIR" >/dev/null; then
-        umount -q "$REPODIR"
+    echo "[1/3] Umounting rootfs overlay."
+    if findmnt "$REPODIR"/rootfs >/dev/null; then
+        umount -q "$REPODIR"/rootfs
     else
         echo "[-!-] Rootfs unmounted already, ignoring."
     fi
 
+    # unlock rootfs
+    echo "[2/3] Unlocking rootfs checkout."
+    if findmnt "$REPODIR"/checkout >/dev/null; then
+        umount -q "$REPODIR"/checkout
+    else
+        echo "[-!-] Rootfs unlocked already, ignoring."
+    fi
+
     # cleanup
-    echo "[2/2] Cleaning checkout destination."
-    rm -rf "$REPODIR"
+    echo "[3/3] Cleaning rootfs checkout."
+    rm -rf "$REPODIR"/checkout/*
 
     # reset traps
     trap - ERR SIGTERM
@@ -84,6 +97,7 @@ start-mounts() {
 
         if [[ -z $USER_SUBUID_START || -z $USER_SUBGID_START || -z $USER_SUBUID_RANGE || -z $USER_SUBGID_RANGE ]]; then
             echo "[!!!] User $TARGETUSR has improperly configured sub{uid,gid}s, skipping."
+            operational_users=( "${operational_users[@]/$TARGETUSR}" )
             continue
         fi
 
@@ -93,9 +107,6 @@ start-mounts() {
 
         unset HASH REPODIR USER_SUBUID_START USER_SUBGID_START USER_SUBUID_RANGE USER_SUBGID_RANGE
     done
-
-    # logging
-    echo "[---] Subsystem rootfs mounting done."
 }
 
 stop-mounts() {
@@ -115,9 +126,6 @@ stop-mounts() {
 
         unset HASH REPODIR
     done
-
-    # logging
-    echo "[---] Subsystem rootfs unmounting done."
 }
 
 monitor() {
@@ -154,7 +162,7 @@ monitor() {
 
 init() {
     # logging
-    echo "[---] Checking for initialization."
+    echo "[---] Initializing."
 
     # set constants
     local RSTRING
@@ -182,9 +190,6 @@ init() {
         rm -rf /tmp/subsystem-"$RSTRING"
         touch /var/lib/subsystem/.initialized
     fi
-
-    # logging
-    echo "[---] Initialized."
 }
 
 ## main logic

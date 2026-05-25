@@ -11,8 +11,10 @@ if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
 fi
 
 ## set constants
+UID=$(id -u "$USER")
 HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
 RTMEDIR="$HOME/.cache/subsystem-$HASH"
+readonly UID
 readonly HASH
 readonly RTMEDIR
 
@@ -25,32 +27,9 @@ start-subsystem() {
     # logging
     echo "[---] Starting subsystem."
 
-    # if container doesn't exist, create it
-    if ! podman container exists "subsystem-$HASH"; then
-        podman container create \
-            --init \
-            --cgroups=split \
-            --name "subsystem-$HASH" \
-            --hostname subsystem \
-            --log-driver journald \
-            --env "SUBSYSTEM_USER=$USER" \
-            --network host \
-            --user 0:0 \
-            --userns keep-id \
-            --tmpfs /run \
-            --workdir "/home/$USER" \
-            -v "$HOME":"/home/$USER":rslave \
-            -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
-            -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
-            -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
-            -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
-            --rootfs /var/lib/subsystem/"$HASH":O \
-            /usr/libexec/ignition
-    fi
-
     # start container
     echo "[1/2] Starting container."
-    podman container start "subsystem-$HASH"
+    podman-cmd
 
     # set runtime lock
     echo "[2/2] Creating runtime lock."
@@ -79,6 +58,30 @@ stop-subsystem() {
 
     # reset traps
     trap - ERR SIGTERM
+}
+
+podman-cmd() {
+    podman container run \
+        --rm \
+        --init \
+        --detach \
+        --cgroups=split \
+        --name "subsystem-$HASH" \
+        --hostname subsystem \
+        --log-driver journald \
+        --env "SUBSYSTEM_USER=$USER" \
+        --network host \
+        --user 0:0 \
+        --userns keep-id \
+        --tmpfs /run \
+        --workdir "/home/$USER" \
+        -v "$HOME":"/home/$USER":rslave \
+        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
+        -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
+        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
+        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+        --rootfs /var/lib/subsystem/"$HASH"/rootfs \
+        /usr/libexec/ignition
 }
 
 monitor() (
@@ -118,7 +121,7 @@ monitor() (
 
         echo "[-i-] subsystem-$HASH exited, restarting..."
 
-        if ! start-subsystem; then
+        if ! podman-cmd; then
             FAILED=$(( FAILED + 1 ))
             echo "[-!-] Failed to restart subsystem-$HASH, failure counter is at $FAILED."
         else
