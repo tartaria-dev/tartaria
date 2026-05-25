@@ -129,15 +129,20 @@ monitor() {
 
     # monitor new users and mount for them
     while true; do
-        inotifywait -m -e close_write /etc/passwd &
+        inotifywait -e close_write /etc/passwd &
         local NOTIFY_PID=$!
 
         if ! wait $NOTIFY_PID 2>/dev/null; then
             break
         fi
 
-        echo "[-i-] New user detected, refreshing rootfs mounts."
-        start-mounts
+        while read -r user; do
+            if [[ ! " ${operational_users[*]} " =~ [[:space:]]${user}[[:space:]] ]]; then
+                echo "[-i-] New user(s) added, refreshing mounts."
+                start-mounts
+                break
+            fi
+        done < <(grep -vE "root|nobody|[^0-9][0-9]{1,3}[^0-9]|^[0-9]{1,3}$|^[0-9]{1,3}[^0-9]|[^0-9][0-9]{1,3}$" /etc/passwd | awk -F: '{print $1}')
     done
 
     # logging
