@@ -38,7 +38,6 @@ echo "[2/2] Configuring repositories."
 if [[ ! -f /etc/.ignition-repo-conf-done ]]; then
     reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
     pacman -Sy >/dev/null 2>&1 || true
-    mkdir -p /etc/ignition
     touch /etc/.ignition-repo-conf-done
 fi
 
