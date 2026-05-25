@@ -10,6 +10,9 @@ pacman-key --populate archlinux
 # disable pacman sandboxing
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
+# fix unknown key warning
+find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} \;
+
 # allow access to containerization utils on the host
 ln -sT /usr/libexec/host-spawn /usr/bin/distrobox
 ln -sT /usr/libexec/host-spawn /usr/bin/podman
@@ -33,4 +36,4 @@ cat /etc/zshrc-addons >> /etc/zsh/zshrc
 rm -f /etc/zshrc-addons
 
 # cleanup
-rm -rf {/{home,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
+rm -rf {/{home/*,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
