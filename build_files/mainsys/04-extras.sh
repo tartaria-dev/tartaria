@@ -32,9 +32,8 @@ ln -sT /usr/lib/os-release /etc/os-release
 
 # install default icon theme
 git clone https://github.com/vinceliuice/MacTahoe-icon-theme
-cd MacTahoe-icon-theme
 bash ./install.sh -t grey -n default-icons -d /usr/share/icons
-cd ..
+
 rm -rf MacTahoe-icon-theme
 
 # set default niri config
