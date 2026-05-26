@@ -21,8 +21,8 @@ mount-rootfs() {
 
     # clean checkout destination to ensure checkout accuracy
     echo "[1/4] Preparing rootfs directiories."
-    rm -rf "$REPODIR"/checkout/*
-    mkdir -p "$REPODIR"/{checkout,rootfs,overlay/{data,work}}
+    rm -rf "$REPODIR"/checkout
+    mkdir -p "$REPODIR"/{rootfs,overlay/{data,work}}
 
     # checkout commit
     echo "[2/4] Checking out rootfs."
@@ -68,7 +68,7 @@ umount-rootfs() {
 
     # cleanup
     echo "[3/3] Cleaning rootfs checkout."
-    rm -rf "$REPODIR"/checkout/*
+    rm -rf "$REPODIR"/checkout
 
     # reset traps
     trap - ERR SIGTERM
