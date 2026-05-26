@@ -34,7 +34,7 @@ mount-rootfs() {
 
     # mount overlayfs
     echo "[4/4] Mounting rootfs overlay."
-    mount -t overlay overlay -o lowerdir="$REPODIR"/checkout,upperdir="$REPODIR"/overlay/data,workdir="$REPODIR"/overlay/work "$REPODIR"/rootfs
+    mount -t overlay overlay -o index=off,lowerdir="$REPODIR"/checkout,upperdir="$REPODIR"/overlay/data,workdir="$REPODIR"/overlay/work "$REPODIR"/rootfs
 
     # reset traps
     trap - ERR SIGTERM
@@ -79,7 +79,7 @@ start-mounts() {
     echo "[---] Mounting subsystem rootfs for all users."
 
     # mount subsystem rootfs for all current users
-    awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd | while read -r TARGETUSR; do
+    while read -r TARGETUSR; do
         if [[ ${operational_users[*]} =~ ${TARGETUSR} ]]; then
             echo "[-i-] Already mounted for user $TARGETUSR."
             continue
@@ -97,7 +97,11 @@ start-mounts() {
 
         if [[ -z $USER_SUBUID_START || -z $USER_SUBGID_START || -z $USER_SUBUID_RANGE || -z $USER_SUBGID_RANGE ]]; then
             echo "[!!!] User $TARGETUSR has improperly configured sub{uid,gid}s, skipping."
-            operational_users=( "${operational_users[@]/$TARGETUSR}" )
+            for i in "${!operational_users[@]}"; do
+                if [[ "${operational_users[i]}" == "$TARGETUSR" ]]; then
+                    unset 'operational_users[i]'
+                fi
+            done
             continue
         fi
 
@@ -106,7 +110,7 @@ start-mounts() {
         fi
 
         unset HASH REPODIR USER_SUBUID_START USER_SUBGID_START USER_SUBUID_RANGE USER_SUBGID_RANGE
-    done
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
 stop-mounts() {
@@ -114,8 +118,18 @@ stop-mounts() {
     echo "[---] Unounting subsystem rootfs for all users."
 
     # umount subsystem rootfs for all current users
-    for TARGETUSR in "${operational_users[@]}"; do
-        echo "[-i-] Unmounting rootfs for user $TARGETUSR."
+    while read -r TARGETUSR; do
+        if [[ ! ${operational_users[*]} =~ ${TARGETUSR} ]]; then
+            echo "[-i-] Already unmounted for user $TARGETUSR."
+            continue
+        else
+            echo "[-i-] Unmounting rootfs for user $TARGETUSR."
+            for i in "${!operational_users[@]}"; do
+                if [[ "${operational_users[i]}" == "$TARGETUSR" ]]; then
+                    unset 'operational_users[i]'
+                fi
+            done
+        fi
 
         HASH=$(echo -n "$(cat /etc/machine-id)$TARGETUSR" | sha256sum | awk '{print $1}')
         REPODIR="/var/lib/subsystem/$HASH"
@@ -125,7 +139,7 @@ stop-mounts() {
         fi
 
         unset HASH REPODIR
-    done
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
 monitor() {
