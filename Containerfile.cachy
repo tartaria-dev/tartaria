@@ -1,9 +1,13 @@
 # base image
 FROM docker.io/cachyos/cachyos-v3:latest AS final
 
-# load in main build/system files
-COPY system_files /
-COPY build_files /build/
+# copy over build files
+COPY build_files/mainsys /build/
+COPY build_files/subsys /mkosi/
+
+# copy over system files
+COPY system_files/mainsys /
+COPY system_files/subsys /mkosi/mkosi.extra/
 
 # fetch Brew, Cherries (our lovely dotfiles), and our AUR pkgs
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /

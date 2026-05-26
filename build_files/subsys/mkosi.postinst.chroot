@@ -36,4 +36,4 @@ cat /etc/zshrc-addons >> /etc/zsh/zshrc
 rm -f /etc/zshrc-addons
 
 # cleanup
-rm -rf {/{home/*,tmp,var{/log,/tmp}}/*,/{boot,efi,init,.gnupg}}
+rm -rf {/{home,tmp,var/{log,tmp}}/*,/{boot,efi,init,.gnupg}}
