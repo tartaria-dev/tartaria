@@ -4,8 +4,8 @@
 set -ouex pipefail
 
 # set correct permissions on polkit rules dir
-chmod 750 /etc/polkit-1
-chown -R polkitd:polkitd /etc/polkit-1
+chmod 750 /etc/polkit-1/rules.d
+chown -R root:polkitd /etc/polkit-1/rules.d
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
