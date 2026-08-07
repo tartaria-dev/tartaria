@@ -7,6 +7,7 @@ set -ouex pipefail
 
 # generate initramfs with dracut
 KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "\.img$" | tail -n 1)")"
+depmod -a "$KERNEL_VERSION"
 DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
 ## arrange filesystem for bootc and image-based systems,
