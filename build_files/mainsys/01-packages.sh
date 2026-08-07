@@ -203,6 +203,7 @@ declare -a packages=(
     niri
     orca
     orchis-theme
+    polkit
     polkit-kde-agent
     shared-mime-info
     tuned
@@ -242,6 +243,6 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -S --noconfirm --needed "${packages[@]}"
-pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
+pacman -S --noconfirm "${packages[@]}"
+pacman -S --noconfirm libva-mesa-driver >/dev/null
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
