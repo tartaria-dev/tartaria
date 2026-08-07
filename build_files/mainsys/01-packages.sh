@@ -209,6 +209,7 @@ declare -a packages=(
     tuned-ppd
     wl-clip-persist
     wlsunset
+    
     xdg-desktop-portal
     xdg-desktop-portal-gnome
     xdg-user-dirs
@@ -242,6 +243,6 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -Sy --noconfirm "${packages[@]}" >/dev/null
-pacman -Sy --noconfirm libva-mesa-driver >/dev/null
+pacman -S --noconfirm "${packages[@]}" >/dev/null
+pacman -S --noconfirm libva-mesa-driver >/dev/null
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
