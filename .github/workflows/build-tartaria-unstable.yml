@@ -53,6 +53,10 @@ jobs:
             containerfile: ./Containerfile.arch
           - IMAGE_FLAVOR: arch-nvidia
             containerfile: ./Containerfile.arch
+          - IMAGE_FLAVOR: cachy
+            containerfile: ./Containerfile.cachy
+          - IMAGE_FLAVOR: cachy-nvidia
+            containerfile: ./Containerfile.cachy
 
     permissions:
       contents: read
