@@ -1,5 +1,5 @@
 # base image
-FROM archlinux:latest AS final
+FROM docker.io/cachyos/cachyos:latest AS final
 
 # copy over build files
 COPY build_files/mainsys /build/
@@ -14,7 +14,7 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 COPY --from=ghcr.io/tartaria-dev/branches:latest / /packages/
 
-# import kernel flavor arg
+# import build args
 ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 ARG BUILD_IS_PR
