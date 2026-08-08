@@ -243,12 +243,6 @@ declare -a packages=(
 )
 
 # install packages in one go
-if [[ IMAGE_FLAVOR == cachy* ]]; then
-    pacman -S --noconfirm --disable-sandbox "${packages[@]}"
-    pacman -S --noconfirm --disable-sandbox libva-mesa-driver
-    pacman -U --noconfirm --disable-sandbox /packages/mainsys/*.pkg.tar.zst
-else
-    pacman -S --noconfirm "${packages[@]}"
-    pacman -S --noconfirm libva-mesa-driver
-    pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst
-fi
+pacman -S --noconfirm "${packages[@]}"
+pacman -S --noconfirm libva-mesa-driver
+pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst

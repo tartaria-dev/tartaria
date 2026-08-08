@@ -14,11 +14,10 @@ grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | \
 set -e
 
 # update pacman config
-sed -i \
-    -e "/= *\/var/ s/^#//" \
-    -e "s@= */var@= /usr/lib/sysimage@g" \
-    -e "/DownloadUser/d" \
-    /etc/pacman.conf
+sed -i -e "/= *\/var/ s/^#//" -e "s@= */var@= /usr/lib/sysimage@g" -e "/DownloadUser/d" /etc/pacman.conf
+if [[ $IMAGE_FLAVOR == cachy* ]]; then
+    sed -i '/^\[options\]/a DisableSandboxNetwork' /etc/pacman.conf
+fi
 
 # init keys
 pacman-key --init
