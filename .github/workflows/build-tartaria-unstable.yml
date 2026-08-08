@@ -127,7 +127,7 @@ jobs:
           build-args: |
             IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
             IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
-            BUILD_IS_PR=${{ github.event_name != 'pull_request' && 'true' || 'false' }}
+            BUILD_IS_PR=${{ github.event_name != 'pull_request' && 'false' || 'true' }}
           oci: true
 
       - name: Login to GHCR
