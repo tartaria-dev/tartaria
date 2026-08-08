@@ -5,9 +5,6 @@ echo "::group::===========================> Configure system"
 
 set -ouex pipefail
 
-# run sysusers
-systemd-sysusers
-
 # system
 systemctl enable \
     apparmor.service \
