@@ -3,6 +3,13 @@
 
 set -ouex pipefail
 
+# preconfigure basic system settings
+echo "uninitialized" > /etc/machine-id
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+# re-enable pacman network sandboxing (cachy)
+sed -i 's/^DisableSandboxNetwork/#DisableSandboxNetwork/' /etc/pacman.conf
+
 # set correct permissions on polkit rules dir
 chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d

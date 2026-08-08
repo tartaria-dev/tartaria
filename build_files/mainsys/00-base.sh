@@ -20,6 +20,11 @@ sed -i \
     -e "/DownloadUser/d" \
     /etc/pacman.conf
 
+# disable pacman network sandboxing (cachy)
+if [[ $IMAGE_FLAVOR == cachy* ]]; then
+    sed -i 's/^#*DisableSandboxNetwork/DisableSandboxNetwork/' /etc/pacman.conf
+fi
+
 # init keys
 pacman-key --init
 if [[ $IMAGE_FLAVOR == cachy* ]]; then
