@@ -4,7 +4,8 @@ base_dir := env("BUILD_BASE_DIR", ".")
 filesystem := env("BUILD_FILESYSTEM", "ext4")
 
 build-containerfile $image_name=image_name:
-    sudo podman build -f Containerfile -t "{{image_name}}:{{image_tag}}" .
+    #!/usr/bin/env bash
+    sudo podman build --build-arg IMAGE_FLAVOR=arch --build-arg IMAGE_VARIANT=unstable-arch --build-arg BUILD_IS_PR=false -f Containerfile -t "{{image_name}}:{{image_tag}}" .
 
 bootc *ARGS:
     sudo podman run \
