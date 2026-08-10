@@ -103,6 +103,7 @@ declare -a packages=(
     cups
     cups-browsed
     ddcutil
+    fprintd
     intel-media-driver
     intel-ucode
     iio-sensor-proxy
