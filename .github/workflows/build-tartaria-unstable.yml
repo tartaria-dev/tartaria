@@ -125,7 +125,7 @@ jobs:
           sudo flatpak install -y flathub app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird >/dev/null
 
           # Compress flatpak store
-          sudo mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps ./flatpak-sysapps.dsk /var/lib/flatpak >/dev/null
+          sudo mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe -L sysapps ./flatpak-sysapps.dsk /var/lib/flatpak >/dev/null
 
       - name: Build image
         id: build_image
