@@ -70,12 +70,6 @@ jobs:
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
-          # Download and store flatpaks for later
-          sudo apt-get update >/dev/null
-          sudo apt-get install -y flatpak >/dev/null
-          sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install -y flathub app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird >/dev/null
-
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
@@ -120,6 +114,18 @@ jobs:
             ostree.bootable=1
           sep-tags: " "
           sep-annotations: " "
+
+      - name: Prepare build
+        run: |
+          # Download and store flatpaks for later
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y flatpak >/dev/null
+          sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird >/dev/null
+
+          # Bind mount them to working dir
+          mkdir -p ./sysapps
+          sudo mount --bind -o ro /var/lib/flatpak ./sysapps
 
       - name: Build image
         id: build_image
