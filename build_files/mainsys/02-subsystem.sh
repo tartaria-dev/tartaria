@@ -25,7 +25,7 @@ pacman -U --root /mkosi/output/image --noconfirm /packages/subsys/* >/dev/null
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
-mkfs.erofs -zzstd,4 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /mkosi/output/image >/dev/null
+mkfs.erofs -zzstd,5 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L rootfs /usr/lib/subsystem/rootfs/rootfs.dsk /mkosi/output/image >/dev/null
 
 # cleanup
 rm -rf /mkosi

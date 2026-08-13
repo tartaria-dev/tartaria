@@ -1,0 +1,19 @@
+[Unit]
+Description=Install system flatpaks
+After=var.mount
+Requires=var.mount
+ConditionPathExists=!/var/lib/tartaria/sysapps-installation-done
+
+[Service]
+Type=oneshot
+ExecStart=mkdir -p /tmp/sysapps /var/lib/tartaria
+ExecStart=mount -o ro,loop /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /tmp/sysapps
+ExecStart=flatpak install -y /tmp/sysapps app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird
+ExecStart=umount /tmp/sysapps
+ExecStart=touch /var/lib/tartaria/sysapps-installation-done
+RemainAfterExit=false
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

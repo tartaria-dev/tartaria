@@ -15,6 +15,7 @@ systemctl enable \
     firewalld.service \
     greetd.service \
     kdeconnect-firewalld-bypass.service \
+    install-flatpak-sysapps.service \
     NetworkManager.service \
     polkit.service \
     pick-cherries.timer \
@@ -30,6 +31,7 @@ systemctl enable \
 # system-preset
 systemctl preset \
     kdeconnect-firewalld-bypass.service \
+    install-flatpak-sysapps.service \
     subsystem-filesystemd.service \
     systemd-resolved.service
 
