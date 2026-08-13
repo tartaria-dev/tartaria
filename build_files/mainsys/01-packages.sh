@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# commands for installing main arch packages
+# commands for installing main system packages
 
 echo "::group::===========================> Install system packages"
 
