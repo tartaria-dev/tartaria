@@ -232,10 +232,4 @@ pacman -S --noconfirm "${packages[@]}" >/dev/null
 pacman -S --noconfirm libva-mesa-driver >/dev/null
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
 
-# create flatpak store dir
-mkdir -p /usr/lib/flatpak-sysapps
-
-# compress flatpak store
-mkfs.erofs -zzstd,12 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /sysapps >/dev/null
-
 echo "::endgroup::"
