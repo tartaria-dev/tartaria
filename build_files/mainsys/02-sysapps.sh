@@ -29,7 +29,7 @@ declare -a sysapps=(
 mkdir -p /tmp/sysapps /usr/lib/flatpak-sysapps{,dsk-src}
 
 # download flatpaks
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --installation=sysapps --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install --installation=sysapps -y flathub "${sysapps[@]}" >/dev/null
 
 # store flatpaks
