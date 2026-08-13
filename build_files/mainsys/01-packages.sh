@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # commands for installing main arch packages
 
-echo "::group::===========================> Install packages"
+echo "::group::===========================> Install system packages"
 
 set -ouex pipefail
 
@@ -195,8 +195,10 @@ declare -a packages=(
     dgop
     espeak-ng
     evolution-data-server
+    frameworkintegration
     glycin
     gnome-keyring
+    gpu-screen-recorder
     greetd
     greetd-regreet
     inotify-tools
@@ -210,37 +212,19 @@ declare -a packages=(
     tuned-ppd
     wl-clip-persist
     wlsunset
-    
+    $CACHY_PKGS
     xdg-desktop-portal
     xdg-desktop-portal-gnome
     xdg-user-dirs
     xdg-utils
 
-    # ========> applications
-    ark
-    baobab
+    # ========> apps
     bazaar
-    $CACHY_PKGS
-    decibels
     flatseal
-    frameworkintegration
-    gnome-calculator
-    gnome-calendar
-    gnome-music
-    gnome-text-editor
-    gnome-weather
-    gpu-screen-recorder
     hplip
-    impression
     kitty
-    loupe
-    mission-center
     nautilus
-    papers
-    secrets
-    showtime
     sysprof
-    thunderbird
 )
 
 # install packages in one go

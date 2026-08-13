@@ -2,12 +2,13 @@
 Description=Refresh system/user font cache
 After=var.mount
 Requires=var.mount
+ConditionPathExists=!/var/lib/tartaria/font-cache-refresh-done
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/fc-cache -rsfv
 ExecStart=/usr/libexec/run-as-all-human-users "fc-cache -rfv"
-ExecStartPost=/usr/bin/systemctl disable refresh-font-cache.service
+ExecStart=touch /var/lib/tartaria/font-cache-refresh-done
 RemainAfterExit=false
 
 [Install]

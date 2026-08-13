@@ -1,7 +1,7 @@
 [Unit]
 Description=Update global chezmoi repository
 After=var.mount
-BindsTo=var.mount network-online.target
+Requires=var.mount network-online.target
 
 [Service]
 Type=oneshot
