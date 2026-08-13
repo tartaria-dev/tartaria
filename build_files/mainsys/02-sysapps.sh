@@ -10,7 +10,7 @@ declare -a sysapps=(
     app.zen_browser.zen
     org.kde.ark
     org.gnome.baobab
-    org.gnome.decibels
+    org.gnome.Decibels
     org.gnome.Calculator
     org.gnome.Calendar
     org.gnome.Music
