@@ -26,7 +26,7 @@ declare -a sysapps=(
 )
 
 # create sysapp dirs
-mkdir -p /tmp/sysapps /usr/lib/flatpak-sysapps{,dsk-src}
+mkdir -p /tmp/sysapps /usr/lib/flatpak-sysapps/dsk-src
 
 # download flatpaks
 flatpak remote-add --installation=sysapps --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

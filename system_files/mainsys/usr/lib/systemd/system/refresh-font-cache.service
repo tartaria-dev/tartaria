@@ -6,6 +6,7 @@ ConditionPathExists=!/var/lib/tartaria/font-cache-refresh-done
 
 [Service]
 Type=oneshot
+ExecStart=mkdir -p /var/lib/tartaria
 ExecStart=/usr/bin/fc-cache -rsfv
 ExecStart=/usr/libexec/run-as-all-human-users "fc-cache -rfv"
 ExecStart=touch /var/lib/tartaria/font-cache-refresh-done
