@@ -24,11 +24,10 @@ ARG BUILD_IS_PR
 RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
-    bash /build/02-sysapps.sh && \
-    bash /build/03-subsystem.sh && \
-    bash /build/04-systemd.sh && \
-    bash /build/05-extras.sh && \
-    bash /build/06-finalize.sh
+    bash /build/02-subsystem.sh && \
+    bash /build/03-systemd.sh && \
+    bash /build/04-extras.sh && \
+    bash /build/05-finalize.sh
 
 # lint image
 RUN bootc container lint
