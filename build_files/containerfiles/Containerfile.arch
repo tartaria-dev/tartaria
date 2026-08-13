@@ -8,9 +8,7 @@ COPY build_files/subsys /mkosi/
 # copy over system files
 COPY system_files/mainsys /
 COPY system_files/subsys /mkosi/mkosi.extra/
-COPY sysapps /
-RUN ls /
-RUN exit 1
+COPY sysapps /sysapps
 
 # fetch Brew, Cherries (our lovely dotfiles), and our AUR pkgs
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
