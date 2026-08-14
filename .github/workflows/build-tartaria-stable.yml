@@ -102,7 +102,7 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Get flatpaks
+      - name: Get Flatpaks
         run: |
           # install necessary pkgs
           sudo apt-get update >/dev/null
