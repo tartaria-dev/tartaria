@@ -1,1 +1,16 @@
-app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird
+app.zen_browser.zen
+org.kde.ark
+org.gnome.baobab
+org.gnome.Decibels
+org.gnome.Calculator
+org.gnome.Calendar
+org.gnome.Music
+org.gnome.TextEditor
+org.gnome.Weather
+io.gitlab.adhami3310.Impression
+org.gnome.Loupe
+io.missioncenter.MissionCenter
+org.gnome.Papers
+org.gnome.World.Secrets
+org.gnome.Showtime
+org.mozilla.thunderbird

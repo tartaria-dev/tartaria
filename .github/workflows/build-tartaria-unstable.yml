@@ -124,7 +124,7 @@ jobs:
           # install flatpaks
           sudo flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           sudo flatpak remote-modify --system --collection-id=org.flathub.Stable flathub
-          sudo flatpak install --system -y flathub "$(<./system_files/mainsys/etc/.sysapps-list)" >/dev/null
+          sudo flatpak install --system -y flathub $(<./system_files/mainsys/etc/.sysapps-list) >/dev/null
 
           # mount system flatpak repo into build context
           mkdir -p sysapps-repo
