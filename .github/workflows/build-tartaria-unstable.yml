@@ -130,6 +130,21 @@ jobs:
             BUILD_IS_PR=${{ github.event_name != 'pull_request' && 'false' || 'true' }}
           oci: true
 
+      - name: Get flatpaks
+        run: |
+          # install necessary pkgs
+          sudo apt-get update >/dev/null
+          sudo apt-get install flatpak >/dev/null
+
+          # install flatpaks
+          sudo flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak remote-modify --system --collection-id=org.flathub.Stable flathub
+          sudo flatpak install --system -y flathub "$(<./system_files/etc/.sysapps-list)" >/dev/null
+
+          # mount system flatpak repo into build context
+          mkdir -p sysapps-repo
+          mount --bind -o ro /var/lib/flatpak ./sysapps-repo
+
       - name: Login to GHCR
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)

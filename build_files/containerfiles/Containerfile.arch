@@ -20,7 +20,7 @@ ARG IMAGE_VARIANT
 ARG BUILD_IS_PR
 
 # run main build scripts
-RUN --mount=type=tmpfs,dst=/tmp \
+RUN --mount=type=tmpfs,dst=/tmp --mount=type=bind,src=sysapps-repo,dst=/var/lib/flatpak \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
     bash /build/02-sysapps.sh && \
