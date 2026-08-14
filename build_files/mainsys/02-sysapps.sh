@@ -5,15 +5,14 @@ echo "::group::===========================> Install system apps"
 
 set -ouex pipefail
 
-# create flatpak repo
-mkdir -p /sysapps-dsksrc
-flatpak --installation=sysapps create-usb /sysapps-dsksrc $(</etc/.sysapps-list) >/dev/null
+# create dirs
+mkdir -p /sysapps-dsksrc /usr/lib/flatpak-sysapps
 
-# fetch flathub repofile
+# create repo and fetch flathub repofile
+flatpak --installation=sysapps create-usb /sysapps-dsksrc $(</etc/.sysapps-list) >/dev/null
 curl -Lo /usr/lib/flatpak-sysapps/flathub.flatpakrepo https://flathub.org/repo/flathub.flatpakrepo
 
 # compress flatpak repo
-mkdir -p /usr/lib/flatpak-sysapps
 mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /sysapps-dsksrc >/dev/null
 
 # cleanup
