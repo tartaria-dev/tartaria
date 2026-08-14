@@ -109,13 +109,13 @@ jobs:
           sudo apt-get install flatpak >/dev/null
 
           # install flatpaks
-          sudo flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak remote-modify --system --collection-id=org.flathub.Stable flathub
-          sudo flatpak install --system -y flathub $(<./system_files/mainsys/etc/.sysapps-list) >/dev/null
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-modify --user --collection-id=org.flathub.Stable flathub
+          flatpak install --user -y flathub $(<./system_files/mainsys/etc/.sysapps-list) >/dev/null
 
           # mount system flatpak repo into build context
           mkdir -p sysapps-repo
-          sudo mount --bind -o ro /var/lib/flatpak ./sysapps-repo
+          sudo mount --bind /home/runner/.local/share/flatpak ./sysapps-repo
 
       - name: Build image
         id: build_image
