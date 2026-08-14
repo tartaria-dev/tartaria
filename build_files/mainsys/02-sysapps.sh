@@ -7,7 +7,7 @@ set -ouex pipefail
 
 # create flatpak repo
 mkdir -p /sysapps-dsksrc
-flatpak --installation=sysapps create-usb /sysapps-dsksrc $(</etc/.sysapps-list) >/dev/null
+flatpak --installation=sysapps-repo create-usb /sysapps-dsksrc $(</etc/.sysapps-list) >/dev/null
 
 # compress flatpak repo
 mkdir -p /usr/lib/flatpak-sysapps
