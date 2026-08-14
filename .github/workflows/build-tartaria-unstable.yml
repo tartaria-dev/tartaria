@@ -115,17 +115,20 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Get flatpaks
+      - name: Get Flatpaks
         run: |
-          # Download and store flatpaks
+          # install necessary pkgs
           sudo apt-get update >/dev/null
-          sudo apt-get install -y flatpak erofs-utils >/dev/null
-          sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak remote-modify --collection-id=org.flathub.Stable flathub
-          sudo flatpak install -y flathub app.zen_browser.zen org.kde.ark org.gnome.baobab org.gnome.Decibels org.gnome.Calculator org.gnome.Calendar org.gnome.Music org.gnome.TextEditor org.gnome.Weather io.gitlab.adhami3310.Impression org.gnome.Loupe io.missioncenter.MissionCenter org.gnome.Papers org.gnome.World.Secrets org.gnome.Showtime org.mozilla.thunderbird >/dev/null
+          sudo apt-get install flatpak >/dev/null
 
-          # Compress flatpak store
-          sudo mkfs.erofs -zlz4hc,12 -C 65536 -E all-fragments,dedupe -L sysapps ./flatpak-sysapps.dsk /var/lib/flatpak >/dev/null
+          # install flatpaks
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-modify --user --collection-id=org.flathub.Stable flathub
+          flatpak install --user -y flathub $(<./system_files/mainsys/etc/.sysapps-list) >/dev/null
+
+          # mount system flatpak repo into build context
+          mkdir -p sysapps-repo
+          sudo mount --bind /home/runner/.local/share/flatpak ./sysapps-repo
 
       - name: Build image
         id: build_image

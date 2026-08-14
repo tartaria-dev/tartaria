@@ -8,7 +8,6 @@ COPY build_files/subsys /mkosi/
 # copy over system files
 COPY system_files/mainsys /
 COPY system_files/subsys /mkosi/mkosi.extra/
-COPY flatpak-sysapps.dsk /usr/lib/flatpak-sysapps/
 
 # fetch Brew, Cherries (our lovely dotfiles), and our AUR pkgs
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
@@ -21,13 +20,14 @@ ARG IMAGE_VARIANT
 ARG BUILD_IS_PR
 
 # run main build scripts
-RUN --mount=type=tmpfs,dst=/tmp \
+RUN --mount=type=tmpfs,dst=/tmp --mount=type=bind,src=sysapps-repo,dst=/sysapps-repo,rw \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
-    bash /build/02-subsystem.sh && \
-    bash /build/03-systemd.sh && \
-    bash /build/04-extras.sh && \
-    bash /build/05-finalize.sh
+    bash /build/02-sysapps.sh && \
+    bash /build/03-subsystem.sh && \
+    bash /build/04-systemd.sh && \
+    bash /build/05-extras.sh && \
+    bash /build/06-finalize.sh
 
 # lint image
 RUN bootc container lint
