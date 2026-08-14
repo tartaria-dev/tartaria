@@ -115,7 +115,7 @@ jobs:
 
           # mount system flatpak repo into build context
           mkdir -p sysapps-repo
-          mount --bind -o ro /var/lib/flatpak ./sysapps-repo
+          sudo mount --bind -o ro /var/lib/flatpak ./sysapps-repo
 
       - name: Build image
         id: build_image
