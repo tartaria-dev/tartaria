@@ -9,6 +9,9 @@ set -ouex pipefail
 mkdir -p /sysapps-dsksrc
 flatpak --installation=sysapps create-usb /sysapps-dsksrc $(</etc/.sysapps-list) >/dev/null
 
+# fetch flathub repofile
+curl -Lo /usr/lib/flatpak-sysapps/flathub.flatpakrepo https://flathub.org/repo/flathub.flatpakrepo
+
 # compress flatpak repo
 mkdir -p /usr/lib/flatpak-sysapps
 mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /sysapps-dsksrc >/dev/null
