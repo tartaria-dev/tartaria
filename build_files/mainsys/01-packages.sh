@@ -204,9 +204,9 @@ declare -a packages=(
     inotify-tools
     libappindicator
     niri
+    noctalia
     orca
     orchis-theme
-    polkit-kde-agent
     shared-mime-info
     tuned
     tuned-ppd
