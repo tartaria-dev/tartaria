@@ -219,6 +219,7 @@ declare -a packages=(
     xdg-utils
 
     # ========> apps
+    ark
     bazaar
     flatseal
     hplip
