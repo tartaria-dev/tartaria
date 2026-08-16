@@ -228,7 +228,7 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -S --noconfirm "${packages[@]}" >/dev/null
+pacman -S --noconfirm --overwrite '/usr/include/libdex-1/*' "${packages[@]}" >/dev/null
 pacman -S --noconfirm libva-mesa-driver >/dev/null
 pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
 
