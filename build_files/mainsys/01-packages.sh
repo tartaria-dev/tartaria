@@ -228,8 +228,8 @@ declare -a packages=(
 )
 
 # install packages in one go
-pacman -S --noconfirm --overwrite '/usr/include/libdex-1/*' --overwrite '/usr/share/*' --overwrite '/usr/lib/*' "${packages[@]}" >/dev/null
-pacman -S --noconfirm libva-mesa-driver >/dev/null
-pacman -U --noconfirm /packages/mainsys/*.pkg.tar.zst >/dev/null
+pacman -S --noconfirm --needed --overwrite '/usr/include/libdex-1/*' --overwrite '/usr/share/*' --overwrite '/usr/lib/*' "${packages[@]}" >/dev/null
+pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
+pacman -U --noconfirm --needed /packages/mainsys/*.pkg.tar.zst >/dev/null
 
 echo "::endgroup::"
