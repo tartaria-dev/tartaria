@@ -13,6 +13,7 @@ fi
 ## set constants
 HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
 RTMEDIR="$HOME/.cache/subsystem-$HASH"
+TERM_RECEIVED="false"
 readonly HASH
 readonly RTMEDIR
 
@@ -58,16 +59,36 @@ stop-subsystem() {
     trap - ERR SIGTERM
 }
 
+monitor() (
+    # trap SIGTERM
+    trap 'TERM_RECEIVED=true; [[ -n "$WAIT_PID" ]] && kill "$WAIT_PID" 2>/dev/null' SIGTERM
+
+    # block if subsystem is running
+    if podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
+        podman wait "subsystem-$HASH" &
+        local WAIT_PID=$!
+        wait "$WAIT_PID"
+    fi
+
+    # if SIGTERM wasn't received, most likely an unplanned stop
+    if [[ $TERM_RECEIVED == false ]]; then
+        echo "[-!-] Subsystem was shut down unexpectedly, restarting."
+    fi
+)
+
 podman-cmd() {
+    # remove container if it exists
     if podman container exists "subsystem-$HASH"; then
         podman container rm -if "subsystem-$HASH"
     fi
 
+    # create and start container
     podman container run \
         --rm \
         --init \
         --detach \
         --cgroups=split \
+        --restart=always \
         --name "subsystem-$HASH" \
         --hostname subsystem \
         --log-driver journald \
@@ -86,74 +107,17 @@ podman-cmd() {
         /usr/libexec/ignition
 }
 
-monitor() (
-    # trap SIGTERM
-    trap '
-        TERM_RECEIVED=true
-        if [[ -n "$SLEEP_PID" ]]; then
-            kill "$SLEEP_PID" 2>/dev/null
-        fi
-    ' SIGTERM
-
-    # logging
-    echo "[---] Monitoring subsystem-$HASH."
-
-    # set vars
-    local SLEEP_PID=""
-    local TERM_RECEIVED=false
-
-    # utilities
-    isleep() {
-        sleep "$1" &
-        SLEEP_PID=$!
-        wait "$SLEEP_PID" 2>/dev/null
-        SLEEP_PID=""
-    }
-
-    # monitor and always restart subsystem regardless of shutdown/deletion
-    while [[ -f "$RTMEDIR/runtime.lock" ]]; do
-        if $TERM_RECEIVED; then break; fi
-
-        while podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; do
-            isleep 1
-            if $TERM_RECEIVED; then break 2; fi
-        done
-
-        if $TERM_RECEIVED || [[ ! -f "$RTMEDIR/runtime.lock" ]]; then break; fi
-
-        echo "[-i-] subsystem-$HASH exited, restarting..."
-
-        if ! podman-cmd; then
-            FAILED=$(( FAILED + 1 ))
-            echo "[-!-] Failed to restart subsystem-$HASH, failure counter is at $FAILED."
-        else
-            isleep 1
-            if $TERM_RECEIVED; then break; fi
-
-            if ! podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
-                FAILED=$(( FAILED + 1 ))
-                echo "[-!-] Failed to start subsystem-$HASH, failure counter is at $FAILED."
-            else
-                FAILED=0
-                echo "[-i-] Restarted subsystem-$HASH successfully."
-            fi
-        fi
-
-        if [[ "$FAILED" -ge "5" ]]; then
-            echo "[!!!] Reached 5 or more consecutive failed restarts."
-            exit 1
-        fi
-    done
-)
-
 ## main logic
 systemd-notify --status "Starting..."
 start-subsystem
 
-systemd-notify --ready --status "Monitoring subsystem-$HASH."
+systemd-notify --ready --status "Subsystem is running."
 monitor
 
 systemd-notify --status "Stopping..."
-stop-subsystem
+if [[ $TERM_RECEIVED == false ]]; then
+    stop-subsystem
+    echo "[-i-] Skipping container shutdown step due to unexpected shutdown."
+fi
 
 systemd-notify --status "Stopped."
