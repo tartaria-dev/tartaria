@@ -3,6 +3,8 @@ Description=Subsystem for %u
 After=graphical-session.target
 RequiresMountsFor=%t/containers
 RequiresMountsFor=/run/user/%U
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=notify
@@ -11,8 +13,6 @@ KillSignal=SIGTERM
 ExecStart=/usr/lib/subsystem/daemon/subsystem-containerd
 Restart=always
 RestartSec=2
-StartLimitIntervalSec=60
-StartLimitBurst=5
 
 [Install]
 WantedBy=graphical-session.target
