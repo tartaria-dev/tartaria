@@ -6,7 +6,7 @@ on:
     tags:
       - "v*"
   schedule:
-    - cron: "05 10 * * 3,6"
+    - cron: '0 10 */3 * *'
 
 env:
   IMAGE_DESC: "Arch Linux bootc image with some extra spices (stable)"
