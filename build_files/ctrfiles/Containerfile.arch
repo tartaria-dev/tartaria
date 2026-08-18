@@ -1,7 +1,8 @@
 # base image
-FROM docker.io/cachyos/cachyos-v3:latest AS final
+FROM archlinux:latest AS final
 
 # copy over build files
+COPY build_files/configs /configs/
 COPY build_files/mainsys /build/
 COPY build_files/subsys /mkosi/
 

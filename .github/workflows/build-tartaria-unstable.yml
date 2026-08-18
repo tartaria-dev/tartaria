@@ -50,13 +50,13 @@ jobs:
       matrix:
         include:
           - IMAGE_FLAVOR: arch
-            containerfile: ./build_files/containerfiles/Containerfile.arch
+            containerfile: ./build_files/ctrfiles/Containerfile.arch
           - IMAGE_FLAVOR: arch-nvidia
-            containerfile: ./build_files/containerfiles/Containerfile.arch
+            containerfile: ./build_files/ctrfiles/Containerfile.arch
           - IMAGE_FLAVOR: cachy
-            containerfile: ./build_files/containerfiles/Containerfile.cachy
+            containerfile: ./build_files/ctrfiles/Containerfile.cachy
           - IMAGE_FLAVOR: cachy-nvidia
-            containerfile: ./build_files/containerfiles/Containerfile.cachy
+            containerfile: ./build_files/ctrfiles/Containerfile.cachy
 
     permissions:
       contents: read
@@ -124,7 +124,7 @@ jobs:
           # install flatpaks
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           flatpak remote-modify --user --collection-id=org.flathub.Stable flathub
-          flatpak install --user -y flathub $(<./system_files/mainsys/etc/.sysapps-list) >/dev/null
+          flatpak install --user -y flathub $(<build_files/configs/system-apps) >/dev/null
 
           # mount system flatpak repo into build context
           mkdir -p sysapps-repo
