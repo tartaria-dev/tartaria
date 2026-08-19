@@ -13,6 +13,7 @@ GRAY=$(tput setaf 7)
 RED=$(tput setaf 1)
 SUBSYS_ID=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
 TRYCOUNTER=0
+WAITED_SECONDS=0
 readonly RED
 readonly GRAY
 readonly NORM
@@ -20,7 +21,7 @@ readonly SUBSYS_ID
 
 ## utilities
 shell() {
-    while [[ "$TRYCOUNTER" -le "10" ]]; do
+    while [[ "$TRYCOUNTER" -lt "10" ]]; do
         if podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh; then
             exit 0
         else
@@ -28,11 +29,8 @@ shell() {
         fi
     done
 
-    if [[ "$TRYCOUNTER" -gt "10" ]]; then
-        clear
-        err-entry
-        exec bash
-    fi
+    err-entry
+    exec bash
 }
 
 throbber() {
@@ -41,18 +39,19 @@ throbber() {
 
     for frame in "${frames[@]}"; do
         printf "\r[%s] %s" "$frame" "$msg"
-        sleep 0.1
+        sleep 0.25
     done
 }
 
 err-entry() {
+    clear
     cat <<EOF
 ${RED}Oops,
 
 Something went wrong while trying to enter your subsystem.
 Logs containing relevant information can be viewed with the following command:${NORM}
 
-${GRAY}journalctl --user -xeu subsystem${NORM}
+${GRAY}journalctl --user -xeu subsystem-containerd${NORM}
 
 ${RED}Manual intervention/debugging may be required.
 Falling back to non-login host shell (bash)...${NORM}
@@ -61,13 +60,14 @@ EOF
 }
 
 err-servfail() {
+    clear
     cat <<EOF
 ${RED}Oops,
 
 Your subsystem has failed to start.
 Logs containing relevant information can be viewed with the following command:${NORM}
 
-${GRAY}journalctl --user -xeu subsystem${NORM}
+${GRAY}journalctl --user -xeu subsystem-containerd${NORM}
 
 ${RED}Manual intervention/debugging may be required.
 Falling back to non-login host shell (bash)...${NORM}
@@ -80,13 +80,15 @@ if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
     shell
 else
     if [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; then
-        tput civvis
-
         while [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; do
             throbber
-        done
+            WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
 
-        tput cnorm
+            if [[ "$WAITED_SECONDS" -gt "15" ]]; then
+                err-entry
+                exec bash
+            fi
+        done
 
         if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
             shell
