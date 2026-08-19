@@ -119,8 +119,8 @@ jobs:
       - name: Get Flatpaks
         run: |
           # install necessary pkgs
-          sudo apt-get update >/dev/null
-          sudo apt-get install flatpak >/dev/null
+          sudo apt-get -y update >/dev/null
+          sudo apt-get -y install flatpak >/dev/null
 
           # install flatpaks
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
