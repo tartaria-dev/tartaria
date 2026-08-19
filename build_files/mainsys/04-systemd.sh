@@ -25,7 +25,7 @@ systemctl enable \
     tuned.service \
     uupd.timer \
     usr-share-tartaria-cherries.mount \
-    verify-greetd-configs.service \
+    sync-greeter-configs.service \
     subsystem-filesystemd.service
 
 # system-preset
