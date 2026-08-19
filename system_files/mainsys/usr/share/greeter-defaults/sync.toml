@@ -1,0 +1,57 @@
+# noctalia-greeter sync.toml (UI + Sync; not managed by Nix)
+# [session] last, [session.power] suspend/reboot/shutdown, [[session.actions]] action/command/label/glyph
+# [appearance] scheme, theme_mode, corner_radius_scale, font_family
+# [appearance.palette] full color role table, [appearance.wallpaper]/[appearance.wallpapers.<connector>]
+# [output] layout/transforms/scales
+
+[appearance]
+corner_radius_scale = 1.3500000238418579
+font_family = "Overpass ExtraBold"
+scheme = "Synced"
+theme_mode = "dark"
+
+    [appearance.palette]
+    error = "#FFB4AB"
+    hover = "#D4BFE0"
+    on_error = "#690005"
+    on_hover = "#392A45"
+    on_primary = "#253049"
+    on_secondary = "#2C303B"
+    on_surface = "#E4E2E4"
+    on_surface_variant = "#C6C6CE"
+    on_tertiary = "#392A45"
+    outline = "#45464D"
+    primary = "#BBC6E6"
+    secondary = "#C3C6D4"
+    shadow = "#000000"
+    surface = "#131315"
+    surface_variant = "#1F1F21"
+    tertiary = "#D4BFE0"
+
+    [appearance.wallpaper]
+    fill_mode = "crop"
+    path = "/usr/share/tartaria/wallpapers/cherry_tree.png"
+
+[session]
+last = "Niri"
+
+    [[session.actions]]
+    action = "lock"
+
+    [[session.actions]]
+    action = "suspend"
+
+    [[session.actions]]
+    action = "logout"
+
+    [[session.actions]]
+    action = "reboot"
+
+    [[session.actions]]
+    action = "shutdown"
+
+    [[session.actions]]
+    action = "command"
+    command = "systemctl hibernate"
+    glyph = "hibernate"
+    label = "Hibernate"

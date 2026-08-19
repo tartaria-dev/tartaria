@@ -1,0 +1,13 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# LOVE MEEEEEE
+set -eo pipefail
+
+# sync config files
+cp -a /usr/share/greeter-defaults/config.toml /etc/greetd/config.toml
+
+if [[ ! -f /var/lib/noctalia-greeter/.synced ]]; then
+    cp -a /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml
+    touch /var/lib/noctalia-greeter/.synced
+fi
