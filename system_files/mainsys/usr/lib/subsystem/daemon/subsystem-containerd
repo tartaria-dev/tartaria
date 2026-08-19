@@ -13,7 +13,6 @@ fi
 ## set constants
 HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
 RTMEDIR="$HOME/.cache/subsystem-$HASH"
-TERM_RECEIVED="false"
 readonly HASH
 readonly RTMEDIR
 
@@ -54,25 +53,19 @@ stop-subsystem() {
     # stop container
     echo "[2/2] Stopping container."
     podman container stop -it 30 "subsystem-$HASH"
+    podman container rm -if "subsystem-$HASH"
 
     # reset traps
     trap - ERR SIGTERM
 }
 
 monitor() (
-    # trap SIGTERM
-    trap 'TERM_RECEIVED=true; [[ -n "$WAIT_PID" ]] && kill "$WAIT_PID" 2>/dev/null' SIGTERM
-
     # block if subsystem is running
     if podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
         podman wait "subsystem-$HASH" &
         local WAIT_PID=$!
         wait "$WAIT_PID"
-    fi
-
-    # if SIGTERM wasn't received, most likely an unplanned stop
-    if [[ $TERM_RECEIVED == false ]]; then
-        echo "[-!-] Subsystem was shut down unexpectedly, restarting."
+        echo "[-i-] Subsystem exited with code $?."
     fi
 )
 
@@ -84,7 +77,6 @@ podman-cmd() {
 
     # create and start container
     podman container run \
-        --rm \
         --init \
         --detach \
         --cgroups=split \
@@ -115,9 +107,6 @@ systemd-notify --ready --status "Subsystem is running."
 monitor
 
 systemd-notify --status "Stopping..."
-if [[ $TERM_RECEIVED == false ]]; then
-    stop-subsystem
-    echo "[-i-] Skipping container shutdown step due to unexpected shutdown."
-fi
+stop-subsystem
 
 systemd-notify --status "Stopped."
