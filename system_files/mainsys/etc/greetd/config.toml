@@ -2,5 +2,5 @@
 vt = 1
 
 [default_session]
-command = "env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/local/bin/noctalia-greeter-session -- --session niri"
+command = "env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/bin/noctalia-greeter-session -- --session niri"
 user = "greeter"
