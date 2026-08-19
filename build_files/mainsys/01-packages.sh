@@ -200,7 +200,6 @@ declare -a packages=(
     gnome-keyring
     gpu-screen-recorder
     greetd
-    greetd-regreet
     inotify-tools
     libappindicator
     niri
