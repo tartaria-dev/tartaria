@@ -2,12 +2,17 @@
 Description=Subsystem filesystem management
 After=var.mount
 Requires=var.mount
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=notify
 NotifyAccess=all
 KillSignal=SIGTERM
+KillMode=mixed
 ExecStart=/usr/lib/subsystem/daemon/subsystem-filesystemd
+Restart=on-failure
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target

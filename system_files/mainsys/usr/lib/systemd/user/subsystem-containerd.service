@@ -10,6 +10,7 @@ StartLimitBurst=5
 Type=notify
 NotifyAccess=all
 KillSignal=SIGTERM
+KillMode=mixed
 ExecStart=/usr/lib/subsystem/daemon/subsystem-containerd
 Restart=always
 RestartSec=2
