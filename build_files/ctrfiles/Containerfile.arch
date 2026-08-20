@@ -2,7 +2,7 @@
 FROM archlinux:latest AS final
 
 # copy over build files
-COPY build_files/configs /configs/
+COPY build_files/configs /etc/bconfigs/
 COPY build_files/mainsys /build/
 COPY build_files/subsys /mkosi/
 
@@ -21,7 +21,7 @@ ARG IMAGE_VARIANT
 ARG BUILD_IS_PR
 
 # run main build scripts
-RUN --mount=type=tmpfs,dst=/tmp --mount=type=bind,src=sysapps-repo,dst=/sysapps-repo,rw \
+RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
     bash /build/02-sysapps.sh && \
