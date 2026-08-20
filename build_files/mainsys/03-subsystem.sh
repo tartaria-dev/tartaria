@@ -5,13 +5,6 @@ echo "::group::===========================> Install subsystem"
 
 set -ouex pipefail
 
-# if build is for a PR, skip this process
-if [[ $BUILD_IS_PR == true ]]; then
-    echo "PR build, skipping subsystem build."
-    echo "::endgroup::"
-    exit 0
-fi
-
 # fetch host-spawn binary
 mkdir -p /mkosi/mkosi.extra/usr/libexec
 wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O /mkosi/mkosi.extra/usr/libexec/host-spawn

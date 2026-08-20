@@ -16,7 +16,6 @@ COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 # import build args
 ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
-ARG BUILD_IS_PR
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
