@@ -9,14 +9,14 @@ set -ouex pipefail
 mkdir -p /usr/lib/flatpak-sysapps/src
 
 # add flathub remote
-curl -Lo /usr/lib/flatpak-sysapps/flathub.flatpakrepo https://flathub.org/repo/flathub.flatpakrepo
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak remote-modify --collection-id=org.flathub.Stable flathub
 
 # install apps
 flatpak install -y flathub $(</etc/bconfigs/system-apps) >/dev/null
 
-# create new flatpak repo
+# setup flatpak repo
+curl -Lo /usr/lib/flatpak-sysapps/flathub.flatpakrepo https://flathub.org/repo/flathub.flatpakrepo
 flatpak create-usb /usr/lib/flatpak-sysapps/src $(</etc/bconfigs/system-apps) >/dev/null
 
 # compress flatpak repo
