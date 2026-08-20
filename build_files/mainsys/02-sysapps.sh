@@ -8,6 +8,9 @@ set -ouex pipefail
 # create dirs
 mkdir -p /usr/lib/flatpak-sysapps/src
 
+# move flatpak system apps list to /etc
+cp /build/conf/system-apps /etc/.sysapps.list
+
 # add flathub remote
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak remote-modify --collection-id=org.flathub.Stable flathub

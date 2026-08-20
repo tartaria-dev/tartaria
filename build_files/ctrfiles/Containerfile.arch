@@ -2,7 +2,6 @@
 FROM archlinux:latest AS final
 
 # copy over build files
-COPY build_files/configs /etc/bconfigs/
 COPY build_files/mainsys /build/
 COPY build_files/subsys /mkosi/
 
