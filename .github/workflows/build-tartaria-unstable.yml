@@ -116,21 +116,6 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Get Flatpaks
-        run: |
-          # install necessary pkgs
-          sudo apt-get -y update >/dev/null
-          sudo apt-get -y install flatpak >/dev/null
-
-          # install flatpaks
-          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak remote-modify --user --collection-id=org.flathub.Stable flathub
-          flatpak install --user -y flathub $(<build_files/configs/system-apps) >/dev/null
-
-          # mount system flatpak repo into build context
-          mkdir -p sysapps-repo
-          sudo mount --bind /home/runner/.local/share/flatpak ./sysapps-repo
-
       - name: Build image
         id: build_image
         uses: redhat-actions/buildah-build@v3.0.2

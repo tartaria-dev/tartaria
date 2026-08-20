@@ -2,17 +2,17 @@
 Description=Install system flatpaks
 After=var.mount
 Requires=var.mount
-ConditionPathExists=/etc/.sysapps-list
+ConditionPathExists=/etc/bconfigs/system-apps
 
 [Service]
 Type=oneshot
 ExecStart=mkdir -p /tmp/sysapps
 ExecStart=bash -c "if ! findmnt /tmp/sysapps >/dev/null; then mount -o ro,loop /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /tmp/sysapps; fi"
 ExecStart=flatpak remote-add --system --if-not-exists flathub /usr/lib/flatpak-sysapps/flathub.flatpakrepo
-ExecStart=bash -c "flatpak install --sideload-repo=/tmp/sysapps --system -y flathub $(</etc/.sysapps-list)"
+ExecStart=bash -c "flatpak install --sideload-repo=/tmp/sysapps --system -y flathub $(</etc/bconfigs/system-apps)"
 ExecStart=flatpak override --system --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0
 ExecStart=umount /tmp/sysapps
-ExecStart=rm -f /etc/.sysapps-list
+ExecStart=rm -f /etc/bconfigs
 RemainAfterExit=false
 Restart=on-failure
 RestartSec=30

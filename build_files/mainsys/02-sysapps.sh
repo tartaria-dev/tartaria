@@ -6,16 +6,23 @@ echo "::group::===========================> Install system apps"
 set -ouex pipefail
 
 # create dirs
-mkdir -p /sysapps-dsksrc /usr/lib/flatpak-sysapps
+mkdir -p /usr/lib/flatpak-sysapps/src
 
-# create repo and fetch flathub repofile
-flatpak --installation=sysapps create-usb /sysapps-dsksrc $(</configs/system-apps) >/dev/null
+# add flathub remote
 curl -Lo /usr/lib/flatpak-sysapps/flathub.flatpakrepo https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remote-modify --collection-id=org.flathub.Stable flathub
+
+# install apps
+flatpak install -y flathub $(</etc/bconfigs/system-apps) >/dev/null
+
+# create new flatpak repo
+flatpak create-usb /usr/lib/flatpak-sysapps/src $(</etc/bconfigs/system-apps) >/dev/null
 
 # compress flatpak repo
-mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /sysapps-dsksrc >/dev/null
+mkfs.erofs -zzstd,9 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L sysapps /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /usr/lib/flatpak-sysapps/src >/dev/null
 
 # cleanup
-rm -rf /sysapps-dsksrc /etc/flatpak
+rm -rf /usr/lib/flatpak-sysapps/src
 
 echo "::endgroup::"
