@@ -12,6 +12,7 @@ sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 
 # install aur pkgs
 useradd -m builder
+mkdir /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 su - builder -c "cd /home/builder && \
     git clone https://aur.archlinux.org/yay-bin.git && \
@@ -21,7 +22,7 @@ su - builder -c "cd /home/builder && \
     rm -rf yay-bin && \
     yay -S --noconfirm zsh-theme-powerlevel10k-git"
 userdel -r builder
-rm -f /etc/sudoers.d/builder
+rm -rf /etc/sudoers.d
 
 # fix unknown key warning
 find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} \;
