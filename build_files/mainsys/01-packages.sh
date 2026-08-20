@@ -237,6 +237,7 @@ pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 # create build user
 useradd -m builder
+mkdir -p /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 
 # build yay and install aur packages
@@ -250,7 +251,7 @@ su - builder -c "cd /home/builder && \
 
 # cleanup
 userdel -r builder
-rm -f /etc/sudoers.d/builder
+rm -rf /etc/sudoers.d
 pacman -Rns --noconfirm yay-bin
 
 echo "::endgroup::"
