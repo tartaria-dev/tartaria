@@ -5,6 +5,8 @@ echo "::group::===========================> Install system packages"
 
 set -ouex pipefail
 
+## Non-AUR packages
+
 # based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
 if [[ "$IMAGE_FLAVOR" == "arch" ]]; then
     KERN_PKG="linux"
@@ -227,9 +229,28 @@ declare -a packages=(
     sysprof
 )
 
-# install packages in one go
+# install packages
 pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
 pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
-pacman -U --noconfirm --needed /packages/mainsys/*.pkg.tar.zst >/dev/null
+
+## AUR packages
+
+# create build user
+useradd -m builder
+echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
+
+# build yay and install aur packages
+su - builder -c "cd /home/builder && \
+    git clone https://aur.archlinux.org/yay-bin.git && \
+    cd yay-bin && \
+    makepkg -si --noconfirm && \
+    cd .. && \
+    rm -rf yay-bin && \
+    yay -S --noconfirm $(</build/mainsys/conf/aur-packages)"
+
+# cleanup
+userdel -r builder
+rm -f /etc/sudoers.d/builder
+pacman -Rns --noconfirm yay-bin
 
 echo "::endgroup::"
