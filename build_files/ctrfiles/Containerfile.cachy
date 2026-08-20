@@ -17,7 +17,6 @@ COPY --from=ghcr.io/tartaria-dev/branches:latest / /packages/
 # import build args
 ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
-ARG BUILD_IS_PR
 
 # run main build scripts
 RUN --mount=type=tmpfs,dst=/tmp \
