@@ -1,0 +1,19 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# create mount dir
+mkdir -p /tmp/sysapps
+
+# mount repo if needed
+if ! findmnt /tmp/sysapps >/dev/null; then
+    mount -o ro,loop /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /tmp/sysapps
+fi
+
+# install all apps from repo
+flatpak remote-add --system --if-not-exists flathub /usr/lib/flatpak-sysapps/flathub.flatpakrepo
+flatpak install --sideload-repo=/tmp/sysapps --system -y flathub $(</etc/.sysapps.list)
+flatpak override --system --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0
+
+# cleanup
+umount /tmp/sysapps
+rm -f /etc/.sysapps.list
