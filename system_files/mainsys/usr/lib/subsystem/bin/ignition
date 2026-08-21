@@ -21,6 +21,7 @@ readonly pkg_pattern
 
 # set up sudo for the user
 if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
+    mkdir -p /etc/sudoers.d
 	echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
 fi
 
