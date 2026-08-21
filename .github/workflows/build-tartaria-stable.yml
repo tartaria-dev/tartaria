@@ -30,13 +30,13 @@ jobs:
       matrix:
         include:
           - IMAGE_FLAVOR: arch
-            containerfile: ./build_files/ctrfiles/Containerfile.arch
+            containerfile: ./build_files/containerfiles/Containerfile.arch
           - IMAGE_FLAVOR: arch-nvidia
-            containerfile: ./build_files/ctrfiles/Containerfile.arch
+            containerfile: ./build_files/containerfiles/Containerfile.arch
           - IMAGE_FLAVOR: cachy
-            containerfile: ./build_files/ctrfiles/Containerfile.cachy
+            containerfile: ./build_files/containerfiles/Containerfile.cachy
           - IMAGE_FLAVOR: cachy-nvidia
-            containerfile: ./build_files/ctrfiles/Containerfile.cachy
+            containerfile: ./build_files/containerfiles/Containerfile.cachy
 
     permissions:
       contents: read
