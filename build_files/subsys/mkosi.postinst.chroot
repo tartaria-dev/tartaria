@@ -21,6 +21,7 @@ su - builder -c "cd /home/builder && \
     cd .. && \
     rm -rf yay-bin && \
     yay -S --noconfirm zsh-theme-powerlevel10k-git"
+pacman -Rns --noconfirm fakeroot debugedit
 userdel -r builder
 rm -rf /etc/sudoers.d
 

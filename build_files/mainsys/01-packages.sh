@@ -235,6 +235,9 @@ pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 ## AUR packages
 
+# install necessary pkgs
+pacman -S --noconfirm --needed fakeroot debugedit
+
 # create build user
 useradd -m builder
 mkdir -p /etc/sudoers.d
@@ -252,6 +255,6 @@ su - builder -c "cd /home/builder && \
 # cleanup
 userdel -r builder
 rm -rf /etc/sudoers.d
-pacman -Rns --noconfirm yay-bin
+pacman -Rns --noconfirm yay-bin fakeroot debugedit
 
 echo "::endgroup::"
