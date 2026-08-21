@@ -63,6 +63,8 @@ declare -a packages=(
     bash-completion
     binutils
     curl
+    dotnet-runtime
+    dotnet-sdk
     gcc
     git
     glibc-locales
