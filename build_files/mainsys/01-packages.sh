@@ -42,6 +42,7 @@ fi
 declare -a packages=(
     # ========> system
     base
+    base-devel
     bootc/bootc
     bootc/uupd
     $KERN_PKG
@@ -111,7 +112,9 @@ declare -a packages=(
     iio-sensor-proxy
     lm_sensors
     libva-intel-driver
+    libva-mesa-driver
     $NVIDIA_PKGS
+    usbutils
     vpl-gpu-rt
     vulkan-icd-loader
     vulkan-intel
@@ -231,12 +234,8 @@ declare -a packages=(
 
 # install packages
 pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
-pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 ## AUR packages
-
-# install necessary pkgs
-pacman -S --noconfirm --needed fakeroot debugedit
 
 # create build user
 useradd -m builder
@@ -250,11 +249,10 @@ su - builder -c "cd /home/builder && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf yay-bin && \
-    yay -S --noconfirm $(</build/mainsys/conf/aur-packages)"
+    yay -S --noconfirm $(</build/conf/aur-packages)"
 
 # cleanup
 userdel -r builder
 rm -rf /etc/sudoers.d
-pacman -Rns --noconfirm yay-bin fakeroot debugedit
 
 echo "::endgroup::"
