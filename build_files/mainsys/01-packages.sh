@@ -246,12 +246,12 @@ echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 
 # build yay and install aur packages
 su - builder -c "cd /home/builder && \
-    git clone https://aur.archlinux.org/yay-bin.git >/dev/null && \
+    git clone https://aur.archlinux.org/yay-bin.git && \
     cd yay-bin && \
-    makepkg -si --noconfirm >/dev/null && \
+    makepkg -si --noconfirm && \
     cd .. && \
     rm -rf yay-bin && \
-    xargs -a /build/conf/aur-packages yay -S --noconfirm --needed >/dev/null"
+    xargs -a /build/conf/aur-packages yay -S --noconfirm --needed" >/dev/null
 
 # cleanup
 userdel -r builder
