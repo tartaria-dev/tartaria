@@ -59,10 +59,12 @@ If you are unsure what variant to choose, please refer to [Variants](https://git
 
 
 ## Forking
-After forking, you may want to remove the workflow for the unstable version of Tartaria, since most users won't need it. To do so, perform the following:
+Forking is not recommended for most use cases; you may want to pull this image in your custom image template instead.
 
-- After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-unstable.yml`.
-- Then, edit `build-tartaria-stable.yml` and replace lines 5-7 within the file with the following:
+If the changes you need to make require a direct fork, however, here's some recommended steps to follow afterwards:
+
+- After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-stable.yml`.
+- Then, edit `build-tartaria-unstable.yml` and replace lines 5-7 within the file with the following:
 
   ```
   pull_request:
@@ -87,7 +89,7 @@ After forking, you may want to remove the workflow for the unstable version of T
       - "**/artifacthub-repo.yml"
   ```
 
-Note that these steps are NOT required; you may keep the unstable workflow if you choose to.
+Note that these steps are NOT required; you may keep the stable workflow if you choose to.
 
 
 ## Credits
