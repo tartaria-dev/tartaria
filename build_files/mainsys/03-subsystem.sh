@@ -11,7 +11,10 @@ wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spaw
 chmod +x /mkosi/mkosi.extra/usr/libexec/host-spawn
 
 # build arch rootfs
-mkosi build --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT"
+if ! mkosi build --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/dev/null; then
+    tail -n 50 /tmp/mkosi.log
+    exit 1
+fi
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
