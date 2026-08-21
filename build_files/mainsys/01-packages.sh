@@ -112,7 +112,6 @@ declare -a packages=(
     iio-sensor-proxy
     lm_sensors
     libva-intel-driver
-    libva-mesa-driver
     $NVIDIA_PKGS
     usbutils
     vpl-gpu-rt
@@ -234,6 +233,7 @@ declare -a packages=(
 
 # install packages
 pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
+pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 ## AUR packages
 
@@ -249,7 +249,7 @@ su - builder -c "cd /home/builder && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf yay-bin && \
-    yay -S --noconfirm $(</build/conf/aur-packages)"
+    xargs -a /build/conf/aur-packages yay -S --noconfirm"
 
 # cleanup
 userdel -r builder
