@@ -64,7 +64,7 @@ Forking is not recommended for most use cases; you may want to pull this image i
 If the changes you need to make require a direct fork, however, here's some recommended steps to follow afterwards:
 
 - After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-stable.yml`.
-- Then, edit `build-tartaria-unstable.yml` and replace lines 5-7 within the file with the following:
+- Then, edit `build-tartaria-unstable.yml` and replace lines 6-29 within the file with the following:
 
   ```
   pull_request:
