@@ -233,7 +233,7 @@ declare -a packages=(
     sysprof
 )
 
-# install packages
+# install non-AUR packages
 pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
 pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
@@ -244,14 +244,16 @@ useradd -m builder
 mkdir -p /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 
-# build yay and install aur packages
-su - builder -c "cd /home/builder && \
-    git clone https://aur.archlinux.org/yay-bin.git && \
-    cd yay-bin && \
-    makepkg -si --noconfirm && \
-    cd .. && \
-    rm -rf yay-bin && \
-    xargs -a /build/conf/aur-packages yay -S --noconfirm --needed" >/dev/null
+# clone yay-bin and install it
+su - builder -c "git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin" >/dev/null
+su - builder -c "cd /home/builder/yay-bin && makepkg -si --noconfirm" >/dev/null
+rm -rf /home/builder/yay-bin
+
+# install AUR packages
+if ! su - builder -c "xargs -a /build/conf/aur-packages yay -S --noconfirm --needed" >/tmp/yay.log 2>&1; then
+    tail -n 200 /tmp/yay.log
+    exit 1
+fi
 
 # cleanup
 userdel -r builder
