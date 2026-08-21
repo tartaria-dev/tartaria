@@ -59,7 +59,6 @@ if ! su - builder -c "xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --need
 fi
 
 # cleanup
-userdel -r builder
-rm -rf /etc/sudoers.d
+rm -f /tmp/yay.log
 
 echo "::endgroup::"
