@@ -23,6 +23,7 @@ mount-rootfs() {
     echo "[1/4] Preparing rootfs directiories."
     rm -rf "$REPODIR"/checkout
     mkdir -p "$REPODIR"/{rootfs,overlay/{data,work}}
+    chown "$USER_SUBUID_START":"$USER_SUBGID_START" "$REPODIR"/rootfs
 
     # checkout commit
     echo "[2/4] Checking out rootfs."
