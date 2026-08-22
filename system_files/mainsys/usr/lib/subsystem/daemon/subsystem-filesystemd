@@ -179,11 +179,6 @@ init() {
     # logging
     echo "[---] Initializing."
 
-    # set constants
-    local RSTRING
-    RSTRING=$(openssl rand -hex 32)
-    readonly RSTRING
-
     # initialize ostree repo and commit rootfs if needed
     if [[ ! -f "/var/lib/subsystem/.initialized" ]]; then
         echo "[1/5] Preparing for initialization."
@@ -194,15 +189,15 @@ init() {
         ostree --repo="/var/lib/subsystem/repo" init --mode=bare
 
         echo "[3/5] Mounting base rootfs."
-        mkdir -p /tmp/subsystem-"$RSTRING"
-        mount -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk /tmp/subsystem-"$RSTRING"
+        mkdir -p /tmp/subsystem-base-setup
+        mount -o ro,acl,loop,user_xattr -t erofs /usr/lib/subsystem/rootfs/rootfs.dsk /tmp/subsystem-base-setup
 
         echo "[4/5] Commiting base rootfs to repository."
-        ostree --repo="/var/lib/subsystem/repo" commit --branch="subsystem-rootfs-base" --subject="base subsystem rootfs snapshot" /tmp/subsystem-"$RSTRING"
+        ostree --repo="/var/lib/subsystem/repo" commit --branch="subsystem-rootfs-base" --subject="base subsystem rootfs snapshot" /tmp/subsystem-base-setup
 
         echo "[5/5] Finalizing."
-        umount -q /tmp/subsystem-"$RSTRING"
-        rm -rf /tmp/subsystem-"$RSTRING"
+        umount -q /tmp/subsystem-base-setup
+        rm -rf /tmp/subsystem-base-setup
         touch /var/lib/subsystem/.initialized
     fi
 }
