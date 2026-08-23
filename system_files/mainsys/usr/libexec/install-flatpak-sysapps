@@ -9,10 +9,16 @@ if ! findmnt /tmp/sysapps >/dev/null; then
     mount -o ro,loop /usr/lib/flatpak-sysapps/flatpak-sysapps.dsk /tmp/sysapps
 fi
 
-# install all apps from repo
+# setup repositories
 flatpak remote-add --system --if-not-exists flathub /usr/lib/flatpak-sysapps/flathub.flatpakrepo
-flatpak install --sideload-repo=/tmp/sysapps --system -y flathub $(</etc/.sysapps.list)
+/usr/libexec/run-as-all-human-users flatpak remote-add --user --if-not-exists flathub /usr/lib/flatpak-sysapps/flathub.flatpakrepo
+
+# set gtk styling overrides
 flatpak override --system --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0
+/usr/libexec/run-as-all-human-users flatpak override --user --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0
+
+# install system apps
+flatpak install --sideload-repo=/tmp/sysapps --system -y flathub $(</etc/.sysapps.list)
 
 # cleanup
 umount /tmp/sysapps
