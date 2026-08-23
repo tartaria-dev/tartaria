@@ -1,0 +1,110 @@
+---
+name: Build Tartaria ISOs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 */3 * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-stable
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ISOs for Tartaria (stable-${{ matrix.IMAGE_FLAVOR }})
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - IMAGE_FLAVOR: arch
+          - IMAGE_FLAVOR: arch-nvidia
+          - IMAGE_FLAVOR: cachy
+          - IMAGE_FLAVOR: cachy-nvidia
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        run: |
+          # Lowercase the image uri
+          echo "IMAGE_REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
+
+      - name: Build ISO
+        uses: tartaria-dev/iso-builder@main
+        with:
+          container-image: 'ghcr.io/tartaria-dev/tartaria:stable-${{ matrix.IMAGE_FLAVOR }}'
+          iso-path: './iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso'
+
+      - name: Compute checksum
+        run: |
+          cd iso
+          sha256sum "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
+            | tee "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
+
+      - name: Install Oras
+        uses: oras-project/setup-oras@v1
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Push to GHCR
+        run: |
+          oras push "${IMAGE_REGISTRY}/tartaria-iso:stable-${{ matrix.IMAGE_FLAVOR }}" \
+            --artifact-type application/vnd.tartaria.iso.v1 \
+            "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso:application/octet-stream"
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: tartaria-iso-checksum-${{ matrix.IMAGE_FLAVOR }}
+          path: ./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256
+          if-no-files-found: error
+          retention-days: 3
+
+  release:
+    name: Publish ISO checksum release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download checksums
+        uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          pattern: tartaria-iso-checksum-*
+          merge-multiple: true
+
+      - name: Prepare environment
+        run: |
+          echo "IMAGE_REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
+          echo "date=$(date -u +%Y-%m-%d)" >> "${GITHUB_OUTPUT}"
+        id: env
+
+      - name: Prepare release notes
+        run: |
+          {
+            echo "### Checksums"
+            echo
+            echo '```'
+            for flavor in arch arch-nvidia cachy cachy-nvidia; do
+              echo "$flavor: $(cat checksums/tartaria-stable-$flavor.iso.sha256)"
+            done
+            echo '```'
+          } > release-notes.md
+
+      - name: Delete previous release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete iso-stable --yes --cleanup-tag || true
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: iso-stable
+          name: "Tartaria Stable ISO checksums (${{ steps.env.outputs.date }})"
+          make_latest: true
+          body_path: release-notes.md
