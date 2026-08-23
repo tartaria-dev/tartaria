@@ -30,7 +30,7 @@ for user in /var/home/*; do
     if [[ "$ECHO_USER" == "1" ]]; then
         echo "$username"
     else
-        echo "Executing '$1' as $username, uid $user_uid"
-        su - "$username" -c "$1"
+        echo "Executing '$*' as $username, uid $user_uid"
+        su - "$username" -c "$*"
     fi
 done
