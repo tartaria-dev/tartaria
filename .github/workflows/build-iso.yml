@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build:
     name: Build ISOs for Tartaria (stable-${{ matrix.IMAGE_FLAVOR }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       packages: write
     strategy:
