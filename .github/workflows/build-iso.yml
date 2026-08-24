@@ -41,6 +41,8 @@ jobs:
 
       - name: Compute checksum
         run: |
+          ls -lah .
+          ls -lah ./iso
           sha256sum "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
             | tee "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
 
