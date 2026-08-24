@@ -36,13 +36,13 @@ jobs:
         uses: tartaria-dev/iso-builder@main
         with:
           container-image: 'ghcr.io/tartaria-dev/tartaria:stable-${{ matrix.IMAGE_FLAVOR }}'
-          iso-path: './iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso'
+          iso-path: './iso'
+          iso-name: 'tartaria-stable-${{ matrix.IMAGE_FLAVOR }}'
 
       - name: Compute checksum
         run: |
-          cd iso
-          sha256sum "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
-            | tee "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
+          sha256sum "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
+            | tee "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
 
       - name: Install Oras
         uses: oras-project/setup-oras@v1
