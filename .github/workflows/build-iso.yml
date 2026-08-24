@@ -41,10 +41,9 @@ jobs:
 
       - name: Compute checksum
         run: |
-          ls -lah .
-          ls -lah ./iso
-          sha256sum "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
-            | tee "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
+          cd ./iso
+          sha256sum "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
+            | tee "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
 
       - name: Install Oras
         uses: oras-project/setup-oras@v1
