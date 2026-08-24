@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-stable
   cancel-in-progress: true
 
+env:
+  INCLUDE_CONTAINER_IN_ISO: false
+
 jobs:
   build:
     name: Build ISOs for Tartaria (stable-${{ matrix.IMAGE_FLAVOR }})
