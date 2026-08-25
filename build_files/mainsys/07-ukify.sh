@@ -11,6 +11,9 @@ mkdir -p /out
 # set vars
 kver=$(ls /kernel)
 
+# install needed tools
+pacman -S --noconfirm --needed systemd-ukify sbsigntools
+
 # create UKI
 bootc container ukify \
     --rootfs /target \

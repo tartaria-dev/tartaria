@@ -36,8 +36,8 @@ RUN mkdir -p /kernel && bootc container split-kernel-and-rootfs --rootfs / --out
 
 # build signed, sealed UKI
 FROM base AS sealed-uki
-RUN pacman -S --noconfirm --needed systemd-ukify sbsigntools
-RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+RUN --mount=type=tmpfs,dst=/var/tmp \
+    --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=bind,from=split,target=/target \
     --mount=type=bind,from=split,source=/kernel,target=/kernel \
     --mount=type=secret,id=secureboot_key,required=false \
