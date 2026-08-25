@@ -12,10 +12,10 @@ mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /build/conf/01-sys-pkgs)
 
 # based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
 case "$IMAGE_FLAVOR" in
-    arch)
+    arch*)
         packages+=("linux")
         ;;
-    cachy)
+    cachy*)
         packages+=("linux-cachyos" "scx-scheds" "scx-manager")
         ;;
 esac

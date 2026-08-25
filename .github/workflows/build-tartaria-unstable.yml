@@ -52,8 +52,12 @@ jobs:
         include:
           - IMAGE_FLAVOR: arch
             containerfile: ./build_files/containerfiles/Containerfile.arch
+          - IMAGE_FLAVOR: arch-sealed
+            containerfile: ./build_files/containerfiles/Containerfile.arch-sealed
           - IMAGE_FLAVOR: cachy
             containerfile: ./build_files/containerfiles/Containerfile.cachy
+          - IMAGE_FLAVOR: cachy-sealed
+            containerfile: ./build_files/containerfiles/Containerfile.cachy-sealed
 
     permissions:
       contents: read
