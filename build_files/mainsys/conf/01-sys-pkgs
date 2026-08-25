@@ -45,8 +45,6 @@ e2fsprogs
 erofs-utils
 exfatprogs
 f2fs-tools
-gpart
-gparted
 jfsutils
 mkosi
 mtools
@@ -184,4 +182,5 @@ flatseal
 hplip
 kitty
 nautilus
+partitionmanager
 sysprof
