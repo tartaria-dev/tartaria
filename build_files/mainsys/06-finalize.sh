@@ -12,16 +12,13 @@ DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose -
 ## arrange filesystem for bootc and image-based systems,
 ## see https://bootc-dev.github.io/bootc/filesystem.html
 
-# clear tempfiles
-rm -rf /tmp/* /run/*
-
 # remove target directories
-rm -rf /{boot,home,root,srv,mnt,var,usr/local}
+rm -rf /{boot,home,root,srv,mnt,tmp,run,var,usr/local}
 rm -rf /usr/lib/sysimage/{log,cache/pacman/pkg}
 rm -rf /{build,packages}
 
 # (re)create essential system directories
-mkdir -p /sysroot /boot /usr/lib/ostree /var
+mkdir -p /sysroot /boot /usr/lib/ostree /var /tmp /run
 
 # create symlinks for bootc filesystem layout
 ln -sT sysroot/ostree /ostree
