@@ -7,34 +7,24 @@ set -ouex pipefail
 
 ## Non-AUR packages
 
-# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
-case "$IMAGE_FLAVOR" in
-    arch)
-        KERN_PKG="linux"
-        CACHY_PKGS=""
-        NVIDIA_PKGS=""
-        ;;
-    arch-nvidia)
-        KERN_PKG="linux"
-        CACHY_PKGS=""
-        NVIDIA_PKGS="nvidia-open nvidia-utils"
-        ;;
-    cachy)
-        KERN_PKG="linux-cachyos"
-        CACHY_PKGS="scx-manager scx-scheds"
-        NVIDIA_PKGS=""
-        ;;
-    cachy-nvidia)
-        KERN_PKG="linux-cachyos-nvidia-open"
-        CACHY_PKGS="scx-manager scx-scheds"
-        NVIDIA_PKGS="nvidia-utils"
-        ;;
-esac
-readonly KERN_PKG CACHY_PKGS NVIDIA_PKGS
-
 # import package list as an array
 mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /build/conf/01-sys-pkgs)
-packages+=("$KERN_PKG" $NVIDIA_PKGS $CACHY_PKGS)
+
+# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
+case "$IMAGE_FLAVOR" in
+    arch-sealed)
+        packages+=("linux")
+        ;;
+    arch)
+        packages+=("linux" "shim")
+        ;;
+    cachy-sealed)
+        packages+=("linux-cachyos" "scx-scheds" "scx-manager")
+        ;;
+    cachy)
+        packages+=("linux-cachyos" "scx-scheds" "scx-manager" "shim")
+        ;;
+esac
 
 # install non-AUR packages
 pacman -S --noconfirm --needed "${packages[@]}" >/dev/null

@@ -27,8 +27,9 @@ RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/05-extras.sh && \
     bash /build/06-finalize.sh
 
-# lint image
-RUN bootc container lint
+# clean then lint image
+RUN rm -rf /tmp/* /tmp/.* /run/*
+RUN bootc container lint --fatal-warnings
 
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah

@@ -1,5 +1,5 @@
 # base image
-FROM docker.io/cachyos/cachyos-v3:latest AS final
+FROM docker.io/cachyos/cachyos-v3:latest AS base
 
 # copy over build files
 COPY build_files/mainsys /build/
@@ -27,9 +27,26 @@ RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/05-extras.sh && \
     bash /build/06-finalize.sh
 
-# clean then lint image
+# lint image
 RUN rm -rf /tmp/* /tmp/.* /run/*
 RUN bootc container lint --fatal-warnings
+
+# split the kernel/initramfs
+FROM base AS split
+RUN mkdir -p /kernel && bootc container split-kernel-and-rootfs --rootfs / --output /kernel
+
+# build signed, sealed UKI
+FROM base AS sealed-uki
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+    --mount=type=bind,from=split,target=/target \
+    --mount=type=bind,from=split,source=/kernel,target=/kernel \
+    --mount=type=secret,id=secureboot_key,required=false \
+    --mount=type=secret,id=secureboot_cert,required=false \
+    bash /build/07-ukify.sh
+
+# add UKI to base
+FROM split AS final
+COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
 
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah
