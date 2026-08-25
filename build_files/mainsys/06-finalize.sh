@@ -12,9 +12,6 @@ DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose -
 ## arrange filesystem for bootc and image-based systems,
 ## see https://bootc-dev.github.io/bootc/filesystem.html
 
-# clear tempfiles
-rm -rf /tmp/* /tmp/.* /run/*
-
 # remove target directories
 rm -rf /{boot,home,root,srv,mnt,var,usr/local}
 rm -rf /usr/lib/sysimage/{log,cache/pacman/pkg}

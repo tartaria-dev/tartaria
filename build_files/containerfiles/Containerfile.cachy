@@ -28,6 +28,7 @@ RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/06-finalize.sh
 
 # lint image
+RUN rm -rf /tmp/* /tmp/.* /run/*
 RUN bootc container lint --fatal-warnings
 
 # split the kernel/initramfs

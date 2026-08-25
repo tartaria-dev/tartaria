@@ -115,6 +115,9 @@ jobs:
       - name: Build image
         id: build_image
         uses: redhat-actions/buildah-build@v3.0.2
+        env:
+          SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
