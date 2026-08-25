@@ -52,11 +52,7 @@ jobs:
         include:
           - IMAGE_FLAVOR: arch
             containerfile: ./build_files/containerfiles/Containerfile.arch
-          - IMAGE_FLAVOR: arch-nvidia
-            containerfile: ./build_files/containerfiles/Containerfile.arch
           - IMAGE_FLAVOR: cachy
-            containerfile: ./build_files/containerfiles/Containerfile.cachy
-          - IMAGE_FLAVOR: cachy-nvidia
             containerfile: ./build_files/containerfiles/Containerfile.cachy
 
     permissions:
@@ -121,7 +117,10 @@ jobs:
         uses: redhat-actions/buildah-build@v3.0.2
         with:
           containerfiles: ${{ matrix.containerfile }}
-          extra-args: --skip-unused-stages=false
+          extra-args: |
+            --skip-unused-stages=false
+            --secret id=secureboot_key,env=SECUREBOOT_KEY
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

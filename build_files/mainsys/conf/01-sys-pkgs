@@ -11,7 +11,6 @@ efibootmgr
 linux-firmware
 ostree
 shadow
-shim
 skopeo
 udev
 
