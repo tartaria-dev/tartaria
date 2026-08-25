@@ -6,7 +6,7 @@ echo "::group::===========================> Build UKI"
 set -ouex pipefail
 
 # create necessary dirs
-mkdir -p /out
+mkdir -p /out /var/tmp
 
 # set vars
 kver=$(ls /kernel)
@@ -23,3 +23,6 @@ bootc container ukify \
     --signtool sbsign \
     --secureboot-private-key /run/secrets/secureboot_key \
     --secureboot-certificate /run/secrets/secureboot_cert
+
+# cleanup
+rm -rf /var/tmp
