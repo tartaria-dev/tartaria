@@ -20,9 +20,9 @@ jobs:
       matrix:
         include:
           - IMAGE_FLAVOR: arch
-          - IMAGE_FLAVOR: arch-nvidia
+          - IMAGE_FLAVOR: arch-sealed
           - IMAGE_FLAVOR: cachy
-          - IMAGE_FLAVOR: cachy-nvidia
+          - IMAGE_FLAVOR: cachy-sealed
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
