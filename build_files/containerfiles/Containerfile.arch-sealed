@@ -59,4 +59,3 @@ RUN --mount=from=final,src=/,target=/chunkah,ro \
 
 # finalize
 FROM oci-archive:out.ociarchive
-ENTRYPOINT ["git"]
