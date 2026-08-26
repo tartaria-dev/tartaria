@@ -9,6 +9,7 @@ dbus-glib
 dracut
 efibootmgr
 linux-firmware
+mokutil
 ostree
 shadow
 skopeo

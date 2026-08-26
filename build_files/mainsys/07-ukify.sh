@@ -24,5 +24,15 @@ bootc container ukify \
     --secureboot-private-key /run/secrets/secureboot_key \
     --secureboot-certificate /run/secrets/secureboot_cert
 
+# sign systemd-boot
+sbsign \
+    --key /run/secrets/secureboot_key \
+    --cert /run/secrets/secureboot_cert \
+    --output /out/grubx64.efi \
+    /target/usr/lib/systemd/boot/efi/systemd-bootx64.efi
+
+# export a DER copy of our cert so it can be baked into the image for MOK enrollment
+openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /out/tartaria.der
+
 # cleanup
 rm -rf /var/tmp

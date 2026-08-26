@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# LOVE MEEEE
+set -eo pipefail
+
+# create necessary dirs
+mkdir -p /etc/tartaria
+
+# create hash file
+hash_file=$(mktemp)
+
+# generate pass and enroll .der
+mokutil --generate-hash="tartaria" > "${hash_file}"
+mokutil --import "/usr/share/tartaria/secureboot/tartaria.der" --hash-file "${hash_file}"
+
+# cleanup
+rm -f "${hash_file}"
+touch /etc/tartaria/mok-enrolled

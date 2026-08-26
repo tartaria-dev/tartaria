@@ -44,9 +44,13 @@ RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=secret,id=secureboot_cert,required=false \
     bash /build/07-ukify.sh
 
-# add UKI to base
+# add UKI + shim chain to base
 FROM split AS final
 COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
+COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
+COPY --from=sealed-uki /out/tartaria.der /usr/share/tartaria/secureboot/tartaria.der
+COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
+COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi
 
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah

@@ -22,6 +22,10 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 
 ## Variants
+
+> [!WARNING]
+> The NVidia flavors are not being built at the moment due to new sealed image variants. Once signing for the NVidia kernel modules is implemented by me, they will be built again.
+
 Variants are composed as follows:
 
 ```
