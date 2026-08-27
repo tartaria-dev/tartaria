@@ -14,6 +14,7 @@ on:
       - "**/renovate.json5"
       - "**/artifacthub-repo.yml"
       - "**/build-tartaria-stable.yml"
+      - "**/build-iso.yml"
   push:
     tags-ignore:
       - 'v*'
@@ -27,6 +28,7 @@ on:
       - "**/renovate.json5"
       - "**/artifacthub-repo.yml"
       - "**/build-tartaria-stable.yml"
+      - "**/build-iso.yml"
   workflow_dispatch:
 
 env:
