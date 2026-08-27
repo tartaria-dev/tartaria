@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-logo.svg" alt="Tartaria logo" style="max-width: 300px; width: 25%;">
+  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-logo.png" alt="Tartaria logo" style="max-width: 300px; width: 25%;">
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch Bootc / Niri / Noctalia</h3>
 <p align="center">
