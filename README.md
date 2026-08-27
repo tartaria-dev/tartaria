@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-logo.png" alt="Tartaria Logo" width="250">
-<h3 align="center">Tartaria - /tɑːrˈtɛəriə/</h3>
+  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-text-logo.svg" alt="Tartaria Logo" width="450">
+<h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia</h3>
 <p align="center">
   <img width="1920" height="1080" alt="Desktop image" src="https://github.com/user-attachments/assets/833bd2bd-bd2d-4f90-a2d3-80e9f08a6a12" />
