@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/main/system_files/mainsys/usr/share/pixmaps/tartaria-logo.svg" alt="Tartaria Logo" width="400">
+  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-logo.png" alt="Tartaria Logo" width="250">
 <h3 align="center">Tartaria - /tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia</h3>
 <p align="center">
