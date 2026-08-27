@@ -1,0 +1,137 @@
+// ---------------- window / background ----------------
+
+Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
+Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
+
+screen_width  = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+// ---------------- animation frames ----------------
+
+frame.count = 78;      // <-- set to the number of PNGs in frames/
+frame.fps   = 30;      // <-- set to the fps you extracted at
+frame.dir   = "frames/";
+
+fun pad5(n) {
+    if (n < 10)    return "0000" + n;
+    if (n < 100)   return "000" + n;
+    if (n < 1000)  return "00" + n;
+    if (n < 10000) return "0" + n;
+    return "" + n;
+}
+
+frame.images = [];
+for (frame.i = 1; frame.i <= frame.count; frame.i++) {
+    frame.images[frame.i - 1] = Image(frame.dir + "frame" + pad5(frame.i) + ".png");
+}
+
+frame.sprite = Sprite(frame.images[0]);
+frame.w = frame.images[0].GetWidth();
+frame.h = frame.images[0].GetHeight();
+frame.sprite.SetX((screen_width  - frame.w) / 2);
+frame.sprite.SetY((screen_height - frame.h) / 2 - 40);   // nudge up to leave room for the prompt
+frame.sprite.SetZ(10);
+
+frame.current = 0;
+
+Plymouth.SetRefreshRate(frame.fps);
+
+fun refresh_callback() {
+    frame.current = (frame.current + 1) % frame.count;
+    frame.sprite.SetImage(frame.images[frame.current]);
+}
+Plymouth.SetRefreshFunction(refresh_callback);
+
+// ---------------- password / question prompt ----------------
+
+prompt.y = frame.sprite.GetY() + frame.h + 40;
+
+prompt.label_sprite = Sprite();
+prompt.label_sprite.SetZ(20);
+prompt.label_sprite.SetVisible(false);
+
+prompt.entry_sprite = Sprite();
+prompt.entry_sprite.SetZ(20);
+prompt.entry_sprite.SetVisible(false);
+
+prompt.message_sprite = Sprite();
+prompt.message_sprite.SetZ(20);
+prompt.message_sprite.SetVisible(false);
+
+fun show_prompt_label(text) {
+    if (text == "") {
+        text = "Password:";
+    }
+    label_image = Image.Text(text, 0.92, 0.92, 0.92, 1, "Overpass ExtraBold 14");
+    prompt.label_sprite.SetImage(label_image);
+    prompt.label_sprite.SetX((screen_width - label_image.GetWidth()) / 2);
+    prompt.label_sprite.SetY(prompt.y + 50);
+    prompt.label_sprite.SetVisible(true);
+}
+
+fun show_prompt_entry(display_text) {
+    entry_image = Image.Text(display_text, 1, 1, 1, 1, "Overpass ExtraBold 18");
+    prompt.entry_sprite.SetImage(entry_image);
+    prompt.entry_sprite.SetX((screen_width - entry_image.GetWidth()) / 2);
+    prompt.entry_sprite.SetY(prompt.y + 80);
+    prompt.entry_sprite.SetVisible(true);
+}
+
+// Called for every keystroke while a password is being typed.
+// `bullets` is the number of characters entered so far.
+fun display_password_callback(prompt_text, bullets) {
+    show_prompt_label(prompt_text);
+
+    dots = "";
+    n = 0;
+    while (n < bullets) {
+        dots = dots + "●";
+        n++;
+    }
+    show_prompt_entry(dots);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+// Called for plain (non-masked) text prompts, e.g. a username or
+// a yes/no confirmation entered during boot.
+fun display_question_callback(prompt_text, entry_text) {
+    show_prompt_label(prompt_text);
+    show_prompt_entry(entry_text);
+}
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+
+// Called when Plymouth returns to normal boot display (prompt answered
+// or dismissed) — hide the prompt UI.
+fun display_normal_callback() {
+    prompt.label_sprite.SetVisible(false);
+    prompt.entry_sprite.SetVisible(false);
+    // Visibility alone can leave stale pixels behind on some renderers
+    // (damage tracking doesn't always pick up a pure visibility flip).
+    // Moving the sprites off-screen forces the old region to redraw.
+    prompt.label_sprite.SetX(-10000);
+    prompt.entry_sprite.SetX(-10000);
+}
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+// Called for status/error messages, e.g. "Wrong password, try again"
+// from a failed LUKS unlock attempt, or fsck output.
+fun message_callback(text) {
+    if (text == "") {
+        prompt.message_sprite.SetVisible(false);
+        return;
+    }
+    message_image = Image.Text(text, 1, 0.55, 0.55, 1, "Overpass Extrabold 12");
+    prompt.message_sprite.SetImage(message_image);
+    prompt.message_sprite.SetX((screen_width - message_image.GetWidth()) / 2);
+    prompt.message_sprite.SetY(prompt.y + 100);
+    prompt.message_sprite.SetVisible(true);
+}
+Plymouth.SetMessageFunction(message_callback);
+
+// Fires when the corresponding hide-message command is sent (not just
+// an empty display-message) — without this the message sprite never
+// clears itself.
+fun hide_message_callback(text) {
+    prompt.message_sprite.SetVisible(false);
+}
+Plymouth.SetHideMessageFunction(hide_message_callback);

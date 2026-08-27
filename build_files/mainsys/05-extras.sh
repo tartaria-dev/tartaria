@@ -21,7 +21,7 @@ ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.se
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
 
 # set plymouth theme
-sed -i 's/bgrt/red_loader/g' /usr/share/plymouth/plymouthd.defaults
+sed -i 's/bgrt/tartaria/g' /usr/share/plymouth/plymouthd.defaults
 
 # remove any .pacnew files
 find /etc/ -name "*.pacnew" -type f -delete
