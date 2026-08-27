@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="system_files/mainsys/usr/share/pixmaps/tartaria-logo.png" alt="Tartaria logo" style="max-width: 300px; width: 25%;">
-<h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">Arch Bootc / Niri / Noctalia</h3>
+  <img src="https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/main/system_files/mainsys/usr/share/pixmaps/tartaria-logo.svg" alt="Tartaria Logo" width="400">
+<h3 align="center">Tartaria - /tɑːrˈtɛəriə/</h3>
+<h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia</h3>
 <p align="center">
   <img width="1920" height="1080" alt="Desktop image" src="https://github.com/user-attachments/assets/833bd2bd-bd2d-4f90-a2d3-80e9f08a6a12" />
 </p>
 
 
 ## Description
-Tartaria is a custom Arch bootc image built for (optimized) general-day-to-day usage, providing:
+Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing:
 
 - AppArmor application security enabled by default
 - An opinionated and mostly GTK-based app suite
