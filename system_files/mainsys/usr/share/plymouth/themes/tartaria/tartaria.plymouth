@@ -6,3 +6,5 @@ ModuleName=script
 [script]
 ImageDir=/usr/share/plymouth/themes/tartaria
 ScriptFile=/usr/share/plymouth/themes/tartaria/tartaria.script
+Font=Overpass ExtraBold 10
+TitleFont=Overpass ExtraBold 13
