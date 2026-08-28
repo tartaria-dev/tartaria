@@ -53,4 +53,10 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 rm -rf /usr/opt
 mv /opt /usr
 
+# add nvidia-drm modprobe config for saffron/amchoor
+if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *amchoor ]]; then
+    mkdir -p /etc/modprobe.d
+    echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf
+fi
+
 echo "::endgroup::"

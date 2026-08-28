@@ -10,9 +10,18 @@ mkdir -p /etc/tartaria
 # create hash file
 hash_file=$(mktemp)
 
-# generate pass and enroll .der
+# generate pass
 mokutil --generate-hash="tartaria" > "${hash_file}"
-mokutil --import "/usr/share/tartaria/secureboot/tartaria.der" --hash-file "${hash_file}"
+
+# enroll secureboot cert if exists
+if [[ -f "/usr/share/tartaria/certs/secureboot.der" ]]; then
+    mokutil --import "/usr/share/tartaria/certs/secureboot.der" --hash-file "${hash_file}"
+fi
+
+# enroll modules cert if exists
+if [[ -f "/usr/share/tartaria/certs/modules.der" ]]; then
+    mokutil --import "/usr/share/tartaria/certs/modules.der" --hash-file "${hash_file}"
+fi
 
 # cleanup
 rm -f "${hash_file}"

@@ -31,8 +31,16 @@ RUN --mount=type=tmpfs,dst=/tmp \
 RUN rm -rf /tmp/* /tmp/.* /run/*
 RUN bootc container lint --fatal-warnings
 
-# split the kernel/initramfs
-FROM base AS split
+# sign NVIDIA modules (saffron only)
+FROM base AS signed-modules
+ARG IMAGE_FLAVOR
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+    --mount=type=secret,id=module_key,required=true \
+    --mount=type=secret,id=module_cert,required=true \
+    bash /build/08-modsign.sh
+
+# split the kernel/initramfs from the signed rootfs
+FROM signed-modules AS split
 RUN mkdir -p /kernel && bootc container split-kernel-and-rootfs --rootfs / --output /kernel
 
 # build signed, sealed UKI
@@ -40,15 +48,15 @@ FROM base AS sealed-uki
 RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=bind,from=split,target=/target \
     --mount=type=bind,from=split,source=/kernel,target=/kernel \
-    --mount=type=secret,id=secureboot_key,required=false \
-    --mount=type=secret,id=secureboot_cert,required=false \
+    --mount=type=secret,id=secureboot_key,required=true \
+    --mount=type=secret,id=secureboot_cert,required=true \
     bash /build/07-ukify.sh
 
 # add UKI + shim chain to base
 FROM split AS final
 COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
 COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
-COPY --from=sealed-uki /out/tartaria.der /usr/share/tartaria/secureboot/tartaria.der
+COPY --from=sealed-uki /out/secureboot.der /usr/share/tartaria/certs/secureboot.der
 COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
 COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi
 
