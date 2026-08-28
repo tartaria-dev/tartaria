@@ -57,9 +57,9 @@ tartaria:<base>-<flavor>-<spice>
 
 ### ISO
 
-Since ISOs are stored in GHCR, the tool [Oras](https://oras.land/) is used to upload/download our ISOs.
+Since our ISOs are stored in GHCR, we use the tool [Oras](https://oras.land/) to upload/download them.
 
-To make things more convenient for you, the end user, run the following and go through the download process:
+To make things more convenient for you, the end user, run the following in a Linux terminal and go through the download process:
 
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
