@@ -22,7 +22,7 @@ case "$IMAGE_FLAVOR" in
         packages+=("linux-cachyos" "scx-scheds" "scx-manager")
         ;;
     cachy-amchoor|cachy-saffron)
-        packages+=("linux-cachyos" "scx-scheds" "scx-manager" "nvidia-open" "nvidia-utils")
+        packages+=("linux-cachyos-nvidia-open" "linux-cachyos" "scx-scheds" "scx-manager" "nvidia-utils")
         ;;
 esac
 

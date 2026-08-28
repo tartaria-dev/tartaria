@@ -50,7 +50,7 @@ done < <(find "/usr/lib/modules/${KERNEL_VERSION}" -name 'nvidia*.ko*' -print0)
 pacman -Rns --noconfirm "$headers"
 
 # regenerate initramfs with dracut
-DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
+DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION" --add-drivers "nvidia nvidia_modeset nvidia_uvm nvidia_drm" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
 # export DER copy into the rootfs so it is inherited by split -> final
 mkdir -p /usr/share/tartaria/certs
