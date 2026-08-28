@@ -15,6 +15,7 @@ on:
       - "**/artifacthub-repo.yml"
       - "**/build-tartaria-stable.yml"
       - "**/build-iso.yml"
+      - "**/iso-downloader.sh"
   push:
     tags-ignore:
       - 'v*'
@@ -29,6 +30,7 @@ on:
       - "**/artifacthub-repo.yml"
       - "**/build-tartaria-stable.yml"
       - "**/build-iso.yml"
+      - "**/iso-downloader.sh"
   workflow_dispatch:
 
 env:
