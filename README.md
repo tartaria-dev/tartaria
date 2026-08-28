@@ -49,8 +49,8 @@ tartaria:<base>-<flavor>-<spice>
 
 - `berbere`: A spice of Tartaria with no extra features; choose this if you do not need features provided by other spices.
 - `amchoor`: A spice of Tartaria that includes preinstalled NVIDIA drivers.
-- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout with a UKI. **Only installable via ISO.**
-- `saffron`: A spice of Tartaria with the features of `amchoor` and `mahleb`. **Only installable via ISO.**
+- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout with a UKI. **Only installable via ISO. Do not rebase to this.**
+- `saffron`: A spice of Tartaria with the features of `amchoor` and `mahleb`. **Only installable via ISO. Do not rebase to this.**
 
 
 ## Installing
