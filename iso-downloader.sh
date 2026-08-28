@@ -38,13 +38,13 @@ clear
 if [[ "$answer" == "1" ]]; then
     echo "[2/2] Downloading Arch-based ISO."
     echo "[-i-] Please do not interrupt the download process. This may take a while."
-    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-arch
+    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-arch-berbere
     mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-stable-arch.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
     rmdir "$HOME"/Downloads/tartaria-iso/iso
 elif [[ "$answer" == "2" ]]; then
     echo "[2/2] Downloading CachyOSv3-based ISO."
     echo "[-i-] Please do not interrupt the download process. This may take a while."
-    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-cachy
+    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-cachy-berbere
     mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-stable-cachy.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
     rmdir "$HOME"/Downloads/tartaria-iso/iso
 fi
