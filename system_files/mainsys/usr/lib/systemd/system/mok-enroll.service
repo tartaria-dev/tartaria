@@ -1,6 +1,5 @@
 [Unit]
-Description=Stage Tartaria's Secure Boot signing cert for MOK enrollment
-ConditionPathExists=/usr/share/tartaria/secureboot/tartaria.der
+Description=Enroll signing certs using MOK
 ConditionPathExists=!/etc/tartaria/mok-enrolled
 Before=systemd-modules-load.service
 

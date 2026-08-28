@@ -24,76 +24,57 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Variants
 
 > [!WARNING]
-> The NVidia flavors are not being built at the moment due to new sealed image variants. Once signing for the NVidia kernel modules is implemented by me, they will be built again.
+> If you are a Tartaria user on an old variant such as `stable-arch`, please read the below and switch over ASAP.
 
 Variants are composed as follows:
 
 ```
-tartaria:<base>-<flavor>
+tartaria:<base>-<flavor>-<spice>
 ```
 
-Two bases of Tartaria are built within this repository:
+### Bases
 
-- `stable`: A base of Tartaria built every 72 hours and on every new repository tag (new repository tags are made every release). Considered stable and recommended for usage.
+- `stable`: A base of Tartaria built every 72 hours and on every new repository tag (new repository tags are made every release). Considered stable and recommended for usage, as it does not receive the latest, untested changes.
 - `unstable`: A base of Tartaria built daily and every time a new change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
-Alongside those bases, we offer two different flavors:
+### Flavors
 
-- `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel. Compatible with all hardware.
-- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel. Ensure your CPU supports the [`x86_64-v3`](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) microarchitecture to use this flavor.
+- `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel.
+- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel.
 
-In total, there are four different variants of Tartaria:
+### Spices
 
-- `stable-arch`
-- `stable-cachy`
-- `unstable-arch`
-- `unstable-cachy`
+- `berbere`: A spice of Tartaria with no extra features, choose this if you not need features provided by other spices.
+- `amchoor`: A spice of Tartaria that includes preinstalled NVIDIA drivers.
+- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout with a UKI. **Only installable via ISO.**
+- `saffron`: A spice of Tartaria with the features of `amchoor` and `mahleb`. **Only installable via ISO.**
 
-Each variant also has a corresponding variant with NVIDIA GPU support, just suffix `-nvidia` to any of the variant names above (e.g., `stable-arch-nvidia`).
+---
+
+In total, there are sixteen variants of Tartaria. You got choices!
 
 
-## Switching
-At the moment, only rebasing is supported - ISO support will come soon. Rebasing from Fedora Silverblue/Kinoite, Aurora, or Bluefin is recommended to prevent unwanted issues, though it doesn't matter.
+## Installing
+
+### ISO
+
+Since ISOs are stored in GHCR, the tool [Oras](https://oras.land/) is used to upload/download our ISOs.
+
+To make things more convenient for you, the end user, run the following and go through the download process:
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
+```
+
+### Rebasing
 
 To rebase, use the following command in your terminal:
 
-`sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>`
+```
+sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>
+```
 
 If you are unsure what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
-
-
-## Forking
-Forking is not recommended for most use cases; you may want to pull this image in your custom image template instead.
-
-If the changes you need to make require a direct fork, however, here's some recommended steps to follow afterwards:
-
-- After forking this repository, go into `.github/workflows` and delete the file `build-tartaria-stable.yml`.
-- Then, edit `build-tartaria-unstable.yml` and replace lines 6-29 within the file with the following:
-
-  ```
-  pull_request:
-    branches:
-      - live
-    paths-ignore:
-      - "**/README.md"
-      - "**/.devcontainer.json"
-      - "**/cleanup.yml"
-      - "**/dependabot.yml"
-      - "**/renovate.json5"
-      - "**/artifacthub-repo.yml"
-  push:
-    branches:
-      - live
-    paths-ignore:
-      - "**/README.md"
-      - "**/.devcontainer.json"
-      - "**/cleanup.yml"
-      - "**/dependabot.yml"
-      - "**/renovate.json5"
-      - "**/artifacthub-repo.yml"
-  ```
-
-Note that these steps are NOT required; you may keep the stable workflow if you choose to.
 
 
 ## Credits

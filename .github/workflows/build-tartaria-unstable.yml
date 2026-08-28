@@ -52,13 +52,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - IMAGE_FLAVOR: arch
+          - IMAGE_FLAVOR: arch-berbere
             containerfile: ./build_files/containerfiles/Containerfile.arch
-          - IMAGE_FLAVOR: arch-sealed
+          - IMAGE_FLAVOR: arch-amchoor
+            containerfile: ./build_files/containerfiles/Containerfile.arch
+          - IMAGE_FLAVOR: arch-mahleb
             containerfile: ./build_files/containerfiles/Containerfile.arch-sealed
-          - IMAGE_FLAVOR: cachy
+          - IMAGE_FLAVOR: arch-saffron
+            containerfile: ./build_files/containerfiles/Containerfile.arch-sealed
+          - IMAGE_FLAVOR: cachy-berbere
             containerfile: ./build_files/containerfiles/Containerfile.cachy
-          - IMAGE_FLAVOR: cachy-sealed
+          - IMAGE_FLAVOR: cachy-amchoor
+            containerfile: ./build_files/containerfiles/Containerfile.cachy
+          - IMAGE_FLAVOR: cachy-mahleb
+            containerfile: ./build_files/containerfiles/Containerfile.cachy-sealed
+          - IMAGE_FLAVOR: cachy-saffron
             containerfile: ./build_files/containerfiles/Containerfile.cachy-sealed
 
     permissions:
@@ -124,12 +132,16 @@ jobs:
         env:
           SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --skip-unused-stages=false
             --secret id=secureboot_key,env=SECUREBOOT_KEY
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
