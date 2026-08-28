@@ -24,7 +24,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Variants
 
 > [!WARNING]
-> If you are a Tartaria user on an old variant such as `stable-arch`, please read the below and switch over ASAP.
+> If you are a Tartaria user on an old variant such as `stable-arch`, please read below and switch over ASAP.
 
 Variants are composed as follows:
 
@@ -44,14 +44,14 @@ tartaria:<base>-<flavor>-<spice>
 
 ### Spices
 
-- `berbere`: A spice of Tartaria with no extra features, choose this if you not need features provided by other spices.
+- `berbere`: A spice of Tartaria with no extra features; choose this if you do not need features provided by other spices.
 - `amchoor`: A spice of Tartaria that includes preinstalled NVIDIA drivers.
 - `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout with a UKI. **Only installable via ISO.**
 - `saffron`: A spice of Tartaria with the features of `amchoor` and `mahleb`. **Only installable via ISO.**
 
 ---
 
-In total, there are sixteen variants of Tartaria. You got choices!
+In total, there are sixteen variants of Tartaria. You've got choices!
 
 
 ## Installing
