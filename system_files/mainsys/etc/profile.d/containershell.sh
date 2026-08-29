@@ -10,6 +10,10 @@ elif [[ "$TERM" == "linux" ]]; then
 elif [[ "$EUID" == "0" ]]; then
     echo "Detected root user, entering host shell."
     return
+elif [[ "$(cat /proc/cmdline)" == *rd.live.image* ]]; then
+    echo "[-i-] Running on a Live ISO."
+    echo "[-i-] Subsystem is disabled on Live ISOs. Install to get the full experience."
+    return
 fi
 
 # hand off control
