@@ -5,7 +5,7 @@
 if [[ $- != *i* ]]; then
     return
 elif [[ "$TERM" == "linux" ]]; then
-    echo "Detetcted TTY, entering host shell."
+    echo "Detected TTY, entering host shell."
     return
 elif [[ "$EUID" == "0" ]]; then
     echo "Detected root user, entering host shell."
