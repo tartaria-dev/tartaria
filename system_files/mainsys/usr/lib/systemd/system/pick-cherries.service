@@ -1,7 +1,7 @@
 [Unit]
-Description=Update global chezmoi repository
-After=var.mount
-Requires=var.mount network-online.target
+Description=Update Global Chezmoi Repository
+RequiresMountsFor=/var
+Requires=network-online.target
 
 [Service]
 Type=oneshot

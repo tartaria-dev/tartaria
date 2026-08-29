@@ -1,5 +1,5 @@
 [Unit]
-Description=Persistent wayland clipboard
+Description=Persistent Wayland Clipboard
 
 [Service]
 ExecStart=/usr/bin/wl-clip-persist --clipboard regular

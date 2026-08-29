@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh User Font Cache
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fc-cache -rfv
+ExecStart=/usr/bin/systemctl --user disable %n
+ExecStart=/usr/bin/systemctl --user mask %n
+RemainAfterExit=false
+
+[Install]
+WantedBy=default.target

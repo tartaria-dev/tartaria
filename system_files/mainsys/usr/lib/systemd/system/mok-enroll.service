@@ -1,12 +1,13 @@
 [Unit]
-Description=Enroll signing certs using MOK
-ConditionPathExists=!/etc/tartaria/mok-enrolled
+Description=Enroll Signing Certs Using MOK
 Before=systemd-modules-load.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/libexec/sys-mok-enroll
+ExecStart=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl mask %n
 
 [Install]
 WantedBy=multi-user.target

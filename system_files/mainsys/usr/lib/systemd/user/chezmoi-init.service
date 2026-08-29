@@ -1,5 +1,5 @@
 [Unit]
-Description=Initialize Chezmoi if directory is missing
+Description=Initialize Chezmoi If Directory Is Missing
 ConditionPathExists=!%h/.config/tartaria/chezmoi
 
 [Service]

@@ -16,7 +16,7 @@
 # thank you Zirconium devs for this fix :vlone:
 
 [Unit]
-Description=Fix groups for Legacy rechunker
+Description=Fix Groups For Legacy Rechunker
 Wants=local-fs.target
 After=local-fs.target
 Before=systemd-user-sessions.service

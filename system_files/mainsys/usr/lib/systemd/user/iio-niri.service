@@ -1,5 +1,5 @@
 [Unit]
-Description=Display autorotation service
+Description=Display Autorotation Service
 PartOf=graphical-session.target
 After=graphical-session.target
 

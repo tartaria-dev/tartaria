@@ -1,15 +1,15 @@
 [Unit]
-Description=Let Valent/KDEConnect bypass firewalld
+Description=Let Valent/KDEConnect Bypass firewalld
+RequiresMountsFor=/var
 After=network-online.target firewalld.service
 Wants=network-online.target
-ConditionPathExists=!/var/lib/tartaria/kdeconnect-firewalld-bypass-done
 
 [Service]
 Type=oneshot
-ExecStart=mkdir -p /var/lib/tartaria
 ExecStart=/usr/bin/firewall-cmd --permanent --zone=public --add-service=kdeconnect
 ExecStart=/usr/bin/firewall-cmd --reload
-ExecStart=touch /var/lib/tartaria/kdeconnect-firewalld-bypass-done
+ExecStart=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl mask %n
 RemainAfterExit=false
 
 [Install]

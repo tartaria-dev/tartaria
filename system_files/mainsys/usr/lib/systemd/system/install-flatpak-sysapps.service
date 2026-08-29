@@ -1,7 +1,6 @@
 [Unit]
-Description=Install system flatpaks
-After=var.mount
-Requires=var.mount
+Description=Install System Flatpaks
+RequiresMountsFor=/var
 ConditionPathExists=/etc/.sysapps.list
 StartLimitIntervalSec=300
 StartLimitBurst=5
@@ -9,6 +8,8 @@ StartLimitBurst=5
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/install-flatpak-sysapps
+ExecStart=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl mask %n
 RemainAfterExit=false
 Restart=on-failure
 RestartSec=30

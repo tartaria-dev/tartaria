@@ -1,7 +1,6 @@
 [Unit]
-Description=Subsystem filesystem management
-After=var.mount
-Requires=var.mount
+Description=Subsystem Filesystem Management
+RequiresMountsFor=/var
 StartLimitIntervalSec=60
 StartLimitBurst=5
 

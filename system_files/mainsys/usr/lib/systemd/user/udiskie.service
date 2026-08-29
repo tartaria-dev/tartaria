@@ -1,5 +1,5 @@
 [Unit]
-Description=udiskie automounter
+Description=Udiskie Automounter
 
 [Service]
 ExecStart=/usr/bin/udiskie

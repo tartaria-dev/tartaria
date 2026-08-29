@@ -1,12 +1,14 @@
 [Unit]
-Description=Enable Flathub User Repository
+Description=Setup Flathub User Repository
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-ExecStart=/usr/bin/systemctl --user disable flathub-user.service
+ExecStart=/usr/bin/flatpak override --user --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0
+ExecStart=/usr/bin/systemctl --user disable %n
+ExecStart=/usr/bin/systemctl --user mask %n
 RemainAfterExit=false
 
 [Install]

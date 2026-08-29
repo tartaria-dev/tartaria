@@ -1,12 +1,13 @@
 [Unit]
 Description=Sync greetd configs
 Before=greetd.service
-After=var.mount
-Requires=var.mount
+RequiresMountsFor=/var
 
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/sync-greeter-configs
+ExecStart=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl mask %n
 
 [Install]
 WantedBy=multi-user.target
