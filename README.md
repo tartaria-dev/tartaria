@@ -24,7 +24,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Variants
 
 > [!WARNING]
-> If you are a Tartaria user on an old variant such as `stable-arch`, please read below and switch over ASAP.
+> If you are a Tartaria user on an old variant such as `stable-arch`, please stay until Release v2.0.0 is published. v2.0.0 is in testing.
 
 
 In total, there are sixteen variants of Tartaria.
