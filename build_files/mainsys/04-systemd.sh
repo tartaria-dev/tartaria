@@ -14,25 +14,25 @@ systemctl enable \
     cups.socket \
     firewalld.service \
     greetd.service \
-    kdeconnect-firewalld-bypass.service \
     install-flatpak-sysapps.service \
+    kdeconnect-firewalld-bypass.service \
     mok-enroll.service \
     NetworkManager.service \
-    polkit.service \
     pick-cherries.timer \
+    polkit.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
+    subsystem-filesystemd.service \
+    sync-greeter-configs.service \
     tuned-ppd.service \
     tuned.service \
-    uupd.timer \
     usr-share-tartaria-cherries.mount \
-    sync-greeter-configs.service \
-    subsystem-filesystemd.service
+    uupd.timer
 
 # system-preset
 systemctl preset \
-    kdeconnect-firewalld-bypass.service \
     install-flatpak-sysapps.service \
+    kdeconnect-firewalld-bypass.service \
     mok-enroll.service \
     subsystem-filesystemd.service \
     systemd-resolved.service
@@ -44,6 +44,7 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     opentabletdriver.service \
+    refresh-font-cache.service \
     subsystem-containerd.service \
     udiskie.service \
     wl-clip-persist.service

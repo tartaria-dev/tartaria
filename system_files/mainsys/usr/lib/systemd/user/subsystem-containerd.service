@@ -3,6 +3,7 @@ Description=Subsystem For %u
 After=graphical-session.target
 RequiresMountsFor=%t/containers
 RequiresMountsFor=/run/user/%U
+ConditionKernelCommandLine=!rd.live.image
 StartLimitIntervalSec=60
 StartLimitBurst=5
 

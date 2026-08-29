@@ -1,6 +1,7 @@
 [Unit]
 Description=Update Global Chezmoi Repository
 RequiresMountsFor=/var
+ConditionKernelCommandLine=!rd.live.image
 Requires=network-online.target
 
 [Service]

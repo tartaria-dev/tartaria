@@ -1,4 +1,5 @@
-enable kdeconnect-firewalld-bypass.service
 enable install-flatpak-sysapps.service
-enable subsystem-filesystemd.service
+enable kdeconnect-firewalld-bypass.service
 enable mok-enroll.service
+enable refresh-font-cache.service
+enable subsystem-filesystemd.service

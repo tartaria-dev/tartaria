@@ -2,6 +2,7 @@
 Description=Bind Mount For Cherries
 ConditionPathExists=/etc/.cherries-are-picked
 ConditionPathExists=/var/lib/cherries
+ConditionKernelCommandLine=!rd.live.image
 DefaultDependencies=no
 After=local-fs.target
 Before=multi-user.target

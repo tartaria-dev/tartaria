@@ -1,8 +1,9 @@
-enable flathub-user.service
 enable chezmoi-init.service
 enable chezmoi-update.timer
-enable wl-clip-persist.service
+enable flathub-user.service
 enable iio-niri.service
-enable udiskie.service
-enable subsystem-containerd.service
 enable noctalia-shell.service
+enable refresh-font-cache.service
+enable subsystem-containerd.service
+enable udiskie.service
+enable wl-clip-persist.service

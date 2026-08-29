@@ -2,6 +2,7 @@
 Description=Install System Flatpaks
 RequiresMountsFor=/var
 ConditionPathExists=/etc/.sysapps.list
+ConditionKernelCommandLine=!rd.live.image
 StartLimitIntervalSec=300
 StartLimitBurst=5
 
