@@ -2,6 +2,7 @@
 Description=Sync greetd configs
 Before=greetd.service
 RequiresMountsFor=/var
+ConditionKernelCommandLine=!rd.live.image
 
 [Service]
 Type=oneshot
