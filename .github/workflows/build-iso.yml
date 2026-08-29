@@ -30,6 +30,9 @@ jobs:
           # Lowercase the image uri
           echo "IMAGE_REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
 
+      - name: Remove unecessary software
+        uses: hastd/free-disk-space@v0.1.2
+
       - name: Build ISO
         uses: tartaria-dev/iso-builder@main
         with:
