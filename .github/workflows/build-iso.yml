@@ -23,7 +23,7 @@ jobs:
           - IMAGE_FLAVOR: cachy-berbere
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Prepare environment
         run: |
