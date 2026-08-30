@@ -113,7 +113,7 @@ jobs:
 
       - name: Build image
         id: build_image
-        uses: redhat-actions/buildah-build@v3.0.2
+        uses: redhat-actions/buildah-build@v3.1.0
         env:
           SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
