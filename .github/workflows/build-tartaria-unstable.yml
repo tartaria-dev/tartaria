@@ -49,7 +49,7 @@ jobs:
   build_push:
     name: Build Tartaria (unstable-${{ matrix.IMAGE_FLAVOR }})
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
@@ -130,27 +130,32 @@ jobs:
 
       - name: Build image
         id: build_image
-        uses: redhat-actions/buildah-build@v3.1.0
+        uses: Wandalen/wretry.action@v3
         env:
           SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
-          containerfiles: ${{ matrix.containerfile }}
-          extra-args: |
-            --skip-unused-stages=false
-            --secret id=secureboot_key,env=SECUREBOOT_KEY
-            --secret id=secureboot_cert,env=SECUREBOOT_CERT
-            --secret id=module_key,env=MODULE_KEY
-            --secret id=module_cert,env=MODULE_CERT
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          build-args: |
-            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
-            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
-          oci: true
+          action: redhat-actions/buildah-build@v3.1.0
+          attempt_limit: 2
+          attempt_delay: 5000
+          with: |
+            containerfiles: ${{ matrix.containerfile }}
+            extra-args: |
+              --skip-unused-stages=false
+              --secret id=secureboot_key,env=SECUREBOOT_KEY
+              --secret id=secureboot_cert,env=SECUREBOOT_CERT
+              --secret id=module_key,env=MODULE_KEY
+              --secret id=module_cert,env=MODULE_CERT
+            image: ${{ env.IMAGE_NAME }}
+            tags: ${{ steps.metadata.outputs.tags }}
+            labels: ${{ steps.metadata.outputs.labels }}
+            build-args: |
+              IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+              IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+            oci: true
+
 
       - name: Login to GHCR
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
