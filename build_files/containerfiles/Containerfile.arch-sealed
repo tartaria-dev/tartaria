@@ -70,6 +70,7 @@ RUN kver=$(ls /kernel) && \
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
+ARG CACHEBUST=1
 RUN --mount=from=final,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
     chunkah build --skip-special-files --max-layers 128 --output oci-archive:/run/src/out.ociarchive
