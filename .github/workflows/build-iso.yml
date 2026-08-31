@@ -20,7 +20,13 @@ jobs:
       matrix:
         include:
           - IMAGE_FLAVOR: arch-berbere
+          - IMAGE_FLAVOR: arch-amchoor
+          - IMAGE_FLAVOR: arch-mahleb
+          - IMAGE_FLAVOR: arch-saffron
           - IMAGE_FLAVOR: cachy-berbere
+          - IMAGE_FLAVOR: cachy-amchoor
+          - IMAGE_FLAVOR: cachy-mahleb
+          - IMAGE_FLAVOR: cachy-affron
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
