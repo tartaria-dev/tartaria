@@ -7,19 +7,26 @@ set -oue pipefail
 # clear term
 clear
 
+# define variants and their tags
+variant_names=("Arch-Bebere" "Arch-Amchoor" "Arch-Mahleb" "Arch-Saffron" "CachyOSv3-Bebere" "CachyOSv3-Amchoor" "CachyOSv3-Mahleb" "CachyOSv3-Saffron")
+variant_tags=("stable-arch-berbere" "stable-arch-amchoor" "stable-arch-mahleb" "stable-arch-saffron" "stable-cachy-berbere" "stable-cachy-amchoor" "stable-cachy-mahleb" "stable-cachy-saffron")
+
 # read user answer
 while true; do
     echo "[---] ISO Selection"
-    echo "[---] Select an ISO to download (enter the corresponding number)."
-    echo "[---] The base you choose here will serve as the base to install when starting the install process, regardless of what spice you select on the image selection page in the installer."
-    echo "[---] If you don't know the meaning of 'base' or 'spice' as used here, please go back to the Tartaria GitHub repo and read the 'Variants' section of the README."
-    echo -e "\n[-1-] Arch-based ISO"
-    echo -e "[-2-] CachyOSv3-based ISO\n"
+    echo "[---] Select a variant of Tartaria to download (enter the corresponding number)."
+    echo "[---] The variant you choose for the ISO will be the one installed."
+    echo "[---] If you do not know what variant to choose, reread the Variants section of the README in the Tartaria github repo."
+    echo
+    for i in "${!variant_names[@]}"; do
+        printf "[-%d-] %s\n" "$((i + 1))" "${variant_names[$i]}"
+    done
+    echo
     read -n 1 -p "[-?-] >> " answer
 
-    if [[ $answer != "1" && $answer != "2" ]]; then
+    if (( answer < 1 || answer > ${#variant_names[@]} )); then
         echo -e "\n[!!!] Invalid choice. Please try again."
-        sleep 2
+        sleep 1
         clear
     else
         break
@@ -35,19 +42,16 @@ podman pull ghcr.io/oras-project/oras:main
 clear
 
 # download iso
-if [[ "$answer" == "1" ]]; then
-    echo "[2/2] Downloading Arch-based ISO."
-    echo "[-i-] Please do not interrupt the download process. This may take a while."
-    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-arch-berbere
-    mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-stable-arch-berbere.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
-    rmdir "$HOME"/Downloads/tartaria-iso/iso
-elif [[ "$answer" == "2" ]]; then
-    echo "[2/2] Downloading CachyOSv3-based ISO."
-    echo "[-i-] Please do not interrupt the download process. This may take a while."
-    podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main pull ghcr.io/tartaria-dev/tartaria-iso:stable-cachy-berbere
-    mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-stable-cachy-berbere.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
-    rmdir "$HOME"/Downloads/tartaria-iso/iso
-fi
+idx=$((answer - 1))
+tag="${variant_tags[$idx]}"
+name="${variant_names[$idx]}"
+
+echo "[2/2] Downloading ${name} ISO."
+echo "[-i-] Please do not interrupt the download process. This may take a while."
+podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main \
+    pull "ghcr.io/tartaria-dev/tartaria-iso:${tag}"
+mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-${tag}.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
+rmdir "$HOME"/Downloads/tartaria-iso/iso
 
 # cleanup
 echo "[---] Cleaning up."
