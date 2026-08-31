@@ -98,8 +98,8 @@ jobs:
             echo "### Checksums"
             echo
             echo '```'
-            for flavor in arch arch-nvidia cachy cachy-nvidia; do
-              echo "$flavor: $(cat checksums/tartaria-stable-$flavor.iso.sha256)"
+            for flavor in arch-berbere arch-amchoor arch-mahleb arch-saffron cachy-berbere cachy-amchoor cachy-mahleb cachy-saffron; do
+              echo "$(cat checksums/tartaria-stable-$flavor.iso.sha256)"
             done
             echo '```'
           } > release-notes.md

@@ -61,3 +61,4 @@ clear
 # finalize
 echo "[-i-] Success!"
 echo "[-i-] Your downloaded ISO is located at '$HOME/Downloads/tartaria-iso/tartaria.iso'."
+echo "[-i-] SHA256 checksums of the ISO are available in the Tartaria repo under Releases."
