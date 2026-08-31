@@ -36,7 +36,7 @@ FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
 RUN --mount=from=final,src=/,target=/chunkah,ro \
     --mount=type=bind,target=/run/src,rw \
-    chunkah build --skip-special-files --max-layers 128 --output oci-archive:/run/src/out.ociarchive
+    while ! -f /run/src/out.ociarchive; do chunkah build --skip-special-files --max-layers 128 --output oci-archive:/run/src/out.ociarchive; done
 
 # finalize
 FROM oci-archive:out.ociarchive
