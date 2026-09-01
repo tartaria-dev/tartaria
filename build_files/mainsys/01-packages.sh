@@ -49,7 +49,6 @@ if ! runuser -u builder -- bash -c "xargs -a /build/conf/02-aur-pkgs yay -S --no
 fi
 
 # cleanup
-pacman -Rns --noconfirm base-devel
 rm -f /tmp/yay.log
 
 echo "::endgroup::"
