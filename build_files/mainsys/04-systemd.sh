@@ -16,6 +16,7 @@ systemctl enable \
     greetd.service \
     install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
+    libvirtd.service \
     mok-enroll.service \
     NetworkManager.service \
     pick-cherries.timer \
@@ -43,7 +44,6 @@ systemctl --global enable \
     chezmoi-update.timer \
     flathub-user.service \
     noctalia-shell.service \
-    opentabletdriver.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
     udiskie.service \

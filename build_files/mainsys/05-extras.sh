@@ -14,6 +14,9 @@ sed -i '/DisableSandboxNetwork/d' /etc/pacman.conf
 chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d
 
+# remove base-devel
+pacman -Rns --noconfirm base-devel
+
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
 

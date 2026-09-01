@@ -17,7 +17,7 @@ if ! mkosi build --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIAN
 fi
 
 # install extra pkgs
-if ! su - builder -c "xargs -a /mkosi/conf/01-aur-pkgs yay -S --noconfirm --needed --root=/mkosi/output/image/" >/tmp/yay.log 2>&1; then
+if ! runuser -u builder -- bash -c "xargs -a /mkosi/conf/01-aur-pkgs yay -S --noconfirm --needed --root=/mkosi/output/image/" >/tmp/yay.log 2>&1; then
     tail -n 200 /tmp/yay.log
     exit 1
 fi
