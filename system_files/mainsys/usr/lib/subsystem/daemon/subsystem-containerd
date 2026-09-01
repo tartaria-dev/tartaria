@@ -22,6 +22,19 @@ start-subsystem() {
     trap 'echo "[!!!] Something went wrong during startup, aborting." && return 1' ERR
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
+    # check if filesystemd is still starting; if so, wait
+    if [[ "$(systemctl --user is-failed subsystem-filesystemd)" == "activating" ]]; then
+        echo "[-i-] subsystem-filesystemd has not finished startup, waiting."
+
+        while [[ "$(systemctl --user is-failed subsystem-filesystemd)" == "activating" ]]; do
+            sleep 1
+        done
+        
+        if [[ "$(systemctl --user is-failed subsystem-filesystemd)" != "active" ]]; then
+            echo "[!!!] subsystem-filesystemd has failed to start."
+        fi
+    fi
+
     # logging
     echo "[---] Starting subsystem."
 

@@ -4,6 +4,21 @@
 # WAHHHHH
 set -eo pipefail
 
+# remove fedora remote if present
+if flatpak remote-list --system | awk '{print $1}' | grep -qx "fedora"; then
+    mapfile -t REFS < <(flatpak list --system --columns=application,origin \
+        | awk -v r="fedora" '$2 == r {print $1}')
+
+    if [ "${#REFS[@]}" -gt 0 ]; then
+        for ref in "${REFS[@]}"; do
+            echo "Uninstalling $ref..."
+            flatpak uninstall --system -y --force-remove "$ref"
+        done
+    fi
+
+    flatpak remote-delete --system --force "fedora"
+fi
+
 # create mount dir
 mkdir -p /tmp/sysapps
 
