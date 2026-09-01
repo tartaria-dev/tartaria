@@ -38,12 +38,12 @@ mkdir -p /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 
 # clone yay-bin and install it
-su - builder -c "git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin" >/dev/null
-su - builder -c "cd /home/builder/yay-bin && makepkg -si --noconfirm" >/dev/null
+runuser -u builder -- bash -c "git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin" >/dev/null
+runuser -u builder -- bash -c "cd /home/builder/yay-bin && makepkg -si --noconfirm" >/dev/null
 rm -rf /home/builder/yay-bin
 
 # install AUR packages
-if ! su - builder -c "xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/yay.log 2>&1; then
+if ! runuser -u builder -- bash -c "xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/yay.log 2>&1; then
     tail -n 200 /tmp/yay.log
     exit 1
 fi
