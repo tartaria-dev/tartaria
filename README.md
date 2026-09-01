@@ -24,7 +24,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 ## Variants
 
 > [!WARNING]
-> If you are a Tartaria user on an old variant such as `stable-arch`, please stay until Release v2.0.0 is published. v2.0.0 is in testing.
+> If you are a Tartaria user on an old variant such as `stable-arch`, please rebase to their newest equivalents except the ones marked as installable via ISO only.
 
 
 In total, there are sixteen variants of Tartaria.
@@ -56,6 +56,9 @@ tartaria:<base>-<flavor>-<spice>
 ## Installing
 
 ### ISO
+
+> [!WARNING]
+> ISOs are NOT working properly at the moment. Refrain from using this installation method.
 
 Since our ISOs are stored in GHCR, we use the tool [Oras](https://oras.land/) to upload/download them.
 
