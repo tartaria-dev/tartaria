@@ -102,7 +102,6 @@ udiskie
 udisks2
 
 # ========> containers & vms
-bridge-utils
 crun
 distrobox
 dnsmasq
