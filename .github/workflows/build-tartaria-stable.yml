@@ -131,6 +131,7 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
+            SYSTEMD_OFFLINE=1
             IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
             IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
             CACHEBUST=${{ github.run_id }}-${{ github.run_attempt }}

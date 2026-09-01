@@ -14,6 +14,7 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 COPY --from=ghcr.io/tartaria-dev/cherries:latest / /usr/share/tartaria/cherries/
 
 # import build args
+ARG SYSTEMD_OFFLINE
 ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
