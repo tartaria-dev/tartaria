@@ -44,7 +44,6 @@ systemctl --global enable \
     chezmoi-update.timer \
     flathub-user.service \
     noctalia-shell.service \
-    opentabletdriver.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
     udiskie.service \
