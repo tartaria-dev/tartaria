@@ -18,11 +18,7 @@ udev
 # ========> cli
 bash
 bash-completion
-binutils
 curl
-dotnet-runtime
-dotnet-sdk
-gcc
 git
 glibc-locales
 jq
@@ -105,19 +101,23 @@ smbclient
 udiskie
 udisks2
 
-# ========> containers
+# ========> containers & vms
+bridge-utils
 crun
 distrobox
-docker
-docker-buildx
-docker-compose
+dnsmasq
+edk2-ovmf
 flatpak
+iptables-nft
+libvirt
 podman
 podman-compose
+virt-manager
+virt-viewer
+qemu-desktop
 
 # ========> media
 ffmpeg
-ffmpegthumbs
 gst-libav
 gst-plugins-bad
 gst-plugins-base
@@ -184,4 +184,3 @@ hplip
 kitty
 nautilus
 partitionmanager
-sysprof
