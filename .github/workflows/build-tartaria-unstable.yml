@@ -83,6 +83,12 @@ jobs:
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
+      - name: Remove unecessary software
+        uses: hastd/free-disk-space@v0.1.2
+
       - name: Setup Go Engine
         uses: actions/setup-go@v5
         with:
@@ -90,6 +96,9 @@ jobs:
 
       - name: Install Buildah
         run: |
+          # allow unprivileged user namespaces
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
           # install build deps
           sudo apt-get update
           sudo apt-get install -y bats btrfs-progs libapparmor-dev libglib2.0-dev libgpgme11-dev libseccomp-dev libselinux1-dev runc skopeo libbtrfs-dev
@@ -100,12 +109,6 @@ jobs:
 
           # cleanup
           cd .. && rm -rf buildah
-
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-
-      - name: Remove unecessary software
-        uses: hastd/free-disk-space@v0.1.2
 
       - name: Get current date
         id: date
