@@ -128,7 +128,7 @@ jobs:
             --secret id=module_cert,env=MODULE_CERT
             --security-opt=label=disable
             --skip-unused-stages=false
-            --volume $(pwd):/run/src
+            --volume ${{ github.workspace }}:/run/src
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
