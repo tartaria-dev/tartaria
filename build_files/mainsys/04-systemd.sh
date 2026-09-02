@@ -16,7 +16,6 @@ systemctl enable \
     greetd.service \
     install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
-    libvirtd.service \
     mok-enroll.service \
     NetworkManager.service \
     pick-cherries.timer \
