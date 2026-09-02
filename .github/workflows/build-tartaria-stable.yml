@@ -58,6 +58,12 @@ jobs:
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
+          # Install latest buildah
+          sudo mkdir -p /etc/apt/keyrings
+          sudo add-apt-repository ppa:projectatomic/ppa -y
+          sudo apt-get update
+          sudo apt-get install -y buildah
+
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -120,7 +126,6 @@ jobs:
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
-          buildah-image: quay.io/buildah/upstream
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --secret id=secureboot_key,env=SECUREBOOT_KEY
