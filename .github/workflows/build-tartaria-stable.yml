@@ -58,6 +58,10 @@ jobs:
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
+          # set XDG_RUNTIME_DIR
+          echo "$XDG_RUNTIME_DIR"
+          echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
+
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -71,11 +75,8 @@ jobs:
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.2
-
-      - name: Setup Go Engine
-        uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          exclude: /opt/hostedtoolcache/go
 
       - name: Install Buildah
         run: |
