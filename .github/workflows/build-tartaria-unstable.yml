@@ -100,7 +100,6 @@ jobs:
 
           # cleanup
           cd .. && rm -rf buildah
-          sudo apt-get remove -y bats btrfs-progs libapparmor-dev libglib2.0-dev libgpgme11-dev libseccomp-dev libselinux1-dev runc skopeo libbtrfs-dev
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
