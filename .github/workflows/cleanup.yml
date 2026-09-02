@@ -17,7 +17,7 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          packages: tartaria
+          packages: tartaria, tartaria-iso
           older-than: 90 days
           delete-orphaned-images: true
           keep-n-tagged: 7

@@ -48,8 +48,8 @@ concurrency:
 jobs:
   build_push:
     name: Build Tartaria (unstable-${{ matrix.IMAGE_FLAVOR }})
-    runs-on: ubuntu-24.04
-    timeout-minutes: 240
+    runs-on: ubuntu-26.04
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -150,7 +150,6 @@ jobs:
           build-args: |
             IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
             IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
-            CACHEBUST=${{ github.run_id }}-${{ github.run_attempt }}
           oci: true
 
       - name: Login to GHCR
