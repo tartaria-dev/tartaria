@@ -120,7 +120,7 @@ jobs:
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
-          buildah-image: quay.io/buildah/stable:v1.45.0
+          buildah-image: quay.io/buildah/stable
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --secret id=secureboot_key,env=SECUREBOOT_KEY
