@@ -83,11 +83,24 @@ jobs:
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
-          # Install latest buildah
-          sudo mkdir -p /etc/apt/keyrings
-          sudo add-apt-repository ppa:projectatomic/ppa -y
+      - name: Setup Go Engine
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - name: Install Buildah
+        run: |
+          # install build deps
           sudo apt-get update
-          sudo apt-get install -y buildah
+          sudo apt-get install -y libgpgme-dev libassuan-dev libbtrfs-dev libdevmapper-dev pkg-config
+
+          # compile buildah
+          git clone --depth 1 --branch v1.45.0 https://github.com
+          cd buildah && make && sudo make install
+
+          # cleanup
+          cd .. && rm -rf buildah
+          sudo apt-get remove -y libgpgme-dev libassuan-dev libbtrfs-dev libdevmapper-dev pkg-config
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
