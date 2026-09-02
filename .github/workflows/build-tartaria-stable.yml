@@ -120,15 +120,14 @@ jobs:
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
+          buildah-image: quay.io/buildah/stable:v1.45.0
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --secret id=secureboot_key,env=SECUREBOOT_KEY
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
             --secret id=module_key,env=MODULE_KEY
             --secret id=module_cert,env=MODULE_CERT
-            --security-opt=label=disable
             --skip-unused-stages=false
-            --volume ${{ github.workspace }}:/run/src
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
