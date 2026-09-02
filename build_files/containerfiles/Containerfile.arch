@@ -28,7 +28,7 @@ RUN --mount=type=tmpfs,dst=/tmp \
     bash /build/06-finalize.sh
 
 # clean then lint image
-RUN rm -rf /tmp/* /tmp/.* /run/* && \
+RUN rm -rf /tmp/* /tmp/.* && find /run -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf {} + && \
     bootc container lint --fatal-warnings
 
 # rechunk image
