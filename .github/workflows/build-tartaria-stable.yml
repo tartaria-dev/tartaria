@@ -70,7 +70,7 @@ jobs:
           sudo apt-get install -y libgpgme-dev libassuan-dev libbtrfs-dev libdevmapper-dev pkg-config
 
           # compile buildah
-          git clone --depth 1 --branch v1.45.0 https://github.com
+          git clone --depth 1 --branch v1.45.0 https://github.com/podman-container-tools/buildah
           cd buildah && make && sudo make install
 
           # cleanup
