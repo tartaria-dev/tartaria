@@ -17,7 +17,7 @@ chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d
 
 # remove base-devel
-pacman -Rns --noconfirm base-devel
+pacman -Rns --noconfirm base-devel cmake extra-cmake-modules
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
@@ -53,6 +53,10 @@ ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.
 
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# hide some desktop entries
+sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{avahi-discover,bssh,bvnc,lstopo,org.ffado.FfadoMixer,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
+update-desktop-database
 
 # move /opt into /usr so it gets preserved
 rm -rf /usr/opt
