@@ -7,6 +7,9 @@ echo "::group::===========================> Prepare image build"
 source /build/conf/00-functions
 set -oux pipefail
 
+# create build log dir
+mkdir -p /tmp/build
+
 # move /var directories to /usr/lib/sysimage for bootc usroverlay compatibility
 grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | \
     xargs -n1 sh -c \

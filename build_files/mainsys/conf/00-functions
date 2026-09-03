@@ -10,6 +10,7 @@ retry() {
             return 1
         fi
         echo "Attempt ${attempt} failed, retrying." >&2
+        rm -rf /tmp/build/*.log
         sleep 2
         (( attempt++ ))
     done
