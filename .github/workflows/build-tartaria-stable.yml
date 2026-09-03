@@ -71,8 +71,11 @@ jobs:
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.2
+
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
         with:
-          swapoff: false
+          swap-size-gb: 10
 
       - name: Get current date
         id: date
