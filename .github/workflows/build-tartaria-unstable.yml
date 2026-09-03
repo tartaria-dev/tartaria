@@ -146,6 +146,7 @@ jobs:
             --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
             --skip-unused-stages=false
+            --jobs=1
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
