@@ -3,6 +3,8 @@
 
 echo "::group::===========================> Prepare image build"
 
+# setup
+source /build/conf/00-functions
 set -oux pipefail
 
 # move /var directories to /usr/lib/sysimage for bootc usroverlay compatibility
@@ -28,11 +30,11 @@ else
 fi
 
 # add heck's bootc repo
-pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
-pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
+retry pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
+retry pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
 echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
 
 # perform system update
-pacman -Syu --noconfirm --needed >/dev/null
+retry pacman -Syu --noconfirm --needed >/dev/null
 
 echo "::endgroup::"

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+retry() {
+    local attempt=1
+    local cmd=("$@")
+
+    until "${cmd[@]}"; do
+        if (( attempt >= 3 )); then
+            echo "Command failed after ${attempt} attempts." >&2
+            return 1
+        fi
+        echo "Attempt ${attempt} failed, retrying." >&2
+        sleep 2
+        (( attempt++ ))
+    done
+}

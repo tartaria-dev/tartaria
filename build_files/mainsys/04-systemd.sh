@@ -3,6 +3,8 @@
 
 echo "::group::===========================> Configure system"
 
+# setup
+source /build/conf/00-functions
 set -ouex pipefail
 
 # system

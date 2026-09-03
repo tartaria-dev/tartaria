@@ -3,6 +3,8 @@
 
 echo "::group::===========================> Install system packages"
 
+# setup
+source /build/conf/00-functions
 set -ouex pipefail
 
 ## Non-AUR packages
@@ -27,8 +29,8 @@ case "$IMAGE_FLAVOR" in
 esac
 
 # install non-AUR packages
-pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
-pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
+retry pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
+retry pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 ## AUR packages
 
@@ -38,13 +40,13 @@ mkdir -p /etc/sudoers.d
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 
 # clone yay-bin and install it
-runuser -u builder -- bash -c "git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin" >/dev/null
-runuser -u builder -- bash -c "cd /home/builder/yay-bin && makepkg -si --noconfirm" >/dev/null
+retry runuser -u builder -- bash -c "git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin" >/dev/null
+retry runuser -u builder -- bash -c "cd /home/builder/yay-bin && makepkg -si --noconfirm" >/dev/null
 rm -rf /home/builder/yay-bin
 
 # install AUR packages
-if ! runuser -u builder -- bash -c "xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/yay.log 2>&1; then
-    tail -n 200 /tmp/yay.log
+if ! retry runuser -u builder -- bash -c "rm -f /tmp/yay.log && xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/yay.log 2>&1; then
+    tail -n 500 /tmp/yay.log
     exit 1
 fi
 

@@ -3,6 +3,8 @@
 
 echo "::group::===========================> Sign NVIDIA modules"
 
+# setup
+source /build/conf/00-functions
 set -ouex pipefail
 
 # if image spice is not saffron, skip
@@ -28,7 +30,7 @@ case "$IMAGE_FLAVOR" in
 esac
 
 # install headers
-pacman -S --noconfirm --needed "$headers"
+retry pacman -S --noconfirm --needed "$headers"
 
 # sign nvidia kernel modules
 while IFS= read -r -d '' mod; do

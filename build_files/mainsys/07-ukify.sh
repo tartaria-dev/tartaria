@@ -3,6 +3,8 @@
 
 echo "::group::===========================> Build UKI"
 
+# setup
+source /build/conf/00-functions
 set -ouex pipefail
 
 # create necessary dirs
@@ -12,7 +14,7 @@ mkdir -p /out /var/tmp
 kver=$(ls /kernel)
 
 # install needed tools
-pacman -S --noconfirm --needed systemd-ukify sbsigntools
+retry pacman -S --noconfirm --needed systemd-ukify sbsigntools
 
 # create UKI
 bootc container ukify \

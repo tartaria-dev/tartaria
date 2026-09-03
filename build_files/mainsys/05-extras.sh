@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # extra important stuff
 
+# setup
+source /build/conf/00-functions
 set -ouex pipefail
 
 # preconfigure basic system settings
