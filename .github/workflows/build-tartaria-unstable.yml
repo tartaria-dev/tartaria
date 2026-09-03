@@ -88,11 +88,8 @@ jobs:
 
       - name: Remove unecessary software
         uses: hastd/free-disk-space@v0.1.2
-
-      - name: Set Swap Space
-        uses: pierotofy/set-swap-space@master
         with:
-          swap-size-gb: 10
+          swapoff: false
 
       - name: Get current date
         id: date
@@ -151,6 +148,7 @@ jobs:
             --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
             --skip-unused-stages=false
+            --jobs=1
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
