@@ -13,13 +13,13 @@ retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/hos
 chmod +x /mkosi/mkosi.extra/usr/libexec/host-spawn
 
 # build arch rootfs
-if ! retry mkosi build --force --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/tmp/mkosi.log 2>&1; then
+if ! retry sudo rm -f /tmp/mkosi.log && mkosi build --force --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/tmp/mkosi.log 2>&1; then
     tail -n 200 /tmp/mkosi.log
     exit 1
 fi
 
 # install extra pkgs
-if ! retry runuser -u builder -- bash -c "xargs -a /mkosi/conf/01-aur-pkgs yay -S --noconfirm --needed --root=/mkosi/output/image/" >/tmp/yay.log 2>&1; then
+if ! retry runuser -u builder -- bash -c "sudo rm -f /tmp/yay.log && xargs -a /mkosi/conf/01-aur-pkgs yay -S --noconfirm --needed --root=/mkosi/output/image/" >/tmp/yay.log 2>&1; then
     tail -n 200 /tmp/yay.log
     exit 1
 fi
