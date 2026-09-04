@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-26.04
     permissions:
       packages: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -44,13 +45,7 @@ jobs:
         with:
           container-image: 'ghcr.io/tartaria-dev/tartaria:stable-${{ matrix.IMAGE_FLAVOR }}'
           iso-path: './iso'
-          iso-name: 'tartaria-stable-${{ matrix.IMAGE_FLAVOR }}'
-
-      - name: Compute checksum
-        run: |
-          cd ./iso
-          sha256sum "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso" \
-            | tee "tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256"
+          iso-name: 'tartaria-${{ matrix.IMAGE_FLAVOR }}'
 
       - name: Install Oras
         uses: oras-project/setup-oras@v2
@@ -60,59 +55,14 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          oras push "${IMAGE_REGISTRY}/tartaria-iso:stable-${{ matrix.IMAGE_FLAVOR }}" \
+          oras push "${IMAGE_REGISTRY}/tartaria-iso:${{ matrix.IMAGE_FLAVOR }}" \
             --artifact-type application/vnd.tartaria.iso.v1 \
-            "./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso:application/octet-stream"
+            "./iso/tartaria-${{ matrix.IMAGE_FLAVOR }}.iso:application/octet-stream"
 
-      - name: Upload checksums
-        uses: actions/upload-artifact@v7
-        with:
-          name: tartaria-iso-checksum-${{ matrix.IMAGE_FLAVOR }}
-          path: ./iso/tartaria-stable-${{ matrix.IMAGE_FLAVOR }}.iso.sha256
-          if-no-files-found: error
-          retention-days: 3
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
 
-  release:
-    name: Publish ISO checksum release
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Download checksums
-        uses: actions/download-artifact@v8
-        with:
-          path: checksums
-          pattern: tartaria-iso-checksum-*
-          merge-multiple: true
-
-      - name: Prepare environment
+      - name: Sign ISO
         run: |
-          echo "IMAGE_REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
-          echo "date=$(date -u +%Y-%m-%d)" >> "${GITHUB_OUTPUT}"
-        id: env
-
-      - name: Prepare release notes
-        run: |
-          {
-            echo "### Checksums"
-            echo
-            echo '```'
-            for flavor in arch-berbere arch-amchoor arch-mahleb arch-saffron cachy-berbere cachy-amchoor cachy-mahleb cachy-saffron; do
-              echo "$(cat checksums/tartaria-stable-$flavor.iso.sha256)"
-            done
-            echo '```'
-          } > release-notes.md
-
-      - name: Delete previous release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release delete iso-stable --yes --cleanup-tag || true
-
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: iso-stable
-          name: "Tartaria Stable ISO checksums (${{ steps.env.outputs.date }})"
-          make_latest: true
-          body_path: release-notes.md
+          cosign sign --yes \
+            "${IMAGE_REGISTRY}/tartaria-iso:${{ matrix.IMAGE_FLAVOR }}"
