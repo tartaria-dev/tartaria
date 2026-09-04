@@ -40,8 +40,7 @@ RUN mkdir -p /kernel && \
 
 # build signed, sealed UKI
 FROM base AS sealed
-RUN --mount=type=bind,src=var-tmp,dst=/var/tmp,rw \
-    --mount=type=bind,src=build_files/mainsys,dst=/build \
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=bind,from=split,target=/target \
     --mount=type=bind,from=split,source=/kernel,target=/kernel \
     --mount=type=secret,id=secureboot_key,required=true \
