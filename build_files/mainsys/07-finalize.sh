@@ -22,7 +22,6 @@ fi
 # remove target directories
 rm -rf /{boot,home,root,srv,mnt,var,usr/local}
 rm -rf /usr/lib/sysimage/{log,cache/pacman/pkg}
-rm -rf /{build,packages}
 
 # (re)create essential system directories
 mkdir -p /sysroot /boot /usr/lib/ostree /var

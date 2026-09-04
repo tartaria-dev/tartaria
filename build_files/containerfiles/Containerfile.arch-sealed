@@ -1,10 +1,6 @@
 # base image
 FROM archlinux:latest AS base
 
-# copy over build files
-COPY build_files/mainsys /build/
-COPY build_files/subsys /mkosi/
-
 # copy over system files
 COPY system_files/mainsys /
 COPY system_files/subsys /mkosi/mkosi.extra/
@@ -18,48 +14,45 @@ ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 # run main build scripts
-RUN --mount=type=tmpfs,dst=/tmp \
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+    --mount=type=bind,src=build_files/subsys,dst=/mkosi \
+    --mount=type=bind,src=system_files/subsys,dst=/mkosi/mkosi.extra \
+    --mount=type=secret,id=module_key,required=true \
+    --mount=type=secret,id=module_cert,required=true \
+    --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
     bash /build/02-sysapps.sh && \
     bash /build/03-subsystem.sh && \
     bash /build/04-systemd.sh && \
     bash /build/05-extras.sh && \
-    bash /build/06-finalize.sh
+    bash /build/06-modsign.sh && \
+    bash /build/07-finalize.sh
 
 # clean then lint image
 RUN rm -rf /tmp/* /tmp/.* /run/* && \
     bootc container lint --fatal-warnings
 
-# sign NVIDIA modules (saffron only)
-FROM base AS signed-modules
-ARG IMAGE_FLAVOR
-RUN --mount=type=bind,src=var-tmp,dst=/var/tmp,rw \
-    --mount=type=bind,src=build_files/mainsys,dst=/build \
-    --mount=type=secret,id=module_key,required=true \
-    --mount=type=secret,id=module_cert,required=true \
-    bash /build/08-modsign.sh
-
 # split the kernel/initramfs from the signed rootfs
-FROM signed-modules AS split
+FROM base AS split
 RUN mkdir -p /kernel && \
     bootc container split-kernel-and-rootfs --rootfs / --output /kernel
 
 # build signed, sealed UKI
-FROM base AS sealed-uki
+FROM base AS sealed
 RUN --mount=type=bind,src=var-tmp,dst=/var/tmp,rw \
     --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=bind,from=split,target=/target \
     --mount=type=bind,from=split,source=/kernel,target=/kernel \
     --mount=type=secret,id=secureboot_key,required=true \
     --mount=type=secret,id=secureboot_cert,required=true \
-    bash /build/07-ukify.sh
+    bash /build/08-ukify.sh
 
 # add UKI + shim chain to base
 FROM split AS final
-COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
-COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
-COPY --from=sealed-uki /out/secureboot.der /usr/share/tartaria/certs/secureboot.der
+COPY --from=sealed /out/*.efi /boot/EFI/Linux/
+COPY --from=sealed /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
+COPY --from=sealed /out/secureboot.der /usr/share/tartaria/certs/secureboot.der
 COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
 COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi
 

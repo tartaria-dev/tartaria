@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # setup UKI stuffs
 
-echo "::group::===========================> Build UKI"
+echo "::group::===========================> Create Signed UKI"
 
 # setup
 source /build/conf/00-functions
 set -ouex pipefail
 
 # create necessary dirs
-mkdir -p /out
+mkdir -p /out /var/tmp
 
 # set vars
 kver=$(ls /kernel)
@@ -35,5 +35,8 @@ sbsign \
 
 # export DER copy
 openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /out/secureboot.der
+
+# cleanup
+rm -rf /var/tmp
 
 echo "::endgroup::"
