@@ -50,7 +50,7 @@ name="${variant_names[$idx]}"
 echo "[2/2] Downloading ${name} ISO."
 echo "[-i-] Please do not interrupt the download process. This may take a while."
 podman run -it --rm ghcr.io/sigstore/cosign/cosign:v2.4.1 verify \
-  "ghcr.io/tartaria-dev/tartaria-iso:stable-arch-berbere" \
+  "ghcr.io/tartaria-dev/tartaria-iso:${tag}" \
   --certificate-identity="https://github.com/tartaria-dev/tartaria/.github/workflows/build-iso.yml@refs/heads/main" \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" || echo "[!!!] ISO did not pass verification. Report this issue immediately." && exit 1
 podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main \
