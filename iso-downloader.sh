@@ -9,7 +9,7 @@ clear
 
 # define variants and their tags
 variant_names=("Arch-Bebere" "Arch-Amchoor" "Arch-Mahleb" "Arch-Saffron" "CachyOSv3-Bebere" "CachyOSv3-Amchoor" "CachyOSv3-Mahleb" "CachyOSv3-Saffron")
-variant_tags=("stable-arch-berbere" "stable-arch-amchoor" "stable-arch-mahleb" "stable-arch-saffron" "stable-cachy-berbere" "stable-cachy-amchoor" "stable-cachy-mahleb" "stable-cachy-saffron")
+variant_tags=("arch-berbere" "arch-amchoor" "arch-mahleb" "arch-saffron" "cachy-berbere" "cachy-amchoor" "cachy-mahleb" "cachy-saffron")
 
 # read user answer
 while true; do
@@ -34,11 +34,12 @@ while true; do
 done
 clear
 
-# prepare download and pull oras container
+# prepare download dir & pull images
 echo "[1/2] Preparing."
 rm -rf "$HOME"/Downloads/tartaria-iso
 mkdir -p "$HOME"/Downloads/tartaria-iso
-podman pull ghcr.io/oras-project/oras:main
+podman pull ghcr.io/sigstore/cosign/cosign:v3.1.3
+podman pull ghcr.io/oras-project/oras:v1.3.4
 clear
 
 # download iso
@@ -48,17 +49,21 @@ name="${variant_names[$idx]}"
 
 echo "[2/2] Downloading ${name} ISO."
 echo "[-i-] Please do not interrupt the download process. This may take a while."
+podman run -it --rm ghcr.io/sigstore/cosign/cosign:v2.4.1 verify \
+  "ghcr.io/tartaria-dev/tartaria-iso:stable-arch-berbere" \
+  --certificate-identity="https://github.com/tartaria-dev/tartaria/.github/workflows/build-iso.yml@refs/heads/main" \
+  --certificate-oidc-issuer="https://token.actions.githubusercontent.com" || echo "[!!!] ISO did not pass verification. Report this issue immediately." && exit 1
 podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:main \
-    pull "ghcr.io/tartaria-dev/tartaria-iso:${tag}"
+    pull "ghcr.io/tartaria-dev/tartaria-iso:${tag}" || echo "[!!!] ISO failed to download. Check your connection and re-run this script."
 mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-${tag}.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
 rmdir "$HOME"/Downloads/tartaria-iso/iso
 
 # cleanup
 echo "[---] Cleaning up."
-podman rmi ghcr.io/oras-project/oras:main
+podman rmi ghcr.io/sigstore/cosign/cosign:v3.1.3
+podman rmi ghcr.io/oras-project/oras:v1.3.4
 clear
 
 # finalize
 echo "[-i-] Success!"
 echo "[-i-] Your downloaded ISO is located at '$HOME/Downloads/tartaria-iso/tartaria.iso'."
-echo "[-i-] SHA256 checksums of the ISO are available in the Tartaria repo under Releases."
