@@ -113,11 +113,6 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Prepare image build
-        run: |
-          # Create makeshift var-tmp for some build steps
-          mkdir -p var-tmp
-
       - name: Build image
         id: build_image
         uses: redhat-actions/buildah-build@v3.1.0

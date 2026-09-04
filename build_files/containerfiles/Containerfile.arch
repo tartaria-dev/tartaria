@@ -1,10 +1,6 @@
 # base image
 FROM archlinux:latest AS final
 
-# copy over build files
-COPY build_files/mainsys /build/
-COPY build_files/subsys /mkosi/
-
 # copy over system files
 COPY system_files/mainsys /
 COPY system_files/subsys /mkosi/mkosi.extra/
@@ -18,14 +14,17 @@ ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 # run main build scripts
-RUN --mount=type=tmpfs,dst=/tmp \
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+    --mount=type=bind,src=build_files/subsys,dst=/mkosi \
+    --mount=type=bind,src=system_files/subsys,dst=/mkosi/mkosi.extra \
+    --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \
     bash /build/02-sysapps.sh && \
     bash /build/03-subsystem.sh && \
     bash /build/04-systemd.sh && \
     bash /build/05-extras.sh && \
-    bash /build/06-finalize.sh
+    bash /build/07-finalize.sh
 
 # clean then lint image
 RUN rm -rf /tmp/* /tmp/.* /run/* && \
