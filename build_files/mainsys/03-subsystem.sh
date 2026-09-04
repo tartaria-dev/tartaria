@@ -10,11 +10,6 @@ set -ouex pipefail
 # create output dir
 mkdir -p /output
 
-# fetch host-spawn binary
-mkdir -p /mkosi/mkosi.extra/usr/libexec
-retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O /mkosi/mkosi.extra/usr/libexec/host-spawn
-chmod +x /mkosi/mkosi.extra/usr/libexec/host-spawn
-
 # build arch rootfs
 if ! retry mkosi build --force --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/tmp/mkosi.log 2>&1; then
     cat /tmp/build/mkosi.log
@@ -26,6 +21,11 @@ if ! retry runuser -u builder -- bash -c "xargs -a /mkosi/conf/01-aur-pkgs yay -
     cat /tmp/build/yay.log
     exit 1
 fi
+
+# install host-spawn
+mkdir -p /output/image/usr/libexec
+retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O /output/image/usr/libexec/host-spawn
+chmod +x /output/image/usr/libexec/host-spawn
 
 # compress rootfs
 mkdir -p /usr/lib/subsystem/rootfs
