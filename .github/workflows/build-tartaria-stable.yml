@@ -157,8 +157,8 @@ jobs:
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
           action: redhat-actions/push-to-registry@v3.0.0
-          attempt_limit: 5
-          attempt_delay: 15000
+          attempt_limit: 3
+          attempt_delay: 2000
           with: |
             registry: ${{ env.IMAGE_REGISTRY }}
             image: ${{ env.IMAGE_NAME }}
