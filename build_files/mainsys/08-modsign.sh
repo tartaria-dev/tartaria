@@ -13,9 +13,6 @@ if [[ "$IMAGE_FLAVOR" != *saffron ]]; then
     exit 0
 fi
 
-# create /var/tmp for now
-mkdir -p /var/tmp
-
 # set kernel version
 KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "\.img$" | tail -n 1)")"
 

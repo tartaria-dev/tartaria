@@ -8,7 +8,7 @@ source /build/conf/00-functions
 set -ouex pipefail
 
 # create necessary dirs
-mkdir -p /out /var/tmp
+mkdir -p /out
 
 # set vars
 kver=$(ls /kernel)
