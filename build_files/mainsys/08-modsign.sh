@@ -55,7 +55,4 @@ DRACUT_NO_XATTR=1 dracut --force --no-hostonly --reproducible --zstd --verbose -
 mkdir -p /usr/share/tartaria/certs
 openssl x509 -in /run/secrets/module_cert -outform DER -out /usr/share/tartaria/certs/modules.der
 
-# cleanup
-rm -rf /var/tmp
-
 echo "::endgroup::"

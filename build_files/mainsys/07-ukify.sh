@@ -36,7 +36,4 @@ sbsign \
 # export DER copy
 openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /out/secureboot.der
 
-# cleanup
-rm -rf /var/tmp
-
 echo "::endgroup::"
