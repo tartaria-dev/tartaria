@@ -48,7 +48,7 @@ done < <(find "/usr/lib/modules/${KERNEL_VERSION}" -name 'nvidia*.ko*' -print0)
 # remove headers
 pacman -Rns --noconfirm "$headers"
 
-# export DER copy into the rootfs so it is inherited by split -> final
+# export module cert
 mkdir -p /usr/share/tartaria/certs
 openssl x509 -in /run/secrets/module_cert -outform DER -out /usr/share/tartaria/certs/modules.der
 
