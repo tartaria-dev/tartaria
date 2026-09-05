@@ -11,9 +11,9 @@ set -ouex pipefail
 mkdir -p /usr/lib/subsystem/segments
 
 # compress /etc
-retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L etc /usr/lib/subsystem/segments/etc.dsk /etc >/dev/null
+retry mkfs.erofs -zzstd,15 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L etc /usr/lib/subsystem/segments/etc.dsk /etc >/dev/null
 
 # compress /var
-retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /var >/dev/null
+retry mkfs.erofs -zzstd,15 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /var >/dev/null
 
 echo "::endgroup::"
