@@ -31,6 +31,12 @@ alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 if status is-interactive
     atuin init fish | source
 
+    if not test -f ~/.config/subsystem/prompt-setup-done
+        tide configure --auto --style=Classic --prompt_colors='16 colors' --show_time='No' --prompt_connection=Disconnected --prompt_spacing=Compact --icons='Few icons' --transient=Yes --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='One line' --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light
+        mkdir -p ~/.config/subsystem
+        touch ~/.config/subsystem/prompt-setup-done
+    end
+
     if not test -f ~/.config/subsystem/suppress-notice
         echo "Hello there!"
         echo
