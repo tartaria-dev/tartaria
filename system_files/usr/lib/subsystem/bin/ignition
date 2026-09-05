@@ -1,0 +1,74 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# do our checks
+if [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
+    exit 77
+elif [[ ! -f /run/.containerenv ]]; then
+	echo "[!!!] Running outside of a subsystem."
+	exit 64
+fi
+
+# logging
+echo "[---] Starting up."
+
+# set up sudo for the user
+echo "[1/5] Configuring sudo."
+if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
+    mkdir -p /etc/sudoers.d
+	echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
+fi
+
+# add shell settings
+echo "[2/5] Configuring shell."
+mkdir -p /etc/fish/conf.d
+cat <<EOF >> /etc/fish/conf.d/startup.fish
+alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
+alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
+alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
+
+if status is-interactive
+    atuin init fish | source
+
+    if not test -f ~/.config/subsystem/suppress-notice
+        echo "Hello there!"
+        echo
+        echo "Your shell is currently running inside a container (mostly) based off of the host."
+        echo "This subsystem is seperate from the host, meaning changes besides those to your homedir"
+        echo "do not affect the host, with said changes being discarded on system reboot/shutdown."
+        echo
+        echo "This also means commands may have undefined or unexpected behavior."
+        echo "To see how to run commands on the host, or link/unlink commands"
+        echo "from the host into this container, run 'synergy --help'."
+        echo
+        echo "Some commands are also linked into this container by default:"
+        echo "distrobox podman flatpak niri noctalia systemctl journalctl"
+        echo
+        echo "To suppress this lovely notice, execute:"
+        echo "touch ~/.config/subsystem/suppress-notice"
+        echo
+    end
+end
+EOF
+
+# link default commands
+echo "[3/5] Linking default commands."
+for cmd in distrobox podman flatpak niri noctalia systemctl journalctl; do ln -sT /usr/libexec/host-spawn /usr/local/bin/"$cmd"; done
+
+# source user configs
+echo "[4/5] Sourcing user configurations."
+if [[ -d /home/"$SUBSYSTEM_USER"/.config/ignition.d/ ]]; then
+	for script in /home/"$SUBSYSTEM_USER"/.config/ignition.d/*.sh; do
+		echo "[i] Sourcing script $script."
+		. "$script" || true
+	done
+fi
+
+# attempt to configure fastest arch repos
+echo "[5/5] Configuring repositories."
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+
+# keep subsystem alive
+echo "[---] Startup done."
+sleep infinity

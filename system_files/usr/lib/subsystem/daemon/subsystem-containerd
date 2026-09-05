@@ -108,18 +108,20 @@ podman-cmd() {
         -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
         -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
         -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
-        --rootfs /var/lib/subsystem/"$HASH"/rootfs \
+        --rootfs /var/lib/subsystem/rootfs-rw/"$HASH"/rootfs \
         /usr/libexec/ignition
 }
 
 ## main logic
 systemd-notify --status "Starting..."
+echo "[-+-] Starting up."
 start-subsystem
 
 systemd-notify --ready --status "Subsystem is running."
 monitor
 
 systemd-notify --status "Stopping..."
+echo "[-+-] Shutting down."
 stop-subsystem
 
 systemd-notify --status "Stopped."

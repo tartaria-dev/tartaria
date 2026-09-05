@@ -22,7 +22,7 @@ readonly SUBSYS_ID
 ## utilities
 shell() {
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
-        if podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/zsh; then
+        if podman exec -u "$(id -u)" -it "subsystem-$SUBSYS_ID" /bin/fish; then
             exit 0
         else
             TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))

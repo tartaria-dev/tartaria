@@ -1,0 +1,175 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+## set pipefail, errtrace
+set -o pipefail -o errtrace
+
+## do our checks
+if [[ "$EUID" != "0" ]]; then
+    echo "[!!!] Please run this as an administrator."
+    exit 77
+fi
+
+## set arrays
+declare -a operational_users
+
+## set vars
+RWLIBDIR=/var/lib/subsystem
+ROLIBDIR=/usr/lib/subsystem
+
+## utilities
+is_mounted() {
+    local u
+    for u in "${operational_users[@]}"; do
+        [[ $u == "$1" ]] && return 0
+    done
+    return 1
+}
+
+drop_user() {
+    local i
+    for i in "${!operational_users[@]}"; do
+        [[ ${operational_users[i]} == "$1" ]] && unset 'operational_users[i]'
+    done
+}
+
+userfs() {
+    local DIR HASH SUID_START SUID_RANGE SGID_START SGID_RANGE
+
+    while read -r TARGETUSR; do
+        case "$1" in
+            mount)
+                if is_mounted "$TARGETUSR"; then
+                    echo "[-!-] Already mounted user subsystem rootfs for user $TARGETUSR."
+                    continue
+                fi
+                echo "[---] Mounting user subsystem rootfs for user $TARGETUSR."
+                operational_users+=("$TARGETUSR")
+
+                read -r SUID_START SUID_RANGE <<< "$(awk -F: -v u="$TARGETUSR" '$1==u {print $2,$3}' /etc/subuid)"
+                read -r SGID_START SGID_RANGE <<< "$(awk -F: -v u="$TARGETUSR" '$1==u {print $2,$3}' /etc/subgid)"
+                if [[ -z $SUID_START || -z $SGID_START || -z $SUID_RANGE || -z $SGID_RANGE ]]; then
+                    echo "[!!!] User $TARGETUSR has improperly configured sub{uid,gid}s, skipping."
+                    drop_user "$TARGETUSR"
+                    continue
+                fi
+
+                HASH=$(printf '%s%s' "$(</etc/machine-id)" "$TARGETUSR" | sha256sum | awk '{print $1}')
+                DIR=$RWLIBDIR/rootfs-rw/$HASH
+
+                trap 'echo "[!!!] Failed to mount user subsystem rootfs for $TARGETUSR, aborting." && return 1' ERR
+                trap 'echo "[!!!] Received SIGTERM, stopping." && return 0' SIGTERM
+
+                echo "[1/3] Creating user subsystem rootfs."
+                mkdir -p "$DIR"/{rootfs,idmapped,data,.work}
+                chown -R "$TARGETUSR":"$TARGETUSR" "$DIR"/
+
+                echo "[2/3] Idmapping base subsystem rootfs."
+                mount --beneath --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro,bind "$RWLIBDIR"/rootfs-ro "$DIR"/idmapped
+
+                echo "[3/3] Mounting user subsystem rootfs overlay."
+                mount -t overlay overlay -o index=off,lowerdir="$DIR"/idmapped,upperdir="$DIR"/data,workdir="$DIR"/.work "$DIR"/rootfs
+
+                trap - ERR SIGTERM
+                ;;
+
+            umount)
+                if ! is_mounted "$TARGETUSR"; then
+                    echo "[-!-] Already unmounted user subsystem rootfs for user $TARGETUSR."
+                    continue
+                fi
+                echo "[---] Unmounting user subsystem rootfs for user $TARGETUSR."
+                drop_user "$TARGETUSR"
+
+                HASH=$(printf '%s%s' "$(</etc/machine-id)" "$TARGETUSR" | sha256sum | awk '{print $1}')
+                DIR=$RWLIBDIR/rootfs-rw/$HASH
+
+                trap 'echo "[!!!] Failed to unmount user subsystem rootfs for $TARGETUSR, aborting." && return 1' ERR
+
+                echo "[1/3] Unmounting user subsystem rootfs overlay."
+                umount -q "$DIR"/rootfs
+
+                echo "[2/3] Unmounting idmapped base subsystem rootfs."
+                umount -q "$DIR"/idmapped
+
+                echo "[3/3] Cleaning user subsystem rootfs."
+                rm -rf "${DIR:?}"/*
+                touch "$DIR"/user-inactive
+
+                trap - ERR
+                ;;
+        esac
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
+}
+
+basefs() {
+    if [[ "$1" == "mount" ]]; then
+        echo "[---] Mounting base subsystem rootfs."
+    
+        echo "[1/3] Creating base subssytem rootfs."
+        rm -rf "$RWLIBDIR"/rootfs-ro/*
+        mkdir -p "$RWLIBDIR"/rootfs-ro/{home,root,bin,sbin,lib,lib64,etc,var,opt,tmp,run,srv,sys,dev,proc}
+    
+        echo "[2/3] Mounting nested filesystems."
+        for dir in etc var; do mount -o ro,acl,loop,user_xattr -t erofs "$ROLIBDIR"/segments/"$dir".dsk "$RWLIBDIR"/rootfs-ro/"$dir"; done
+        for dir in srv opt; do mount --bind -o ro /var/"$dir" "$RWLIBDIR"/rootfs-ro/"$dir"; done
+        for type in "$RWLIBDIR"/rootfs-ro/lib{,64}; do mount --bind -o ro /usr/lib "$type"; done
+        for type in "$RWLIBDIR"/rootfs-ro/{,s}bin; do mount --bind -o ro /usr/bin "$type"; done
+    
+        echo "[3/3] Locking base subsystem rootfs."
+        mount --bind -o ro "$RWLIBDIR"/rootfs-ro "$RWLIBDIR"/rootfs-ro
+    elif [[ "$1" == "umount" ]]; then
+        echo "[---] Unmounting base subsystem rootfs."
+    
+        echo "[1/3] Unlocking base subsystem rootfs."
+        umount -q "$RWLIBDIR"/rootfs-ro
+    
+        echo "[2/3] Unmounting nested filesystems."
+        for dir in bin sbin lib lib64 etc var opt srv; do umount -q "$RWLIBDIR"/rootfs-ro/"$dir"; done
+    
+        echo "[3/3] Cleaning base subsystem rootfs."
+        rm -rf "$RWLIBDIR"/rootfs-ro/*
+        touch "$RWLIBDIR"/rootfs-ro/system-inactive
+    fi
+}
+
+monitor() {
+    trap 'kill "$NOTIFY_PID" 2>/dev/null; break' SIGTERM
+
+    echo "[---] Monitoring for new users."
+
+    while true; do
+        inotifywait -e close_write /etc/passwd &
+        local NOTIFY_PID=$!
+
+        if ! wait $NOTIFY_PID 2>/dev/null; then
+            break
+        fi
+
+        while read -r user; do
+            if ! is_mounted "$user"; then
+                echo "[-i-] New user(s) added, refreshing mounts."
+                userfs mount
+                break
+            fi
+        done < <(grep -vE "root|nobody|[^0-9][0-9]{1,3}[^0-9]|^[0-9]{1,3}$|^[0-9]{1,3}[^0-9]|[^0-9][0-9]{1,3}$" /etc/passwd | awk -F: '{print $1}')
+    done
+
+    trap - SIGTERM
+}
+
+## main logic
+systemd-notify --status "Starting..."
+echo "[-+-] Starting up."
+basefs mount
+userfs mount
+
+systemd-notify --ready --status "Filesystems are mounted."
+monitor
+
+systemd-notify --status "Stopping..."
+echo "[-+-] Shutting down."
+userfs umount
+basefs umount
+
+systemd-notify --status "Stopped."

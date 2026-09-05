@@ -16,9 +16,11 @@ skopeo
 udev
 
 # ========> cli
+atuin
 bash
 bash-completion
 curl
+fish
 git
 glibc-locales
 jq
@@ -33,6 +35,7 @@ rsync
 tar
 unzip
 vim
+nvim
 wget
 
 # ========> filesystems
@@ -43,7 +46,6 @@ erofs-utils
 exfatprogs
 f2fs-tools
 jfsutils
-mkosi
 mtools
 nilfs-utils
 ntfs-3g
