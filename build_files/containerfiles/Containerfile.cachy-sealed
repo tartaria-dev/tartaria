@@ -17,6 +17,7 @@ ARG IMAGE_VARIANT
 RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
     --mount=type=bind,src=build_files/subsys,dst=/mkosi \
     --mount=type=bind,src=system_files/subsys,dst=/mkosi/mkosi.extra \
+    --mount=type=secret,id=secureboot_cert,required=true \
     --mount=type=secret,id=module_key,required=true \
     --mount=type=secret,id=module_cert,required=true \
     --mount=type=tmpfs,dst=/tmp \
@@ -34,28 +35,12 @@ RUN rm -rf /tmp/* /tmp/.* /run/* && \
     bootc container lint --fatal-warnings
 
 # split the kernel/initramfs from the signed rootfs
-FROM base AS split
+FROM base AS split-kernel
 RUN mkdir -p /kernel && \
     bootc container split-kernel-and-rootfs --rootfs / --output /kernel
 
-# build signed, sealed UKI
-FROM base AS sealed
-RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
-    --mount=type=bind,from=split,target=/target \
-    --mount=type=bind,from=split,source=/kernel,target=/kernel \
-    --mount=type=secret,id=secureboot_key,required=true \
-    --mount=type=secret,id=secureboot_cert,required=true \
-    bash /build/08-ukify.sh
-
-# add UKI + shim chain to base
-FROM split AS final
-COPY --from=sealed /out/*.efi /boot/EFI/Linux/
-COPY --from=sealed /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
-COPY --from=sealed /out/secureboot.der /usr/share/tartaria/certs/secureboot.der
-COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
-COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi
-
-# move artifacts out of /kernel
+# copy kernel to /usr/share/split-kernel, required for ISO builds
+FROM split-kernel AS rechunk-base
 RUN kver=$(ls /kernel) && \
     mkdir -p "/usr/share/split-kernel/$kver/" && \
     cp "/kernel/$kver/vmlinuz" "/usr/share/split-kernel/$kver/" && \
@@ -64,8 +49,24 @@ RUN kver=$(ls /kernel) && \
 # rechunk image
 FROM quay.io/coreos/chunkah AS chunkah
 ARG CHUNKAH_CONFIG_STR
-RUN --mount=from=final,src=/,target=/chunkah,ro \
-    chunkah build --skip-special-files --max-layers 128 --output oci:/src/out
+RUN --mount=from=rechunk-base,src=/,target=/chunkah,ro \
+    chunkah build --skip-special-files --max-layers 128 --prune /ostree --prune /sysroot/ostree --output oci:/src/out
 
-# finalize
-FROM oci:out
+# use rechunked output as new base
+FROM oci:out AS base-chunked
+
+# build signed, sealed UKI
+FROM base AS sealed-uki
+RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
+    --mount=type=bind,from=base-chunked,target=/target \
+    --mount=type=bind,from=split-kernel,source=/kernel,target=/kernel \
+    --mount=type=secret,id=secureboot_key,required=true \
+    --mount=type=secret,id=secureboot_cert,required=true \
+    bash /build/08-ukify.sh
+
+# add UKI + shim chain to base
+FROM base-chunked AS final
+COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
+COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
+COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
+COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi

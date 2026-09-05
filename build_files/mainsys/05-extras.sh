@@ -68,4 +68,10 @@ if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *amchoor ]]; then
     echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf
 fi
 
+# export secureboot cert for saffron/mahleb
+if [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *mahleb ]]; then
+    mkdir -p /usr/share/tartaria/certs
+    openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /usr/share/tartaria/certs/secureboot.der
+fi
+
 echo "::endgroup::"
