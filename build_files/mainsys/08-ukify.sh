@@ -33,9 +33,6 @@ sbsign \
     --output /out/grubx64.efi \
     /target/usr/lib/systemd/boot/efi/systemd-bootx64.efi
 
-# export DER copy
-openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /out/secureboot.der
-
 # cleanup
 rm -rf /var/tmp
 
