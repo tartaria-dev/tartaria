@@ -35,7 +35,7 @@ if status is-interactive
         echo "Hello there!"
         echo
         echo "Your shell is currently running inside a container (mostly) based off of the host."
-        echo "This subsystem is seperate from the host, meaning changes besides those to your homedir"
+        echo "This subsystem is separate from the host, meaning changes besides those to your homedir"
         echo "do not affect the host, with said changes being discarded on system reboot/shutdown."
         echo
         echo "This also means commands may have undefined or unexpected behavior."
