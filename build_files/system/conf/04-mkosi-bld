@@ -1,0 +1,35 @@
+[Distribution]
+Distribution=arch
+
+[Output]
+Format=directory
+OutputDirectory=/output
+
+[Content]
+Bootable=no
+Packages=
+    base
+    dbus
+    shadow
+    bash
+    bash-completion
+    curl
+    glibc-locales
+    jq
+    less
+    lsof
+    man-db
+    nano
+    openssh
+    rsync
+    tar
+    udev
+    unzip
+    usbutils
+    wget
+    atuin
+    fastfetch
+    git
+    vim
+    nvim
+    reflector
