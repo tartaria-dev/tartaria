@@ -1,6 +1,7 @@
 iio-niri
 python-clickgen
 bibata-cursor-theme
+fish-tide
 darkly-qt6-git
 matugen-git
 distroshelf
@@ -8,3 +9,5 @@ qt6ct-kde
 shim-signed
 valent
 noctalia-greeter
+maplemono-ttf
+maplemono-nf-unhinted

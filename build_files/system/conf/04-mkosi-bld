@@ -9,17 +9,11 @@ OutputDirectory=/output
 Bootable=no
 Packages=
     base
-    base-devel
     dbus
-    util-linux
-    glibc
     shadow
     bash
     bash-completion
-    binutils
     curl
-    fakeroot
-    gcc
     glibc-locales
     jq
     less
@@ -27,20 +21,15 @@ Packages=
     man-db
     nano
     openssh
-    patchelf
     rsync
-    reflector
     tar
-    tree
     udev
     unzip
     usbutils
     wget
     atuin
-    cava
     fastfetch
     git
-    neovim
-    starship
     vim
-    which
+    nvim
+    reflector

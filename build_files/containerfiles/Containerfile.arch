@@ -2,8 +2,7 @@
 FROM archlinux:latest AS final
 
 # copy over system files
-COPY system_files/mainsys /
-COPY system_files/subsys /mkosi/mkosi.extra/
+COPY system_files /
 
 # fetch Brew and Cherries
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
@@ -14,9 +13,8 @@ ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 # run main build scripts
-RUN --mount=type=bind,src=build_files/mainsys,dst=/build \
-    --mount=type=bind,src=build_files/subsys,dst=/mkosi \
-    --mount=type=bind,src=system_files/subsys,dst=/mkosi/mkosi.extra \
+RUN --mount=type=bind,src=build_files/system,dst=/build \
+    --mount=type=bind,src=build_files/system/conf/04-mkosi-bld,dst=/mkosi/mkosi.conf \
     --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \
     bash /build/01-packages.sh && \

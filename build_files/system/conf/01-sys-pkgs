@@ -16,9 +16,12 @@ skopeo
 udev
 
 # ========> cli
+atuin
 bash
 bash-completion
 curl
+fastfetch
+fish
 git
 glibc-locales
 jq
@@ -29,10 +32,12 @@ nano
 openssh
 powertop
 python3
+reflector
 rsync
 tar
 unzip
 vim
+nvim
 wget
 
 # ========> filesystems
@@ -43,7 +48,6 @@ erofs-utils
 exfatprogs
 f2fs-tools
 jfsutils
-mkosi
 mtools
 nilfs-utils
 ntfs-3g
