@@ -7,6 +7,9 @@ echo "::group::===========================> Install subsystem"
 source /build/conf/00-functions
 set -ouex pipefail
 
+# install mkosi
+retry pacman -S --noconfirm --needed mkosi
+
 # create dirs
 mkdir -p /usr/lib/subsystem/segments
 
@@ -23,6 +26,7 @@ retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L 
 retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /output/image/var >/dev/null
 
 # cleanup
+pacman -Rns --noconfirm mkosi
 rm -rf /output /tmp/mkosi.log
 
 echo "::endgroup::"
