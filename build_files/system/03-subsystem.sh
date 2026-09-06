@@ -12,7 +12,7 @@ mkdir -p /usr/lib/subsystem/segments
 
 # build dummy arch rootfs - provides minimal /var
 if ! retry mkosi build --force --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/tmp/mkosi.log 2>&1; then
-    cat /tmp/build/mkosi.log
+    cat /tmp/mkosi.log
     exit 1
 fi
 
@@ -23,6 +23,6 @@ retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L 
 retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /output/image/var >/dev/null
 
 # cleanup
-rm -rf /output
+rm -rf /output /tmp/mkosi.log
 
 echo "::endgroup::"
