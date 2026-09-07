@@ -140,6 +140,9 @@ jobs:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --target split-kernel
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
             --security-opt=label=disable
           image: stage-split
           tags: ${{ github.run_id }}
@@ -158,6 +161,9 @@ jobs:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --target chunkah
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
             --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
           image: stage-chunked
