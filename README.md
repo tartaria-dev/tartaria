@@ -8,7 +8,7 @@
 
 
 > [!WARNING]
-> **Deprecating/moving non-sealed variants** is being considered to reduce maintenance workload and to make space for a possible new variant with a different desktop environment. Point being, this image may become ISO-installable only in the future, as long as sealed images and ISO installation is stable by then.
+> **Deprecating/moving non-sealed variants** will be done in the near future to reduce maintenance workload and to make space for a possible new variant with a different desktop environment. To clarify, this image will be ISO-installable only in the future, provided sealed images and ISO installation are stable by then.
 
 ## Description
 Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing:
