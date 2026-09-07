@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 ## set errexit, pipefail, errtrace
-set -eo pipefail -o errtrace
+set -eEo pipefail
 
 ## do our checks
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
