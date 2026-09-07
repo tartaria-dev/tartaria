@@ -122,35 +122,68 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Build rechunked image
-        id: build_image_rechunked
+      - name: Build base image
+        id: build_base
         uses: redhat-actions/buildah-build@v3.1.0
         env:
-          SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
-          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
+            --target base
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
             --secret id=module_key,env=MODULE_KEY
             --secret id=module_cert,env=MODULE_CERT
-            --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
-            --skip-unused-stages=false
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
+          image: stage-base
+          tags: ${{ github.run_id }}
+          layers: true
+          squash: false
           build-args: |
             IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
             IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+          oci: true
+
+      - name: Build split image
+        id: build_split
+        uses: redhat-actions/buildah-build@v3.1.0
+        env:
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+        with:
+          containerfiles: ${{ matrix.containerfile }}
+          extra-args: |
+            --target split-kernel
+            --security-opt=label=disable
+          image: stage-split
+          tags: ${{ github.run_id }}
           layers: true
           squash: false
           oci: true
 
+      - name: Build rechunked image
+        id: build_chunk
+        uses: redhat-actions/buildah-build@v3.1.0
+        env:
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+        with:
+          containerfiles: ${{ matrix.containerfile }}
+          extra-args: |
+            --target chunkah
+            --volume ${{ github.workspace }}:/src
+            --security-opt=label=disable
+          image: stage-chunked
+          tags: ${{ github.run_id }}
+          layers: true
+          oci: true
+
       - name: Build final image
-        id: build_image_final
+        id: build_image
         uses: redhat-actions/buildah-build@v3.1.0
         env:
           SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
@@ -163,12 +196,14 @@ jobs:
             --secret id=secureboot_key,env=SECUREBOOT_KEY
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
             --security-opt=label=disable
-            --skip-unused-stages=false
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           layers: true
           squash: false
+          build-args: |
+            BASE_IMAGE=${{ steps.build_base.outputs.image-with-tag }}
+            SPLITKERNEL_IMAGE=${{ steps.build_split.outputs.image-with-tag }}
           oci: true
 
       - name: Login to GHCR

@@ -1,3 +1,12 @@
+ARG BASE_IMAGE
+ARG SPLITKERNEL_IMAGE
+
+FROM ${BASE_IMAGE} AS base
+
+FROM ${SPLITKERNEL_IMAGE} AS split-kernel
+
+FROM oci:out AS base-chunked
+
 FROM base AS sealed-uki
 RUN --mount=type=bind,src=build_files/scripts,dst=/build \
     --mount=type=bind,from=base-chunked,target=/target \
