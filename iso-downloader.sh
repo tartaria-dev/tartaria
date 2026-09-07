@@ -8,8 +8,9 @@ set -oue pipefail
 clear
 
 # define variants and their tags
-variant_names=("Arch-Bebere" "Arch-Amchoor" "Arch-Mahleb" "Arch-Saffron" "CachyOSv3-Bebere" "CachyOSv3-Amchoor" "CachyOSv3-Mahleb" "CachyOSv3-Saffron")
-variant_tags=("arch-berbere" "arch-amchoor" "arch-mahleb" "arch-saffron" "cachy-berbere" "cachy-amchoor" "cachy-mahleb" "cachy-saffron")
+bases=( "Arch" "CachyOSv3" )
+tags=("arch-saffron" "arch-mahleb" "cachy-saffron" "cachy-mahleb")
+names=("Arch-Saffron" "Arch-Mahleb" "CachyOSv3-Saffron" "CachyOSv3-Mahleb")
 
 # define clanup step
 cleanup() {
@@ -18,20 +19,40 @@ cleanup() {
     trap - ERR
 }
 
-# read user answer
+# read user answer (base selection)
 while true; do
     echo "[---] ISO Selection"
-    echo "[---] Select a variant of Tartaria to download (enter the corresponding number)."
-    echo "[---] The variant you choose for the ISO will be the one installed."
-    echo "[---] If you do not know what variant to choose, reread the Variants section of the README in the Tartaria github repo."
+    echo "[---] What base of Tartaria do you want? (enter the corresponding number)"
     echo
-    for i in "${!variant_names[@]}"; do
-        printf "[-%d-] %s\n" "$((i + 1))" "${variant_names[$i]}"
+    for i in "${!bases[@]}"; do
+        printf "[-%d-] %s\n" "$((i + 1))" "${bases[$i]}"
     done
     echo
-    read -n 1 -p "[-?-] >> " answer
+    read -n 1 -p "[-?-] >> " base_answer
 
-    if (( answer < 1 || answer > ${#variant_names[@]} )); then
+    if (( base_answer < 1 || base_answer > ${#bases[@]} )); then
+        echo -e "\n[!!!] Invalid choice. Please try again."
+        sleep 1
+        clear
+    else
+        break
+    fi
+done
+clear
+
+# read user answer (NVIDIA drivers)
+while true; do
+    echo "[---] ISO Selection"
+    echo "[---] Do you need preinstalled NVIDIA drivers? (enter the corresponding number)"
+    echo
+    options=( "Yes" "No" )
+    for i in "${!options[@]}"; do
+        printf "[-%d-] %s\n" "$((i + 1))" "${options[$i]}"
+    done
+    echo
+    read -n 1 -p "[-?-] >> " nvidia_answer
+
+    if (( nvidia_answer < 1 || nvidia_answer > ${#options[@]} )); then
         echo -e "\n[!!!] Invalid choice. Please try again."
         sleep 1
         clear
@@ -51,9 +72,9 @@ podman pull ghcr.io/oras-project/oras:v1.3.4
 clear
 
 # download iso
-idx=$((answer - 1))
-tag="${variant_tags[$idx]}"
-name="${variant_names[$idx]}"
+idx=$(( (base_answer - 1) * 2 + (nvidia_answer - 1) ))
+tag="${tags[$idx]}"
+name="${names[$idx]}"
 
 echo "[2/2] Downloading ${name} ISO."
 echo "[-i-] Please do not interrupt the download process. This may take a while."

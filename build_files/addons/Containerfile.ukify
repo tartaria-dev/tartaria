@@ -1,0 +1,13 @@
+FROM base AS sealed-uki
+RUN --mount=type=bind,src=build_files/scripts,dst=/build \
+    --mount=type=bind,from=base-chunked,target=/target \
+    --mount=type=bind,from=split-kernel,source=/kernel,target=/kernel \
+    --mount=type=secret,id=secureboot_key,required=true \
+    --mount=type=secret,id=secureboot_cert,required=true \
+    bash /build/08-ukify.sh
+
+FROM base-chunked AS final
+COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
+COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
+COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
+COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi

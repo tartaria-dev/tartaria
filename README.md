@@ -8,18 +8,10 @@
 
 
 > [!WARNING]
-> **Deprecating/moving non-sealed variants** is being considered to reduce maintenance workload and to make space for a possible new variant with a different desktop environment. Point being, this image may become ISO-installable only in the future, as long as sealed images and ISO installation is stable by then.
+> **Non-sealed variants have been removed.** In part of a restructure in support of moving to the experimental sealed layout, the non-sealed variants have been removed from this repository. A seperate repository containing all code for the non-sealed variants will be established soon.
 
 ## Description
-Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing:
-
-- AppArmor application security enabled by default
-- An opinionated and mostly GTK-based app suite
-- A containerized shell powered by a minimal Arch container
-- The Niri scrollable tiling Wayland compositor
-- The modern, fluid Noctalia desktop shell
-
-Overall, Tartaria aims to provide a sleek, modern, unobtrusive experience that lets you get your work done.
+Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing a sleek, modern, unobtrusive experience that lets you get your work done.
 
 The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
 
@@ -30,7 +22,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 > If you are a Tartaria user on an old variant such as `stable-arch`, please rebase to their newest equivalents except the ones marked as installable via ISO only.
 
 
-In total, there are sixteen variants of Tartaria.
+In total, there are eight variants of Tartaria.
 
 Variants are composed as follows:
 
@@ -50,10 +42,8 @@ tartaria:<base>-<flavor>-<spice>
 
 ### Spices
 
-- `berbere`: A spice of Tartaria with no extra features; choose this if you do not need features provided by other spices.
-- `amchoor`: A spice of Tartaria that includes preinstalled NVIDIA drivers.
-- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout with a UKI. **Only installable via ISO. Do not rebase to this.**
-- `saffron`: A spice of Tartaria with the features of `amchoor` and `mahleb`. **Only installable via ISO. Do not rebase to this.**
+- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout.
+- `saffron`: A spice of Tartaria including secure boot support, the sealed image layout, and preinstalled NVIDIA drivers.
 
 
 ## Installing
@@ -61,7 +51,7 @@ tartaria:<base>-<flavor>-<spice>
 ### ISO
 
 > [!WARNING]
-> ISOs are NOT working properly at the moment. Refrain from using this installation method.
+> ISOs are still being tested. The below instructions will update over time. Refrain from using them right now.
 
 Since our ISOs are stored in GHCR, we use the tool [Oras](https://oras.land/) to upload/download them.
 
@@ -70,16 +60,6 @@ To make things more convenient for you, the end user, run the following in a Lin
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
 ```
-
-### Rebasing
-
-To rebase, use the following command in your terminal:
-
-```
-sudo bootc switch ghcr.io/tartaria-dev/tartaria:<variant>
-```
-
-If you are unsure what variant to choose, please refer to [Variants](https://github.com/tartaria-dev/tartaria#variants).
 
 
 ## Credits

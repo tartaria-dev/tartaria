@@ -13,8 +13,8 @@ ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 # run main build scripts
-RUN --mount=type=bind,src=build_files/system,dst=/build \
-    --mount=type=bind,src=build_files/system/conf/04-mkosi-bld,dst=/mkosi/mkosi.conf \
+RUN --mount=type=bind,src=build_files/scripts,dst=/build \
+    --mount=type=bind,src=build_files/scripts/conf/04-mkosi-bld,dst=/mkosi/mkosi.conf \
     --mount=type=secret,id=secureboot_cert,required=true \
     --mount=type=secret,id=module_key,required=true \
     --mount=type=secret,id=module_cert,required=true \
@@ -50,21 +50,5 @@ ARG CHUNKAH_CONFIG_STR
 RUN --mount=from=rechunk-base,src=/,target=/chunkah,ro \
     chunkah build --skip-special-files --max-layers 128 --prune /ostree --prune /sysroot/ostree --output oci:/src/out
 
-# use rechunked output as new base
+# base off of chunked image
 FROM oci:out AS base-chunked
-
-# build signed, sealed UKI
-FROM base AS sealed-uki
-RUN --mount=type=bind,src=build_files/system,dst=/build \
-    --mount=type=bind,from=base-chunked,target=/target \
-    --mount=type=bind,from=split-kernel,source=/kernel,target=/kernel \
-    --mount=type=secret,id=secureboot_key,required=true \
-    --mount=type=secret,id=secureboot_cert,required=true \
-    bash /build/08-ukify.sh
-
-# add UKI + shim chain to base
-FROM base-chunked AS final
-COPY --from=sealed-uki /out/*.efi /boot/EFI/Linux/
-COPY --from=sealed-uki /out/grubx64.efi /boot/EFI/BOOT/grubx64.efi
-COPY --from=base /usr/share/shim-signed/shimx64.efi /boot/EFI/BOOT/BOOTX64.EFI
-COPY --from=base /usr/share/shim-signed/mmx64.efi /boot/EFI/BOOT/mmx64.efi
