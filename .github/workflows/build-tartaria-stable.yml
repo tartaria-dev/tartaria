@@ -148,6 +148,9 @@ jobs:
           tags: ${{ github.run_id }}
           layers: true
           squash: false
+          build-args: |
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
           oci: true
 
       - name: Build rechunked image
@@ -169,6 +172,9 @@ jobs:
           image: stage-chunked
           tags: ${{ github.run_id }}
           layers: true
+          build-args: |
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
           oci: true
 
       - name: Build final image
