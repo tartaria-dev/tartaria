@@ -3,7 +3,7 @@ name: Build Tartaria ISOs
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 12 */3 * *'
+    - cron: '0 12 */30 * *'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-stable
@@ -30,7 +30,7 @@ jobs:
           - IMAGE_FLAVOR: cachy-saffron
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
       - name: Prepare environment
         run: |
@@ -54,10 +54,14 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Push to GHCR
-        run: |
-          oras push "${IMAGE_REGISTRY}/tartaria-iso:${{ matrix.IMAGE_FLAVOR }}" \
-            --artifact-type application/vnd.tartaria.iso.v1 \
-            "./iso/tartaria-${{ matrix.IMAGE_FLAVOR }}.iso:application/octet-stream"
+        uses: Wandalen/wretry.action@v3
+        with:
+          command: |
+            oras push "${IMAGE_REGISTRY}/tartaria-iso:${{ matrix.IMAGE_FLAVOR }}" \
+              --artifact-type application/vnd.tartaria.iso.v1 \
+              "./iso/tartaria-${{ matrix.IMAGE_FLAVOR }}.iso:application/octet-stream"
+          attempt_limit: 3
+          attempt_delay: 2000
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3
