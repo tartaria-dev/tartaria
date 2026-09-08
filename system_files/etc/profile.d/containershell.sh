@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
 
+# disable for now, need to see how image store can be accessed on composefs (we are movin forward!)
+echo "[-i-] Subsystem has been disabled. If you are seeing this and you are not the developer, revert to your last stable update."
+return
+
 # check if the shell is interactive, if we are in a TTY, or if we are root
 if [[ $- != *i* ]]; then
     return

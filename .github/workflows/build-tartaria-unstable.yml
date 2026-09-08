@@ -54,22 +54,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - IMAGE_FLAVOR: arch-berbere
-            containerfile: ./build_files/containerfiles/Containerfile.arch
-          - IMAGE_FLAVOR: arch-amchoor
-            containerfile: ./build_files/containerfiles/Containerfile.arch
           - IMAGE_FLAVOR: arch-mahleb
-            containerfile: ./build_files/containerfiles/Containerfile.arch-sealed
+            containerfile: ./build_files/images/Containerfile.arch
           - IMAGE_FLAVOR: arch-saffron
-            containerfile: ./build_files/containerfiles/Containerfile.arch-sealed
-          - IMAGE_FLAVOR: cachy-berbere
-            containerfile: ./build_files/containerfiles/Containerfile.cachy
-          - IMAGE_FLAVOR: cachy-amchoor
-            containerfile: ./build_files/containerfiles/Containerfile.cachy
+            containerfile: ./build_files/images/Containerfile.arch
           - IMAGE_FLAVOR: cachy-mahleb
-            containerfile: ./build_files/containerfiles/Containerfile.cachy-sealed
+            containerfile: ./build_files/images/Containerfile.cachy
           - IMAGE_FLAVOR: cachy-saffron
-            containerfile: ./build_files/containerfiles/Containerfile.cachy-sealed
+            containerfile: ./build_files/images/Containerfile.cachy
 
     permissions:
       contents: read
@@ -130,7 +122,79 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
-      - name: Build image
+      - name: Build base image
+        id: build_base
+        uses: redhat-actions/buildah-build@v3.1.0
+        env:
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+        with:
+          containerfiles: ${{ matrix.containerfile }}
+          extra-args: |
+            --target base
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
+            --security-opt=label=disable
+          image: stage-base
+          tags: ${{ github.run_id }}
+          layers: true
+          squash: false
+          build-args: |
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+          oci: true
+
+      - name: Build split image
+        id: build_split
+        uses: redhat-actions/buildah-build@v3.1.0
+        env:
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+        with:
+          containerfiles: ${{ matrix.containerfile }}
+          extra-args: |
+            --target split-kernel
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
+            --security-opt=label=disable
+          image: stage-split
+          tags: ${{ github.run_id }}
+          layers: true
+          squash: false
+          build-args: |
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+          oci: true
+
+      - name: Build rechunked image
+        id: build_chunk
+        uses: redhat-actions/buildah-build@v3.1.0
+        env:
+          MODULE_KEY: ${{ secrets.MODULE_KEY }}
+          MODULE_CERT: ${{ secrets.MODULE_CERT }}
+          SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
+        with:
+          containerfiles: ${{ matrix.containerfile }}
+          extra-args: |
+            --target chunkah
+            --secret id=secureboot_cert,env=SECUREBOOT_CERT
+            --secret id=module_key,env=MODULE_KEY
+            --secret id=module_cert,env=MODULE_CERT
+            --volume ${{ github.workspace }}:/src
+            --security-opt=label=disable
+          image: stage-chunked
+          tags: ${{ github.run_id }}
+          layers: true
+          build-args: |
+            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+          oci: true
+
+      - name: Build final image
         id: build_image
         uses: redhat-actions/buildah-build@v3.1.0
         env:
@@ -139,21 +203,19 @@ jobs:
           MODULE_KEY: ${{ secrets.MODULE_KEY }}
           MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
-          containerfiles: ${{ matrix.containerfile }}
+          containerfiles: build_files/addons/Containerfile.ukify
           extra-args: |
             --secret id=secureboot_key,env=SECUREBOOT_KEY
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
-            --secret id=module_key,env=MODULE_KEY
-            --secret id=module_cert,env=MODULE_CERT
-            --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
-            --skip-unused-stages=false
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          layers: true
+          squash: false
           build-args: |
-            IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
-            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+            BASE_IMAGE=${{ steps.build_base.outputs.image-with-tag }}
+            SPLITKERNEL_IMAGE=${{ steps.build_split.outputs.image-with-tag }}
           oci: true
 
       - name: Login to GHCR
