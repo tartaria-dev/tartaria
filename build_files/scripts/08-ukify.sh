@@ -8,7 +8,7 @@ source /build/conf/00-functions
 set -ouex pipefail
 
 # create necessary dirs
-mkdir -p /out /var/tmp
+mkdir -p /out/{uki,boot} /var/tmp
 
 # set vars
 kver=$(ls /kernel)
@@ -21,7 +21,7 @@ bootc container ukify \
     --rootfs /target \
     --kernel-dir "/kernel/${kver}" \
     -- \
-    --output "/out/${kver}.efi" \
+    --output "/out/uki/${kver}.efi" \
     --signtool sbsign \
     --secureboot-private-key /run/secrets/secureboot_key \
     --secureboot-certificate /run/secrets/secureboot_cert
@@ -30,7 +30,7 @@ bootc container ukify \
 sbsign \
     --key /run/secrets/secureboot_key \
     --cert /run/secrets/secureboot_cert \
-    --output /out/grubx64.efi \
+    --output /out/boot/grubx64.efi \
     /target/usr/lib/systemd/boot/efi/systemd-bootx64.efi
 
 # cleanup
