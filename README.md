@@ -10,6 +10,9 @@
 > [!WARNING]
 > **Non-sealed variants have been removed.** In part of a restructure in support of moving to the experimental sealed layout, the non-sealed variants have been removed from this repository. A seperate repository containing all code for the non-sealed variants will be established soon.
 
+> [!WARNING]
+> Due to the restructuring, Tartaria is currently unstable and not safe to install. Please wait for v2 to exit beta.
+
 ## Description
 Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing a sleek, modern, unobtrusive experience that lets you get your work done.
 
@@ -17,10 +20,6 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 
 ## Variants
-
-> [!WARNING]
-> If you are a Tartaria user on an old variant such as `stable-arch`, please rebase to their newest equivalents except the ones marked as installable via ISO only.
-
 
 In total, there are eight variants of Tartaria.
 
@@ -61,6 +60,7 @@ To make things more convenient for you, the end user, run the following in a Lin
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
 ```
 
+If you find that the variant you installed doesn't fit you, run `synergy rebase` in the terminal and go through the selection process.
 
 ## Credits
 Thank you to the [Bootcrew](https://discord.gg/52Qcb4x2w3) team for making this project possible (and for general help)! I'd also like to thank the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
