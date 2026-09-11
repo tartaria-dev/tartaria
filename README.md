@@ -20,7 +20,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 In total, there are sixteen variants of Tartaria.
 
-Variants marked as **sealed** are **only installable via ISO, and experimental.** Variants marked as **nonsealed** are **installable via ISO and rebasing.**
+Variants marked as **sealed** are **only installable via ISO, and experimental.** Variants marked as **nonsealed** are **only installable by rebasing via bootc/rpm-ostree.**
 
 Variants are composed as follows:
 
