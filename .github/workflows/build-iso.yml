@@ -20,9 +20,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - IMAGE_FLAVOR: arch-mahleb
+          - IMAGE_FLAVOR: arch-maraska
           - IMAGE_FLAVOR: arch-saffron
-          - IMAGE_FLAVOR: cachy-mahleb
+          - IMAGE_FLAVOR: cachy-maraska
           - IMAGE_FLAVOR: cachy-saffron
     steps:
       - name: Checkout repository

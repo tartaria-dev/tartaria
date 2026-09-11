@@ -54,11 +54,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - IMAGE_FLAVOR: arch-mahleb
+          - IMAGE_FLAVOR: arch-maraska
             containerfile: ./build_files/images/Containerfile.arch-sealed
           - IMAGE_FLAVOR: arch-saffron
             containerfile: ./build_files/images/Containerfile.arch-sealed
-          - IMAGE_FLAVOR: cachy-mahleb
+          - IMAGE_FLAVOR: cachy-maraska
             containerfile: ./build_files/images/Containerfile.cachy-sealed
           - IMAGE_FLAVOR: cachy-saffron
             containerfile: ./build_files/images/Containerfile.cachy-sealed

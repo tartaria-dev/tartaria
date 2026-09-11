@@ -9,8 +9,8 @@ clear
 
 # define variants and their tags
 bases=( "Arch" "CachyOSv3" )
-tags=("arch-saffron" "arch-mahleb" "cachy-saffron" "cachy-mahleb")
-names=("Arch-Saffron" "Arch-Mahleb" "CachyOSv3-Saffron" "CachyOSv3-Mahleb")
+tags=("arch-saffron" "arch-maraska" "cachy-saffron" "cachy-maraska")
+names=("Arch-Saffron" "Arch-maraska" "CachyOSv3-Saffron" "CachyOSv3-maraska")
 
 # define clanup step
 cleanup() {

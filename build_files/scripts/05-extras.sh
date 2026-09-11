@@ -62,8 +62,8 @@ update-desktop-database
 rm -rf /usr/opt
 mv /opt /usr
 
-# export secureboot cert for saffron/mahleb
-if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *mahleb ]]; then
+# export secureboot cert for saffron/maraska
+if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *maraska ]]; then
     mkdir -p /usr/share/tartaria/certs
     openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /usr/share/tartaria/certs/secureboot.der
 fi
