@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sign NVIDIA kernel modules (-saffron)
+# sign NVIDIA kernel modules (saffron only)
 
 echo "::group::===========================> Sign NVIDIA modules"
 

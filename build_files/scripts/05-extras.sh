@@ -16,10 +16,6 @@ sed -i '/DisableSandboxNetwork/d' /etc/pacman.conf
 chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d
 
-# export secureboot cert for saffron/mahleb
-mkdir -p /usr/share/tartaria/certs
-openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /usr/share/tartaria/certs/secureboot.der
-
 # remove base-devel
 pacman -Rns --noconfirm base-devel cmake extra-cmake-modules
 
@@ -66,8 +62,14 @@ update-desktop-database
 rm -rf /usr/opt
 mv /opt /usr
 
+# export secureboot cert for saffron/mahleb
+if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *mahleb ]]; then
+    mkdir -p /usr/share/tartaria/certs
+    openssl x509 -in /run/secrets/secureboot_cert -outform DER -out /usr/share/tartaria/certs/secureboot.der
+fi
+
 # add nvidia-drm modprobe config for saffron/amchoor
-if [[ "$IMAGE_VARIANT" == *saffron ]]; then
+if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *amchoor ]]; then
     mkdir -p /etc/modprobe.d
     echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf
 fi
