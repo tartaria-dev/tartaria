@@ -1,0 +1,97 @@
+name: Prepare image build
+description: Prepare image build
+
+inputs:
+  image-flavor:
+    description: Image flavor
+    required: true
+  default-tag:
+    description: Default tag
+    required: true
+  fetch-depth:
+    description: Fetch depth
+    required: false
+    default: '0'
+  checkout-latest-tag:
+    description: Checkout the latest tag
+    required: false
+    default: 'true'
+
+outputs:
+  date:
+    description: Build timestamp
+    value: ${{ steps.date.outputs.date }}
+  tags:
+    description: Computed image tags
+    value: ${{ steps.metadata.outputs.tags }}
+  labels:
+    description: Computed image labels
+    value: ${{ steps.metadata.outputs.labels }}
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare environment
+      shell: bash
+      run: |
+        # Lowercase the image uri
+        echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> "${GITHUB_ENV}"
+        echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "${GITHUB_ENV}"
+
+    - name: Checkout repository
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - name: Checkout latest tag
+      if: inputs.checkout-latest-tag == 'true'
+      shell: bash
+      run: |
+        latest=$(git tag --list 'v*' --sort=-version:refname | head -1)
+        echo "Checking out latest tag: $latest"
+        git checkout "$latest"
+
+    - name: Remove unecessary software
+      uses: hastd/free-disk-space@v0.1.2
+      with:
+        swapoff: false
+
+    - name: Get current date
+      id: date
+      shell: bash
+      run: |
+        # This generates a timestamp like what is defined on the ArtifactHub documentation
+        # E.G: 2022-02-08T15:38:15Z'
+        # https://artifacthub.io/docs/topics/repositories/container-images/
+        # https://linux.die.net/man/1/date
+        echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> "$GITHUB_OUTPUT"
+
+    - name: Set image metadata
+      uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+      id: metadata
+      with:
+        tags: |
+          type=raw,value=${{ inputs.default-tag }}-${{ inputs.image-flavor }}
+          type=raw,value=${{ inputs.default-tag }}-${{ inputs.image-flavor }}.{{date 'YYYYMMDD'}}
+          type=raw,value=${{ inputs.image-flavor }}-{{date 'YYYYMMDD'}}
+          type=sha,enable=${{ github.event_name == 'pull_request' }}
+          type=ref,event=pr
+        labels: |
+          io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+          org.opencontainers.image.created=${{ steps.date.outputs.date }}
+          org.opencontainers.image.description=${{ env.IMAGE_DESC }}
+          org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+          org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/${{ github.sha }}/Containerfile
+          org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+          org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
+          org.opencontainers.image.vendor=${{ github.repository_owner }}
+          org.opencontainers.image.version=${{ inputs.default-tag }}.{{date 'YYYYMMDD'}}
+          io.artifacthub.package.deprecated=false
+          io.artifacthub.package.keywords=${{ env.IMAGE_KEYWORDS }}
+          io.artifacthub.package.license=Apache-2.0
+          io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}
+          io.artifacthub.package.prerelease=false
+          containers.bootc=1
+          ostree.bootable=1
+        sep-tags: " "
+        sep-annotations: " "
