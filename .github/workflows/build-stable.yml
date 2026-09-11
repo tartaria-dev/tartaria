@@ -44,6 +44,17 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout latest tag
+        run: |
+          latest=$(git tag --list 'v*' --sort=-version:refname | head -1)
+          echo "Checking out latest tag: $latest"
+          git checkout "$latest"
+
       - name: Prepare build
         id: prep
         uses: ./.github/actions/prepare-image
@@ -177,6 +188,17 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout latest tag
+        run: |
+          latest=$(git tag --list 'v*' --sort=-version:refname | head -1)
+          echo "Checking out latest tag: $latest"
+          git checkout "$latest"
+
       - name: Prepare build
         id: prep
         uses: ./.github/actions/prepare-image

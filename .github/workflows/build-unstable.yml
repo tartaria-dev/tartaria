@@ -69,14 +69,15 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
       - name: Prepare build
         id: prep
         uses: ./.github/actions/prepare-image
         with:
           image-flavor: ${{ matrix.IMAGE_FLAVOR }}
           default-tag: ${{ env.DEFAULT_TAG }}
-          fetch-depth: '1'
-          checkout-latest-tag: 'false'
 
       - name: Build base image
         id: build_base
@@ -204,14 +205,15 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
       - name: Prepare build
         id: prep
         uses: ./.github/actions/prepare-image
         with:
           image-flavor: ${{ matrix.IMAGE_FLAVOR }}
           default-tag: ${{ env.DEFAULT_TAG }}
-          fetch-depth: '1'
-          checkout-latest-tag: 'false'
 
       - name: Build image
         id: build_image
@@ -229,7 +231,7 @@ jobs:
           squash: false
           build-args: |
             IMAGE_FLAVOR=${{ matrix.IMAGE_FLAVOR }}
-            IMAGE_VARIANT=unstable-${{ matrix.IMAGE_FLAVOR }}
+            IMAGE_VARIANT=stable-${{ matrix.IMAGE_FLAVOR }}
           oci: true
 
       - name: Publish build

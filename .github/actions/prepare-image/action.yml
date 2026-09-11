@@ -8,14 +8,6 @@ inputs:
   default-tag:
     description: Default tag
     required: true
-  fetch-depth:
-    description: Fetch depth
-    required: false
-    default: '0'
-  checkout-latest-tag:
-    description: Checkout the latest tag
-    required: false
-    default: 'true'
 
 outputs:
   date:
@@ -37,19 +29,6 @@ runs:
         # Lowercase the image uri
         echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> "${GITHUB_ENV}"
         echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "${GITHUB_ENV}"
-
-    - name: Checkout repository
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-      with:
-        fetch-depth: ${{ inputs.fetch-depth }}
-
-    - name: Checkout latest tag
-      if: inputs.checkout-latest-tag == 'true'
-      shell: bash
-      run: |
-        latest=$(git tag --list 'v*' --sort=-version:refname | head -1)
-        echo "Checking out latest tag: $latest"
-        git checkout "$latest"
 
     - name: Remove unecessary software
       uses: hastd/free-disk-space@v0.1.2
