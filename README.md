@@ -49,7 +49,7 @@ tartaria:<channel>-<edition>-<flavor>
 
 **Sealed** variants provide E2E integrity verification via UKIs, Secure Boot, and fs-verity–backed composefs on top of what nonsealed has. Sealed variants are only installable via ISO, and are experimental.
 
-**Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and immutable /usr. Nonsealed variants are installable by rebasing or installing via an ISO.
+**Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and composefs filesystem. Nonsealed variants are installable by rebasing or installing via an ISO.
 
 
 ## Installing
