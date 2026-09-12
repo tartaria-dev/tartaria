@@ -51,6 +51,7 @@ tartaria:<channel>-<edition>-<flavor>
 
 **Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and immutable /usr. Nonsealed variants are installable by rebasing or installing via an ISO.
 
+
 ## Installing
 
 ### ISO
@@ -80,6 +81,7 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/tartaria-dev/tartaria:<vari
 If after installation you don't like the variant you chose, run `synergy rebase` in the terminal and go through the selection process.
 
 Refer to the [Variants](https://github.com/tartaria-dev/tartaria#Variants) section above for choosing a variant.
+
 
 ## Credits
 Thank you to the [Bootcrew](https://discord.gg/52Qcb4x2w3) team for making this project possible (and for general help)! I'd also like to thank the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
