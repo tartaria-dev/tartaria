@@ -25,6 +25,7 @@ systemctl enable \
     rechunker-group-fix.service \
     refresh-font-cache.service \
     sync-greeter-configs.service \
+    thinkfan.service \
     tuned-ppd.service \
     tuned.service \
     usr-share-tartaria-cherries.mount \
