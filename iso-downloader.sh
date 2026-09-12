@@ -9,8 +9,8 @@ clear
 
 # define variants and their tags
 bases=( "Arch" "CachyOSv3" )
-tags=("arch-saffron" "arch-mahleb" "cachy-saffron" "cachy-mahleb")
-names=("Arch-Saffron" "Arch-Mahleb" "CachyOSv3-Saffron" "CachyOSv3-Mahleb")
+base_prefixes=( "arch" "cachy" )
+flavors=( "saffron" "amchoor" "maraska" "berbere" )
 
 # define clanup step
 cleanup() {
@@ -62,6 +62,28 @@ while true; do
 done
 clear
 
+# read user answer (Sealed/Unsealed)
+while true; do
+    echo "[---] ISO Selection"
+    echo "[---] Do you want the sealed or unsealed variant? (enter the corresponding number)"
+    echo
+    seal_options=( "Sealed" "Unsealed" )
+    for i in "${!seal_options[@]}"; do
+        printf "[-%d-] %s\n" "$((i + 1))" "${seal_options[$i]}"
+    done
+    echo
+    read -n 1 -p "[-?-] >> " sealed_answer
+
+    if (( sealed_answer < 1 || sealed_answer > ${#seal_options[@]} )); then
+        echo -e "\n[!!!] Invalid choice. Please try again."
+        sleep 1
+        clear
+    else
+        break
+    fi
+done
+clear
+
 # prepare download dir & pull images
 echo "[1/2] Preparing."
 trap 'cleanup && echo && echo "[!!!] Something went wrong during preperation. Please re-run this script."' ERR
@@ -71,11 +93,13 @@ podman pull ghcr.io/sigstore/cosign/cosign:v3.1.3
 podman pull ghcr.io/oras-project/oras:v1.3.4
 clear
 
-# download iso
-idx=$(( (base_answer - 1) * 2 + (nvidia_answer - 1) ))
-tag="${tags[$idx]}"
-name="${names[$idx]}"
+# resolve tag & display name
+flavor_idx=$(( (nvidia_answer - 1) * 2 + (sealed_answer - 1) ))
+flavor="${flavors[$flavor_idx]}"
+tag="${base_prefixes[$((base_answer - 1))]}-${flavor}"
+name="${bases[$((base_answer - 1))]}-${flavor^}"
 
+# download iso
 echo "[2/2] Downloading ${name} ISO."
 echo "[-i-] Please do not interrupt the download process. This may take a while."
 trap 'cleanup && echo && echo "[!!!] ISO did not pass verification. Report this issue immediately."' ERR

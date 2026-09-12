@@ -8,10 +8,7 @@
 
 
 > [!WARNING]
-> **Non-sealed variants have been removed.** In part of a restructure in support of moving to the experimental sealed layout, the non-sealed variants have been removed from this repository. A seperate repository containing all code for the non-sealed variants will be established soon.
-
-> [!WARNING]
-> Due to the restructuring, Tartaria is currently unstable and not safe to install. Please wait for v2 to exit beta.
+> Tartaria is currently unstable and not safe to install due to the efforts towards v2. Please wait for v2 to exit beta and release.
 
 ## Description
 Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing a sleek, modern, unobtrusive experience that lets you get your work done.
@@ -21,28 +18,38 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 ## Variants
 
-In total, there are eight variants of Tartaria.
+In total, there are sixteen variants of Tartaria.
+
+Variants marked as **sealed** are **only installable by an ISO.** Variants marked as **nonsealed** are **installable by ISO or rebasing.**
 
 Variants are composed as follows:
 
 ```
-tartaria:<base>-<flavor>-<spice>
+tartaria:<channel>-<edition>-<flavor>
 ```
 
-### Bases
+### Channels
 
-- `stable`: A base of Tartaria built every 72 hours and on every new repository tag (new repository tags are made every release). Considered stable and recommended for usage, as it does not receive the latest, untested changes.
-- `unstable`: A base of Tartaria built daily and every time a new change is made. Considered unstable and not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+- `stable`: Built every **72 hours** and on **every new release**. Does not receive the latest, untested changes immediately.
+- `unstable`: Built **daily** and on **every new change**. Not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+
+### Editions
+
+- `arch`: Based on **Arch Linux** with the **Arch kernel**.
+- `cachy`: Based on **CachyOS-v3** with the **CachyOS-v3 BORE kernel**.
 
 ### Flavors
 
-- `arch`: A flavor of Tartaria based on Arch Linux and the Arch kernel.
-- `cachy`: A flavor of Tartaria based on CachyOS-v3 and the CachyOS-v3 kernel.
+- `berbere`: **Nonsealed** image layout and nothing extra.
+- `amchoor`: **Nonsealed** image layout with preinstalled NVIDIA drivers.
+- `maraska`: **Sealed** image layout with secure boot support.
+- `saffron`: **Sealed** image layout with secure boot support, and preinstalled NVIDIA drivers.
 
-### Spices
+### Notes
 
-- `mahleb`: A spice of Tartaria including secure boot support and the sealed image layout.
-- `saffron`: A spice of Tartaria including secure boot support, the sealed image layout, and preinstalled NVIDIA drivers.
+**Sealed** variants provide E2E integrity verification via UKIs, Secure Boot, and fs-verity–backed composefs on top of what nonsealed has. Sealed variants are only installable via ISO, and are experimental.
+
+**Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and composefs filesystem. Nonsealed variants are installable by rebasing or installing via an ISO.
 
 
 ## Installing
@@ -50,17 +57,31 @@ tartaria:<base>-<flavor>-<spice>
 ### ISO
 
 > [!WARNING]
-> ISOs are still being tested. The below instructions will update over time. Refrain from using them right now.
+> ISO installation is still being tested/improved. The below instructions will update over time.
 
-Since our ISOs are stored in GHCR, we use the tool [Oras](https://oras.land/) to upload/download them.
-
-To make things more convenient for you, the end user, run the following in a Linux terminal and go through the download process:
+Run the following in a Linux terminal and go through the selection/download process:
 
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
 ```
 
-If you find that the variant you installed doesn't fit you, run `synergy rebase` in the terminal and go through the selection process.
+### Rebasing
+
+If you are already running an OS such as Fedora Atomic or one of the Universal Blue projects, you can rebase with one of the following commands:
+
+```
+bootc switch ghcr.io/tartaria-dev/tartaria:<variant> # fedora atomic and universal blue projects
+```
+```
+rpm-ostree rebase ostree-unverified-registry:ghcr.io/tartaria-dev/tartaria:<variant> # fedora atomic only
+```
+
+### Notes
+
+If after installation you don't like the variant you chose, run `synergy rebase` in the terminal and go through the selection process.
+
+Refer to the [Variants](https://github.com/tartaria-dev/tartaria#Variants) section above for choosing a variant.
+
 
 ## Credits
 Thank you to the [Bootcrew](https://discord.gg/52Qcb4x2w3) team for making this project possible (and for general help)! I'd also like to thank the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!

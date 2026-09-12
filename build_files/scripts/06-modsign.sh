@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sign NVIDIA kernel modules (-saffron)
+# sign NVIDIA kernel modules (saffron only)
 
 echo "::group::===========================> Sign NVIDIA modules"
 
@@ -22,7 +22,7 @@ case "$IMAGE_FLAVOR" in
         headers="linux-headers"
         ;;
     cachy*)
-        headers="linux-cachyos-headers"
+        headers="linux-cachyos-bore-headers"
         ;;
 esac
 
