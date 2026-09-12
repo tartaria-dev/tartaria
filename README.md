@@ -20,7 +20,7 @@ The name is inspired by my favorite species of cherries, the [Black Tartarian](h
 
 In total, there are sixteen variants of Tartaria.
 
-Variants marked as **sealed** are **only installable via ISO, and experimental.** Variants marked as **nonsealed** are **only installable by rebasing via bootc/rpm-ostree.**
+Variants marked as **sealed** are **only installable by an ISO.** Variants marked as **nonsealed** are **installable by ISO or rebasing.**
 
 Variants are composed as follows:
 
@@ -30,7 +30,7 @@ tartaria:<channel>-<edition>-<flavor>
 
 ### Channels
 
-- `stable`: Built every **72 hours** and on **every new release**. Does not receive the latest, untested changes.
+- `stable`: Built every **72 hours** and on **every new release**. Does not receive the latest, untested changes immediately.
 - `unstable`: Built **daily** and on **every new change**. Not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
 
 ### Editions
@@ -45,6 +45,11 @@ tartaria:<channel>-<edition>-<flavor>
 - `maraska`: **Sealed** image layout with secure boot support.
 - `saffron`: **Sealed** image layout with secure boot support, and preinstalled NVIDIA drivers.
 
+### Notes
+
+**Sealed** variants provide E2E integrity verification via UKIs, Secure Boot, and fs-verity–backed composefs on top of what nonsealed has. Sealed variants are only installable via ISO, and are experimental.
+
+**Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and immutable /usr. Nonsealed variants are installable by rebasing or installing via an ISO.
 
 ## Installing
 
