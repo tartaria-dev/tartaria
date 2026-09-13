@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+set -ouex pipefail
+
+# disable pacman sandboxing
+sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
+
+# fix /etc/os-release
+sed -i "s/Arch/Tartaria ($IMAGE_VARIANT)/g" /etc/os-release
