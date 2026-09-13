@@ -24,8 +24,8 @@ systemctl enable \
     polkit.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
+    subsystem-filesystemd.service \
     sync-greeter-configs.service \
-    thinkfan.service \
     tuned-ppd.service \
     tuned.service \
     usr-share-tartaria-cherries.mount \
@@ -36,6 +36,7 @@ systemctl preset \
     install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
     mok-enroll.service \
+    subsystem-filesystemd.service \
     systemd-resolved.service
 
 # user
@@ -45,6 +46,7 @@ systemctl --global enable \
     flathub-user.service \
     noctalia-shell.service \
     refresh-font-cache.service \
+    subsystem-containerd.service \
     udiskie.service \
     wl-clip-persist.service
     
@@ -54,6 +56,8 @@ systemctl preset --global \
     chezmoi-update.timer \
     flathub-user.service \
     noctalia-shell.service \
+    refresh-font-cache.service \
+    subsystem-containerd.service \
     udiskie.service \
     wl-clip-persist.service
 

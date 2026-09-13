@@ -29,7 +29,9 @@ is_mounted() {
 drop_user() {
     local i
     for i in "${!operational_users[@]}"; do
-        [[ ${operational_users[i]} == "$1" ]] && unset 'operational_users[i]'
+        if [[ ${operational_users[i]} == "$1" ]]; then
+            unset 'operational_users[i]'
+        fi
     done
 }
 
@@ -57,25 +59,29 @@ userfs() {
                 HASH=$(printf '%s%s' "$(</etc/machine-id)" "$TARGETUSR" | sha256sum | awk '{print $1}')
                 USERDIR=$RWLIBDIR/$HASH
 
-                trap 'echo "[!!!] Failed to mount rootfs for $TARGETUSR, skipping." && continue' ERR
+                trap 'echo "[!!!] Failed to mount rootfs for $TARGETUSR, skipping." && userfs umount' ERR
                 trap 'echo "[!!!] Received SIGTERM, stopping." && return 0' SIGTERM
 
-                echo "[1/4] Setting up rootfs directory."
+                echo "[1/4] Setting up rootfs directories."
+                for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do umount -q "$USERDIR/$dir" || true; done
                 rm -rf "${USERDIR:?}"/*
-                mkdir -p "$USERDIR"/{rootfs,base/{home,root,bin,sbin,lib,lib64,etc,var,opt,tmp,run,srv,sys,dev,proc},data,.work}
-                chown -R "$TARGETUSR":"$TARGETUSR" "$USERDIR"/
+                mkdir -p "$USERDIR"/{rootfs,overlay/{base,data,work}/{rfs,bin,sbin,lib,lib64,etc,var,srv,opt,usr},overlay/base/rfs/{home,root,bin,sbin,lib,lib64,etc,var,srv,opt,usr,tmp,run,sys,dev,proc}}
+                chown -R "$SUID_START":"$SGID_START" "$USERDIR"/
 
-                echo "[2/4] Locking rootfs directory."
-                mount --bind -o ro "$USERDIR"/base "$USERDIR"/base
+                echo "[2/4] Locking rootfs directories."
+                mount --bind "$USERDIR"/overlay/base "$USERDIR"/overlay/base
+                mount -o remount,bind,ro "$USERDIR"/overlay/base
 
-                echo "[3/4] Mounting toplevel directories."
-                for dir in etc var; do mount --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro,acl,loop,user_xattr -t erofs "$ROLIBDIR"/segments/"$dir".dsk "$USERDIR"/base/"$dir"; done
-                for dir in srv opt; do mount --bind --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro /var/"$dir" "$USERDIR"/base/"$dir"; done
-                for type in "$USERDIR"/base/lib{,64}; do mount --bind --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro /usr/lib "$type"; done
-                for type in "$USERDIR"/base/{,s}bin; do mount --bind --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro /usr/bin "$type"; done
+                echo "[3/4] Mounting base directories."
+                mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/rfs,upperdir="$USERDIR"/overlay/data/rfs,workdir="$USERDIR"/overlay/work/rfs "$USERDIR"/rootfs
+                for dir in etc var; do mount --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro,acl,loop,user_xattr -t erofs "$ROLIBDIR"/segments/"$dir".dsk "$USERDIR"/overlay/base/"$dir"; done
+                for dir in srv opt; do mount --bind --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro /var/"$dir" "$USERDIR"/overlay/base/"$dir"; done
+                bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr "$USERDIR"/overlay/base/usr
+                for dir in "$USERDIR"/overlay/base/lib{,64}; do bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr/lib "$dir"; done
+                for dir in "$USERDIR"/overlay/base/{,s}bin; do bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr/bin "$dir"; done
 
-                echo "[4/4] Mounting rootfs overlay."
-                mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/base,upperdir="$USERDIR"/data,workdir="$USERDIR"/.work "$USERDIR"/rootfs
+                echo "[4/4] Mounting overlay directories."
+                for dir in etc var srv opt usr lib{,64} {,s}bin; do mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/"$dir",upperdir="$USERDIR"/overlay/data/"$dir",workdir="$USERDIR"/overlay/work/"$dir" "$USERDIR"/rootfs/"$dir"; done
 
                 trap - ERR SIGTERM
                 ;;
@@ -93,18 +99,12 @@ userfs() {
 
                 trap 'echo "[!!!] Failed to unmount rootfs for $TARGETUSR, manual intervention is required." && continue' ERR
 
-                echo "[1/4] Unmounting rootfs overlay."
-                umount -q "$USERDIR"/rootfs
+                echo "[1/2] Unmounting rootfs directories."
+                for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do umount "$USERDIR/$dir" || true; done
 
-                echo "[2/4] Unmounting toplevel directories."
-                for dir in bin sbin lib lib64 etc var opt srv; do umount -q "$USERDIR"/base/"$dir"; done
-
-                echo "[3/4] Unlocking rootfs directory."
-                umount "$USERDIR"/base
-
-                echo "[4/4] Cleaning user subsystem rootfs."
+                echo "[2/2] Cleaning rootfs directories."
                 rm -rf "${USERDIR:?}"/*
-                touch "$USERDIR"/user-inactive
+                echo "Notice now no one talks about the Epstein Files anymore." > "$USERDIR"/user-inactive
 
                 trap - ERR
                 ;;
