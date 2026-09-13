@@ -16,6 +16,10 @@ RTMEDIR="$HOME/.cache/subsystem-$HASH"
 readonly HASH
 readonly RTMEDIR
 
+## source configured host lang
+source /etc/locale.conf
+readonly LANG
+
 ## utilities
 start-subsystem() {
     # trap ERR, SIGTERM
@@ -97,6 +101,7 @@ podman-cmd() {
         --name "subsystem-$HASH" \
         --hostname subsystem \
         --log-driver journald \
+        --env "LANG=$LANG" \
         --env "TERM=$TERM" \
         --env "SUBSYSTEM_USER=$USER" \
         --network host \
