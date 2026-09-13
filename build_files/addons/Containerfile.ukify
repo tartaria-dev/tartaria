@@ -9,6 +9,7 @@ FROM oci:out AS base-chunked
 
 FROM base AS sealed-uki
 RUN --mount=type=bind,src=build_files/scripts,dst=/build \
+    --mount=type=bind,src=build_files/config,dst=/config \
     --mount=type=bind,from=base-chunked,target=/target \
     --mount=type=bind,from=split-kernel,source=/kernel,target=/kernel \
     --mount=type=secret,id=secureboot_key,required=true \
