@@ -97,6 +97,7 @@ podman-cmd() {
         --name "subsystem-$HASH" \
         --hostname subsystem \
         --log-driver journald \
+        --env "TERM=$TERM" \
         --env "SUBSYSTEM_USER=$USER" \
         --network host \
         --user 0:0 \
