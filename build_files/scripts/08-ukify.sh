@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup UKI stuffs
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Create Signed UKI"
 

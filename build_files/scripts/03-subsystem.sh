@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install subsystem
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Install subsystem"
 

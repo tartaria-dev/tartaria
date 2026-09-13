@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# extra important stuff
+# SPDX-License-Identifier: GPL-3.0-only
 
 # setup
 source /config/00-functions
@@ -16,8 +16,9 @@ sed -i '/DisableSandboxNetwork/d' /etc/pacman.conf
 chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d
 
-# remove base-devel
+# remove base-devel, keep sudo
 pacman -Rns --noconfirm base-devel cmake extra-cmake-modules
+pacman -S --noconfirm --needed sudo
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service

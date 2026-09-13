@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sign NVIDIA kernel modules (saffron only)
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Sign NVIDIA modules"
 

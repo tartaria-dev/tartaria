@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# configure important system services
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Configure system"
 

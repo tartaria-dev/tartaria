@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# finalize image build
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Finalize image build"
 

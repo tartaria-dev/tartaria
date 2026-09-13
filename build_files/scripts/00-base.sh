@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# prepare base image
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Prepare image build"
 

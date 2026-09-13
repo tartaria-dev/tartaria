@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# commands for installing main system packages
+# SPDX-License-Identifier: GPL-3.0-only
 
 echo "::group::===========================> Install system packages"
 
