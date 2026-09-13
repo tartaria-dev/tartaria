@@ -4,7 +4,7 @@
 echo "::group::===========================> Create Signed UKI"
 
 # setup
-source /build/conf/00-functions
+source /config/00-functions
 set -ouex pipefail
 
 # create necessary dirs

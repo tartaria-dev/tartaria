@@ -4,13 +4,13 @@
 echo "::group::===========================> Install system packages"
 
 # setup
-source /build/conf/00-functions
+source /config/00-functions
 set -ouex pipefail
 
 ## Non-AUR packages
 
 # import package list as an array
-mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /build/conf/01-sys-pkgs)
+mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /config/01-sys-pkgs)
 
 # based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
 case "$IMAGE_FLAVOR" in
@@ -45,7 +45,7 @@ retry runuser -u builder -- bash -c "cd /home/builder/yay-bin && makepkg -si --n
 rm -rf /home/builder/yay-bin
 
 # install AUR packages
-if ! retry runuser -u builder -- bash -c "xargs -a /build/conf/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/build/yay.log 2>&1; then
+if ! retry runuser -u builder -- bash -c "xargs -a /config/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/build/yay.log 2>&1; then
     cat /tmp/yay.log
     exit 1
 fi

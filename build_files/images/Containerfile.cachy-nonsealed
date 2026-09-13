@@ -8,6 +8,7 @@ ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
 
 RUN --mount=type=bind,src=build_files/scripts,dst=/build \
+    --mount=type=bind,src=build_files/config,dst=/config \
     --mount=type=bind,src=build_files/scripts/conf/04-mkosi-bld,dst=/mkosi/mkosi.conf \
     --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \

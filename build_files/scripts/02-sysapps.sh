@@ -4,14 +4,14 @@
 echo "::group::===========================> Install system apps"
 
 # setup
-source /build/conf/00-functions
+source /config/00-functions
 set -ouex pipefail
 
 # create dirs
 mkdir -p /usr/lib/flatpak-sysapps/src
 
 # move flatpak system apps list to /etc
-cp /build/conf/03-flatpaks /etc/.sysapps.list
+cp /config/03-flatpaks /etc/.sysapps.list
 
 # add flathub remote
 retry flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

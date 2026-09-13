@@ -4,7 +4,7 @@
 echo "::group::===========================> Sign NVIDIA modules"
 
 # setup
-source /build/conf/00-functions
+source /config/00-functions
 set -ouex pipefail
 
 # if image spice is not saffron, skip
