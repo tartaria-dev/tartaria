@@ -85,3 +85,6 @@ Refer to the [Variants](https://github.com/tartaria-dev/tartaria#Variants) secti
 
 ## Credits
 Thank you to the [Bootcrew](https://discord.gg/52Qcb4x2w3) team for making this project possible (and for general help)! I'd also like to thank the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
+
+## Metrics
+![Alt](https://repobeats.axiom.co/api/embed/e1ddc95a13421c83c1bb9958fb3fc28c8fb02cce.svg "Repobeats analytics image")
