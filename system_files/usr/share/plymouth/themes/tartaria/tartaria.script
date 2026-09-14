@@ -79,7 +79,7 @@ fun show_animation_after_prompt() {
 // Occupies the same bottom-anchored area the animation uses, so it
 // visually replaces it while a prompt is active.
 
-prompt.y = frame.y;
+prompt.y = frame.y - 15;
 
 prompt.label_sprite = Sprite();
 prompt.label_sprite.SetZ(10);
