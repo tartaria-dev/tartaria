@@ -16,14 +16,19 @@ systemctl enable \
     cups.socket \
     firewalld.service \
     greetd.service \
+    home.mount \
     install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
+    mnt.mount \
     mok-enroll.service \
     NetworkManager.service \
+    opt.mount \
     pick-cherries.timer \
     polkit.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
+    root.mount \
+    srv.mount \
     subsystem-filesystemd.service \
     sync-greeter-configs.service \
     tuned-ppd.service \
@@ -33,9 +38,14 @@ systemctl enable \
 
 # system-preset
 systemctl preset \
+    home.mount \
     install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
+    mnt.mount \
     mok-enroll.service \
+    opt.mount \
+    root.mount \
+    srv.mount \
     subsystem-filesystemd.service \
     systemd-resolved.service
 

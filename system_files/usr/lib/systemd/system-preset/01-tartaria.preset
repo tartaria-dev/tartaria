@@ -1,5 +1,10 @@
+enable home.mount
 enable install-flatpak-sysapps.service
 enable kdeconnect-firewalld-bypass.service
+enable mnt.mount
 enable mok-enroll.service
+enable opt.mount
 enable refresh-font-cache.service
+enable root.mount
+enable srv.mount
 enable subsystem-filesystemd.service
