@@ -1,9 +1,10 @@
+enable enable-flathub-repo.service
 enable home.mount
-enable install-flatpak-sysapps.service
 enable kdeconnect-firewalld-bypass.service
 enable mnt.mount
 enable mok-enroll.service
 enable opt.mount
+enable preinstall-flatpaks.service
 enable refresh-font-cache.service
 enable root.mount
 enable srv.mount

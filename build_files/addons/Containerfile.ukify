@@ -14,7 +14,7 @@ RUN --mount=type=bind,src=build_files/scripts,dst=/build \
     --mount=type=bind,from=split-kernel,source=/kernel,target=/kernel \
     --mount=type=secret,id=secureboot_key,required=true \
     --mount=type=secret,id=secureboot_cert,required=true \
-    bash /build/08-ukify.sh
+    bash /build/07-ukify.sh
 
 FROM base-chunked AS final
 COPY --from=sealed-uki /out/uki/*.efi /boot/EFI/Linux/

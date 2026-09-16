@@ -1,0 +1,13 @@
+[Unit]
+Description=Setup flathub user repository
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak remote-add --user --if-not-exists flathub /usr/share/flatpak/remotes.d/flathub.flatpakrepo
+ExecStart=/usr/bin/flatpak override --user --filesystem=xdg-config/gtk-3.0 --filesystem=xdg-config/gtk-4.0 --filesystem=xdg-config/qt5ct --filesystem=xdg-config/qt6ct
+ExecStart=/usr/bin/systemctl --user disable %n
+ExecStart=/usr/bin/systemctl --user mask %n
+RemainAfterExit=false
+
+[Install]
+WantedBy=default.target

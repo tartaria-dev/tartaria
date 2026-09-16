@@ -52,6 +52,10 @@ rm -rf MacTahoe-icon-theme
 install -d /etc/niri/
 ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
 
+# install flatpak's preinstall file
+mkdir -p /usr/share/flatpak/preinstall.d
+cp /config/03-flatpaks /usr/share/flatpak/preinstall.d/sysapps.preinstall
+
 # apply gschema overrides
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
@@ -60,7 +64,7 @@ retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/hos
 chmod +x /usr/lib/subsystem/bin/host-spawn
 
 # hide some desktop entries
-sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{avahi-discover,bssh,bvnc,lstopo,org.ffado.FfadoMixer,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
+sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{avahi-discover,bssh,bvnc,lstopo,nvim,dev.noctalia.Noctalia,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
 update-desktop-database
 
 # export secureboot cert for saffron/maraska

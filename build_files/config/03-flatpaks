@@ -1,8 +1,59 @@
-app.zen_browser.zen
-org.gnome.Decibels
-org.gnome.TextEditor
-io.gitlab.adhami3310.Impression
-org.gnome.Loupe
-io.missioncenter.MissionCenter
-org.gnome.Papers
-org.gnome.Showtime
+[Flatpak Preinstall app.zen_browser.zen]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.baobab]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Decibels]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Calculator]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Calendar]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Music]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.TextEditor]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Weather]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall io.gitlab.adhami3310.Impression]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Loupe]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall io.missioncenter.MissionCenter]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Papers]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.World.Secrets]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.gnome.Showtime]
+Branch=stable
+IsRuntime=false
+
+[Flatpak Preinstall org.mozilla.thunderbird]
+Branch=stable
+IsRuntime=false

@@ -14,10 +14,10 @@ systemctl enable \
     brew-setup.service \
     cups-browsed.service \
     cups.socket \
+    enable-flathub-repo.service \
     firewalld.service \
     greetd.service \
     home.mount \
-    install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
     mnt.mount \
     mok-enroll.service \
@@ -25,6 +25,7 @@ systemctl enable \
     opt.mount \
     pick-cherries.timer \
     polkit.service \
+    preinstall-flatpaks.service \
     rechunker-group-fix.service \
     refresh-font-cache.service \
     root.mount \
@@ -38,12 +39,13 @@ systemctl enable \
 
 # system-preset
 systemctl preset \
+    enable-flathub-repo.service \
     home.mount \
-    install-flatpak-sysapps.service \
     kdeconnect-firewalld-bypass.service \
     mnt.mount \
     mok-enroll.service \
     opt.mount \
+    preinstall-flatpaks.service \
     root.mount \
     srv.mount \
     subsystem-filesystemd.service \
@@ -53,7 +55,7 @@ systemctl preset \
 systemctl --global enable \
     chezmoi-init.service \
     chezmoi-update.timer \
-    flathub-user.service \
+    enable-flathub-repo.service \
     noctalia-shell.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
@@ -64,7 +66,7 @@ systemctl --global enable \
 systemctl preset --global \
     chezmoi-init.service \
     chezmoi-update.timer \
-    flathub-user.service \
+    enable-flathub-repo.service \
     noctalia-shell.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
