@@ -1,6 +1,6 @@
 enable chezmoi-init.service
 enable chezmoi-update.timer
-enable flathub-user.service
+enable enable-flathub-repo.service
 enable iio-niri.service
 enable noctalia-shell.service
 enable refresh-font-cache.service

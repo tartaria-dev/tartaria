@@ -1,0 +1,21 @@
+[Unit]
+Description=Preinstall system flatpaks
+After=network-online.target enable-flathub-repo.service
+Wants=network-online.target enable-flathub-repo.service
+ConditionPathExists=/usr/bin/flatpak
+ConditionKernelCommandLine=!rd.live.image
+Documentation=man:flatpak-preinstall(1)
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak preinstall -y
+ExecStart=/usr/bin/systemctl disable %n
+ExecStart=/usr/bin/systemctl mask %n
+RemainAfterExit=true
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
