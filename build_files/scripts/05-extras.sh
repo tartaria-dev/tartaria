@@ -63,10 +63,6 @@ chmod +x /usr/lib/subsystem/bin/host-spawn
 sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{avahi-discover,bssh,bvnc,lstopo,org.ffado.FfadoMixer,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
 update-desktop-database
 
-# move /opt into /usr so it gets preserved
-rm -rf /usr/opt
-mv /opt /usr
-
 # export secureboot cert for saffron/maraska
 if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *maraska ]]; then
     mkdir -p /usr/share/tartaria/certs

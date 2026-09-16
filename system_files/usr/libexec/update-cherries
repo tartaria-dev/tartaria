@@ -26,3 +26,4 @@ rsync -avH --delete "$MNT"/system_files/ /var/lib/cherries/
 # cleanup
 echo "[3/3] Cleaning up."
 podman image unmount ghcr.io/tartaria-dev/cherries:latest
+touch /etc/.cherries-are-picked

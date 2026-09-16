@@ -1,0 +1,14 @@
+[Unit]
+Description=Bind mount for /opt
+DefaultDependencies=no
+After=-.mount var.mount
+Before=local-fs.target
+
+[Mount]
+What=/var/opt
+Where=/opt
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

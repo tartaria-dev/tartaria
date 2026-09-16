@@ -19,20 +19,15 @@ fi
 ## arrange filesystem for bootc and image-based systems,
 ## see https://bootc-dev.github.io/bootc/filesystem.html
 
-# remove target directories
-rm -rf /{boot,home,root,srv,mnt,var,usr/local}
+# remove unnecessary dirs
+rm -rf /{boot,home,root,srv,mnt,var,opt,usr/local}
 rm -rf /usr/lib/sysimage/{log,cache/pacman/pkg}
 
-# (re)create essential system directories
-mkdir -p /sysroot /boot /usr/lib/ostree /var
+# recreate necessary dirs
+mkdir -p /sysroot /boot /usr/lib/ostree /var /home /root /opt /mnt /srv
 
-# create symlinks for bootc filesystem layout
+# create toplevel symlinks
 ln -sT sysroot/ostree /ostree
-ln -sT var/roothome /root
-ln -sT var/srv /srv
-ln -sT var/mnt /mnt
-ln -sT var/opt /opt
-ln -sT var/home /home
-ln -sT var/usrlocal /usr/local
+ln -sT ../var/usrlocal /usr/local
 
 echo "::endgroup::"
