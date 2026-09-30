@@ -41,10 +41,13 @@ userfs() {
     while read -r TARGETUSR; do
         case "$1" in
             mount)
-                if is_mounted "$TARGETUSR"; then
+                if [[ -f "/var/home/$TARGETUSR/.config/subsystem/disable" ]]; then
+                    echo "[-!-] Subsystem disabled for user $TARGETUSR, skipping."
+                elif is_mounted "$TARGETUSR"; then
                     echo "[-!-] Already mounted rootfs for user $TARGETUSR."
                     continue
                 fi
+                
                 echo "[---] Mounting rootfs for user $TARGETUSR."
                 operational_users+=("$TARGETUSR")
 
@@ -87,10 +90,13 @@ userfs() {
                 ;;
 
             umount)
-                if ! is_mounted "$TARGETUSR"; then
+                if [[ -f "/var/home/$TARGETUSR/.config/subsystem/disable" ]]; then
+                    echo "[-!-] Subsystem disabled for user $TARGETUSR, skipping."
+                elif ! is_mounted "$TARGETUSR"; then
                     echo "[-!-] Already unmounted rootfs for user $TARGETUSR."
                     continue
                 fi
+
                 echo "[---] Unmounting rootfs for user $TARGETUSR."
                 drop_user "$TARGETUSR"
 
@@ -104,7 +110,7 @@ userfs() {
 
                 echo "[2/2] Cleaning rootfs directories."
                 rm -rf "${USERDIR:?}"/*
-                echo "Notice now no one talks about the Epstein Files anymore." > "$USERDIR"/user-inactive
+                echo "Why on earth are you reading this? Anywho, since you're here, you notice now no one talks about the Epstein files anymore?" > "$USERDIR"/user-inactive
 
                 trap - ERR
                 ;;

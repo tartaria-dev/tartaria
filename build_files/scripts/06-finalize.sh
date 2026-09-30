@@ -19,8 +19,8 @@ fi
 ## arrange filesystem for bootc and image-based systems,
 ## see https://bootc-dev.github.io/bootc/filesystem.html
 
-# remove unnecessary dirs
-rm -rf /{boot,home,root,srv,mnt,var,opt,usr/local}
+# remove unnecessary dir content
+rm -rf /{boot,home,root,srv,mnt,var,opt}
 rm -rf /usr/lib/sysimage/{log,cache/pacman/pkg}
 
 # recreate necessary dirs
@@ -28,6 +28,5 @@ mkdir -p /sysroot /boot /usr/lib/ostree /var /home /root /opt /mnt /srv
 
 # create toplevel symlinks
 ln -sT sysroot/ostree /ostree
-ln -sT ../var/usrlocal /usr/local
 
 echo "::endgroup::"
