@@ -41,7 +41,7 @@ case $1 in
         echo "[-i-] Restarting subsystem. All open shells will close in 3 seconds, cancel with CTRL+C."
         sleep 3
 
-        # create file so containershell.sh knows about the restart
+        # create file so the shell knows about the restart
         touch "$HOME"/.cache/subsys-restart
 
         # start seperate job to restart the container

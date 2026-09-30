@@ -26,6 +26,11 @@ shell() {
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
         if podman exec -u "$(id -u)" -e "TERM=$CTERM" -it "subsystem-$SUBSYS_ID" /bin/fish; then
             exit 0
+        elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
+            echo "[-i-] Subsystem is restarting. Please wait."
+            sleep 1
+            rm -f "$HOME"/.cache/subsys-restart
+            exec /usr/lib/subsystem/bin/shell
         else
             TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))
         fi
@@ -86,7 +91,7 @@ else
             throbber
             WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
 
-            if [[ "$WAITED_SECONDS" -gt "15" ]]; then
+            if [[ "$WAITED_SECONDS" -gt "30" ]]; then
                 err-entry
                 exec bash
             fi
