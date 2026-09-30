@@ -1,0 +1,72 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+# set errexit & pipefail
+set -eo pipefail
+
+# do our checks
+if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
+    echo "[!!!] Please do not run this as an administrator or system user."
+    exit 77
+elif [[ ! -f /run/.containerenv ]]; then
+	echo "[!!!] Running outside of a subsystem."
+	exit 64
+fi
+
+# utilities
+help() {
+    cat <<EOF
+usage:
+    subsys <command> [options...]
+
+synopsis:
+    per-user subsystem management tools
+
+commands:
+    diag                            view journalctl logs
+    restart                         restart subsystem
+    disable                         disable subsystem
+
+EOF
+}
+
+# iterate through args
+case $1 in
+    diag)
+        # pull up journalctl logs
+        journalctl --user -xeu subsystem-containerd
+        ;;
+    restart)
+        # warn user
+        echo "[-i-] Restarting subsystem. All open shells will close in 3 seconds, cancel with CTRL+C."
+        sleep 3
+
+        # create file so containershell.sh knows about the restart
+        touch "$HOME"/.cache/subsys-restart
+
+        # start seperate job to restart the container
+        /usr/libexec/host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
+        ;;
+    disable)
+        # warn user
+        echo "[-!-] This will create a file located at $HOME/.config/subsystem/disable."
+        echo "[-i-] As long as this file exists, the following will be disabled on future logins:"
+        echo "  - autostart of the subsystem container"
+        echo "  - the autostart of the filesystem creation for the subsystem container"
+        echo
+        echo "[-i-] Removing the file afterwards will re-enable the above."
+        echo "[-i-] Press 'y' to confirm, or any other key/CTRL+C to abort."
+
+        # get confirmation
+        read -r ans
+
+        # if user didnt type "y," abort
+        [[ "$ans" != "y" ]] && echo "[-!-] Aborting." && exit 1
+
+        # create file
+        mkdir -p "$HOME"/.config/subsystem/disable
+        touch "$HOME"/.config/subsystem/disable
+
+        # notify user of changes
+        echo "[-i-] Subsystem disabled. Log out and back in to apply changes."
+esac

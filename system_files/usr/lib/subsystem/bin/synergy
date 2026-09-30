@@ -29,6 +29,7 @@ options:
     -u, --unlink                    unlink a command linked from the host                        
 
 unrecognized options will be treated as a string to execute on the host within a seperate bash shell, e.g. "echo foo"
+bash scripting is supported, e.g. "synergy [[ -f /some/file ]] && echo 'successful'"
 EOF
 }
 
@@ -50,8 +51,7 @@ case $1 in
         fi
 
         # execute cmd as root
-        # shellcheck disable=SC2068
-        /usr/libexec/host-spawn pkexec $@
+        /usr/libexec/host-spawn pkexec env SUBSYSTEM_USER=bypass bash -lic "$@"
         ;;
     -l|--link)
         # shift args
@@ -106,7 +106,6 @@ case $1 in
         fi
 
         # execute cmd normally
-        # shellcheck disable=SC2068
-        /usr/libexec/host-spawn $@
+        /usr/libexec/host-spawn env SUBSYSTEM_USER=bypass bash -lic "$@"
         ;;
 esac

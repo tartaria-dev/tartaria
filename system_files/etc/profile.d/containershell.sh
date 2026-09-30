@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# check if the shell is interactive, if we are in a TTY, or if we are root
-if [[ $- != *i* ]]; then
+# check if the shell is interactive, bypassed, disabled, if we are in a TTY, or if we are root
+if [[ $- != *i* || "$SUBSYSTEM_USER" == "bypass" || -f "$HOME"/.config/subsystem/disable ]]; then
     return
 elif [[ "$(cat /proc/cmdline)" == *rd.live.image* ]]; then
     echo "[-i-] Running on a Live ISO."

@@ -40,7 +40,10 @@ if status is-interactive
         echo "synergy --help"
         echo
         echo "Some commands are also linked into this container from the host by default for your convenience:"
-        echo "distrobox podman flatpak niri noctalia systemctl journalctl"
+        echo "distrobox podman flatpak niri noctalia systemctl journalctl bootc"
+        echo
+        echo "Brew is also available, but isn't integrated into this container by default. Just run the following:"
+        echo "synergy brew [...]"
         echo
         echo "To suppress this lovely notice, execute:"
         echo "touch ~/.config/subsystem/suppress-notice"
@@ -51,7 +54,12 @@ EOF
 
 # link default commands
 echo "[3/5] Linking default commands."
-for cmd in distrobox-* distrobox podman flatpak niri noctalia systemctl journalctl; do rm -f /usr/bin/$cmd; ln -sT /usr/libexec/host-spawn /usr/bin/"$cmd"; done
+for cmd in distrobox-* distrobox podman flatpak niri noctalia systemctl journalctl; do rm -f "$(which $cmd)"; ln -sT /usr/libexec/host-spawn "$(which $cmd)"; done
+
+# link bootc
+rm -f /usr/bin/bootc
+echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' | tee -a /usr/bin/bootc
+chmod +x /usr/bin/bootc
 
 # source user configs
 echo "[4/5] Sourcing user configurations."

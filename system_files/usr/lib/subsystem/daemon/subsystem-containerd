@@ -113,7 +113,8 @@ podman-cmd() {
         -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
         -v /usr/lib/subsystem/bin/host-spawn:/usr/libexec/host-spawn:ro \
         -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
-        -v /usr/lib/subsystem/bin/synergy:/usr/bin/synergy:ro \
+        -v /usr/lib/subsystem/bin/synergy:/usr/local/bin/synergy:ro \
+        -v /usr/lib/subsystem/bin/subsys:/usr/local/bin/subsys:ro \
         --rootfs /var/lib/subsystem/"$HASH"/rootfs \
         /usr/libexec/ignition
 }
