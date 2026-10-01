@@ -69,4 +69,16 @@ case $1 in
 
         # notify user of changes
         echo "[-i-] Subsystem disabled. Log out and back in to apply changes."
+        ;;
+    *)
+        # check for no argument or invalid argument
+        if [[ -z "$*" ]]; then
+            echo "[!!!] No command provided."
+        else
+            echo "[!!!] Invalid argument."
+        fi
+
+        # how to write good comments?
+        help
+        exit 1
 esac
