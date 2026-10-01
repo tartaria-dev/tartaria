@@ -22,6 +22,20 @@ readonly CTERM
 readonly SUBSYS_ID
 
 ## utilities
+get_state() {
+    systemctl --user is-failed subsystem-containerd 2>/dev/null
+}
+
+throbber() {
+    local msg="$1"
+    local frames=("/" "-" "\\" "|")
+
+    for frame in "${frames[@]}"; do
+        printf "\r[%s] %s" "$frame" "$msg"
+        sleep 0.25
+    done
+}
+
 shell() {
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
         if podman exec -u "$(id -u)" -e "TERM=$CTERM" -it "subsystem-$SUBSYS_ID" /bin/fish; then
@@ -29,7 +43,7 @@ shell() {
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
             clear
             rm -f "$HOME"/.cache/subsys-restart
-            exec /usr/lib/subsystem/bin/shell
+            exec env TMSG="Restarting..." /usr/lib/subsystem/bin/shell
         else
             TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))
         fi
@@ -37,16 +51,6 @@ shell() {
 
     err-entry
     exec bash
-}
-
-throbber() {
-    local msg="Starting..."
-    local frames=("/" "-" "\\" "|")
-
-    for frame in "${frames[@]}"; do
-        printf "\r[%s] %s" "$frame" "$msg"
-        sleep 0.25
-    done
 }
 
 err-entry() {
@@ -60,7 +64,7 @@ Logs containing relevant information can be viewed with the following command:${
 ${GRAY}journalctl --user -xeu subsystem-containerd${NORM}
 
 ${RED}Manual intervention/debugging may be required.
-Falling back to non-login host shell (bash)...${NORM}
+Falling back to login host shell (bash)...${NORM}
 
 EOF
 }
@@ -76,34 +80,34 @@ Logs containing relevant information can be viewed with the following command:${
 ${GRAY}journalctl --user -xeu subsystem-containerd${NORM}
 
 ${RED}Manual intervention/debugging may be required.
-Falling back to non-login host shell (bash)...${NORM}
+Falling back to login host shell (bash)...${NORM}
 
 EOF
 }
 
 ## main logic
-if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
+if [[ "$(get_state)" == "active" ]]; then
     shell
-else
-    if [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; then
-        while [[ "$(systemctl --user is-failed subsystem-containerd)" == "activating" ]]; do
-            throbber
-            WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
+elif [[ "$(get_state)" == "activating" || "$(get_state)" == "deactivating" || "$(get_state)" == "reloading" || "$(get_state)" == inactive ]]; then
+    while [[ "$(get_state)" == "activating" || "$(get_state)" == "deactivating" || "$(get_state)" == "reloading" || "$(get_state)" == inactive ]]; do
+        throbber ${TSMG:-Starting...}
+        WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
 
-            if [[ "$WAITED_SECONDS" -gt "30" ]]; then
-                err-entry
-                exec bash
-            fi
-        done
+        if [[ "$WAITED_SECONDS" -gt "30" ]]; then
+            err-entry
+            exec env SUBSYSTEM_USER=bypass bash -l
+	fi
+    done
 
-        if [[ "$(systemctl --user is-failed subsystem-containerd)" == "active" ]]; then
-            shell
-        else
-            err-servfail
-            exec bash
-        fi
+    if [[ "$(get_state)" == "active" ]]; then
+        shell
     else
         err-servfail
-        exec bash
+        echo "DEBUG: systemd unit detected as failed in inner loop"
+        exec env SUBSYSTEM_USER=bypass bash -l
     fi
+else
+    err-servfail
+    echo "DEBUG: systemd unit detected as failed in outer loop"
+    exec env SUBSYSTEM_USER=bypass bash -l
 fi
