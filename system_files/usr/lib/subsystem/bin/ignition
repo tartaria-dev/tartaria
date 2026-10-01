@@ -54,7 +54,7 @@ EOF
 
 # link default commands
 echo "[3/5] Linking default commands."
-for cmd in distrobox-* distrobox podman flatpak niri noctalia systemctl journalctl; do rm -f "$(which $cmd)"; ln -sT /usr/libexec/host-spawn "$(which $cmd)"; done
+for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do CMDPATH=$(command -v "$cmd"); rm -f "$CMDPATH"; ln -sT /usr/libexec/host-spawn "$CMDPATH"; done
 
 # link bootc
 rm -f /usr/bin/bootc

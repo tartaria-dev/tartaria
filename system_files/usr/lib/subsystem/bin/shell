@@ -27,8 +27,7 @@ shell() {
         if podman exec -u "$(id -u)" -e "TERM=$CTERM" -it "subsystem-$SUBSYS_ID" /bin/fish; then
             exit 0
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
-            echo "[-i-] Subsystem is restarting. Please wait."
-            sleep 1
+            clear
             rm -f "$HOME"/.cache/subsys-restart
             exec /usr/lib/subsystem/bin/shell
         else

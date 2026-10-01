@@ -38,8 +38,12 @@ case $1 in
         ;;
     restart)
         # warn user
-        echo "[-i-] Restarting subsystem. All open shells will close in 3 seconds, cancel with CTRL+C."
-        sleep 3
+        echo "[-i-] Restarting subsystem."
+        echo "[-i-] Any running tasks in the subsystem will be stopped."
+        echo "[-i-] To continue, press any key, or press CTRL+C to abort."
+
+        # await user input
+        read -srn1
 
         # create file so the shell knows about the restart
         touch "$HOME"/.cache/subsys-restart
@@ -49,22 +53,15 @@ case $1 in
         ;;
     disable)
         # warn user
-        echo "[-!-] This will create a file located at $HOME/.config/subsystem/disable."
-        echo "[-i-] As long as this file exists, the following will be disabled on future logins:"
-        echo "  - autostart of the subsystem container"
-        echo "  - the autostart of the filesystem creation for the subsystem container"
-        echo
-        echo "[-i-] Removing the file afterwards will re-enable the above."
-        echo "[-i-] Press 'y' to confirm, or any other key/CTRL+C to abort."
+        echo "[-i-] Disabling subsystem."
+        echo "[-i-] This will disable the subsystem and give you a standard host bash shell."
+        echo "[-i-] Press any key to continue, or CTRL+C to abort."
 
-        # get confirmation
-        read -r ans
-
-        # if user didnt type "y," abort
-        [[ "$ans" != "y" ]] && echo "[-!-] Aborting." && exit 1
+        # await user input
+        read -srn1
 
         # create file
-        mkdir -p "$HOME"/.config/subsystem/disable
+        mkdir -p "$HOME"/.config/subsystem
         touch "$HOME"/.config/subsystem/disable
 
         # notify user of changes
