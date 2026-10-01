@@ -66,6 +66,8 @@ case $1 in
 
         # notify user of changes
         echo "[-i-] Subsystem disabled. Log out and back in to apply changes."
+        echo "[-i-] To re-enable the subsystem, remove ~/.config/subsystem/disable."
+        echo "[-i-] You'll then need to log out then back in again."
         ;;
     *)
         # check for no argument or invalid argument
