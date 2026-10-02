@@ -45,7 +45,7 @@ retry runuser -u builder -- bash -c "cd /home/builder/yay-bin && makepkg -si --n
 rm -rf /home/builder/yay-bin
 
 # install AUR packages
-if ! retry runuser -u builder -- bash -c "xargs -a /config/02-aur-pkgs yay -S --noconfirm --needed" >/tmp/build/yay.log 2>&1; then
+if ! retry runuser -u builder -- bash -c "xargs -a /config/02-aur-pkgs yay -S --noconfirm --needed"; then
     cat /tmp/yay.log
     exit 1
 fi
