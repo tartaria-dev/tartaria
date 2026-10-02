@@ -11,16 +11,14 @@
 > Tartaria is currently unstable and not safe to install due to the efforts towards v2. Please wait for v2 to exit beta and release.
 
 ## Description
-Tartaria is a custom Arch/CachyOSv3 bootc image built for (optimized) general-day-to-day usage, providing a sleek, modern, unobtrusive experience that lets you get your work done.
+Tartaria is a custom Arch/CachyOSv3 bootc image built for general-day-to-day usage, providing a nice modern experience that lets you get stuff done.
 
-The name is inspired by my favorite species of cherries, the [Black Tartarian](https://shop.arborday.org/treeguide/210) species - tender, juicy, and sweet.
+The name is inspired by the **[Black Tartarian](https://shop.arborday.org/treeguide/210)** cherry species - tender, juicy, and sweet. Also sounds cool.
 
 
 ## Variants
 
 In total, there are sixteen variants of Tartaria.
-
-Variants marked as **sealed** are **only installable by an ISO.** Variants marked as **nonsealed** are **installable by ISO or rebasing.**
 
 Variants are composed as follows:
 
@@ -40,16 +38,14 @@ tartaria:<channel>-<edition>-<flavor>
 
 ### Flavors
 
-- `berbere`: **Nonsealed** image layout and nothing extra.
-- `amchoor`: **Nonsealed** image layout with preinstalled NVIDIA drivers.
-- `maraska`: **Sealed** image layout with secure boot support.
-- `saffron`: **Sealed** image layout with secure boot support, and preinstalled NVIDIA drivers.
+- `berbere`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with nothing extra.
+- `amchoor`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with preinstalled NVIDIA drivers.
+- `maraska`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with nothing extra.
+- `saffron`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with preinstalled NVIDIA drivers.
 
 ### Notes
 
-**Sealed** variants provide E2E integrity verification via UKIs, Secure Boot, and fs-verity–backed composefs on top of what nonsealed has. Sealed variants are only installable via ISO, and are experimental.
-
-**Nonsealed** variants do not have E2E integrity verification but still get bootc's atomic updates, rollback, and composefs filesystem. Nonsealed variants are installable by rebasing or installing via an ISO.
+**[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** images are only installable via rebasing. **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** images are only installable via ISO, **and are highly experimental.** You cannot rebase to a sealed image, and cannot install a standard image via ISO.
 
 
 ## Installing
@@ -57,7 +53,7 @@ tartaria:<channel>-<edition>-<flavor>
 ### ISO
 
 > [!WARNING]
-> ISO installation is still being tested/improved. The below instructions will update over time.
+> ISO installation is only available for sealed images (also the only way to install them), and is highly experimental. Install with caution.
 
 Run the following in a Linux terminal and go through the selection/download process:
 
@@ -78,13 +74,12 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/tartaria-dev/tartaria:<vari
 
 ### Notes
 
-If after installation you don't like the variant you chose, run `synergy rebase` in the terminal and go through the selection process.
-
-Refer to the [Variants](https://github.com/tartaria-dev/tartaria#Variants) section above for choosing a variant.
+Refer to the **[Variants](https://github.com/tartaria-dev/tartaria#Variants)** section above for choosing a variant. Ensure you choose the **correct installation method** for the variant you choose, **otherwise unexpected behavior can occur.**
 
 
 ## Credits
-Thank you to the [Bootcrew](https://discord.gg/52Qcb4x2w3) team for making this project possible (and for general help)! I'd also like to thank the [XeniaOS](https://github.com/XeniaMeraki/XeniaOS/) and [Zirconium](https://github.com/zirconium-dev/zirconium/) projects for inspiring the creation of Tartaria!
+Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making this project possible (and for general help)! I'd also like to thank the (now archived :<) **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
+
 
 ## Metrics
 ![Alt](https://repobeats.axiom.co/api/embed/e1ddc95a13421c83c1bb9958fb3fc28c8fb02cce.svg "Repobeats analytics image")
