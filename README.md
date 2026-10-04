@@ -78,7 +78,7 @@ Refer to the **[Variants](https://github.com/tartaria-dev/tartaria#Variants)** s
 
 
 ## Credits
-Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making this project possible (and for general help)! I'd also like to thank the (now archived :<) **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
+Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making this project possible (and for general help)! I'd also like to thank the (now archived :<) **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and (not archived :>) **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
 
 
 ## Metrics
