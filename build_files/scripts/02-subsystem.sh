@@ -14,16 +14,16 @@ retry pacman -S --noconfirm --needed mkosi
 mkdir -p /usr/lib/subsystem/segments
 
 # build dummy arch rootfs - provides minimal /var and /etc
-if ! retry mkosi build --force --directory="/mkosi" --environment="IMAGE_VARIANT=$IMAGE_VARIANT" >/tmp/build/mkosi.log 2>&1; then
+if ! retry bash -c "mkosi build --force --directory='/mkosi' --environment=\"IMAGE_VARIANT=$IMAGE_VARIANT\" >/tmp/build/mkosi.log 2>&1"; then
     cat /tmp/build/mkosi.log
     exit 1
 fi
 
 # compress /etc
-retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L etc /usr/lib/subsystem/segments/etc.dsk /etc >/dev/null
+mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L etc /usr/lib/subsystem/segments/etc.dsk /etc >/dev/null
 
 # compress /var
-retry mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /output/image/var >/dev/null
+mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /output/image/var >/dev/null
 
 # cleanup
 pacman -Rns --noconfirm mkosi

@@ -18,7 +18,7 @@ chown -R root:polkitd /etc/polkit-1/rules.d
 
 # remove base-devel, keep sudo
 pacman -Rns --noconfirm base-devel cmake extra-cmake-modules
-pacman -S --noconfirm --needed sudo
+retry pacman -S --noconfirm --needed sudo
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
@@ -44,7 +44,7 @@ sed -i "s/Arch/Tartaria ($IMAGE_VARIANT)/g" /usr/lib/os-release
 ln -sT /usr/lib/os-release /etc/os-release
 
 # install default icon theme
-git clone https://github.com/vinceliuice/MacTahoe-icon-theme
+retry git clone https://github.com/vinceliuice/MacTahoe-icon-theme
 bash ./MacTahoe-icon-theme/install.sh -t grey -n default-icons -d /usr/share/icons
 rm -rf MacTahoe-icon-theme
 
