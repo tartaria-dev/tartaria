@@ -9,7 +9,7 @@ set -oux pipefail
 
 # create build log dir
 mkdir -p /tmp/build
-chown 777 /tmp/build
+chmod 1777 /tmp/build
 
 # move /var directories to /usr/lib/sysimage for bootc usroverlay compatibility
 grep "= */var" /etc/pacman.conf | sed "/= *\/var/s/.*=// ; s/ //" | \
