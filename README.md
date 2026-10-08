@@ -53,7 +53,7 @@ tartaria:<channel>-<edition>-<flavor>
 ### ISO
 
 > [!WARNING]
-> ISO installation is only available for sealed images (also the only way to install them), and is highly experimental. Install with caution.
+> ISO installation is highly experimental. Install with caution and an expectation for something to go **kaboom**.
 
 Run the following in a Linux terminal and go through the selection/download process:
 
