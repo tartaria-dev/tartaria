@@ -23,6 +23,9 @@ retry pacman -S --noconfirm --needed sudo
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service
 
+# fix ttyname err noise in synergy
+sed -i '1s|/usr/bin/tty )|/usr/bin/tty 2>/dev/null )|' /etc/profile.d/gpm.sh
+
 # configure useradd defaults
 sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
 

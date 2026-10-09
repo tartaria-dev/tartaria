@@ -95,7 +95,7 @@ case $1 in
         fi
     
         # execute cmd as root
-        /usr/libexec/host-spawn --no-pty pkexec env SUBSYSTEM_USER=bypass bash -lic "$@"
+        /usr/libexec/host-spawn run0 --background= env SUBSYSTEM_USER=bypass bash -lic "$*"
         ;;
     *)
         # run checks
@@ -106,6 +106,6 @@ case $1 in
         fi
 
         # execute cmd normally
-        /usr/libexec/host-spawn --no-pty env SUBSYSTEM_USER=bypass bash -lic "$@"
+        /usr/libexec/host-spawn env SUBSYSTEM_USER=bypass bash -lic "$*"
         ;;
 esac
