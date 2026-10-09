@@ -104,11 +104,9 @@ elif [[ "$(get_state)" == "activating" || "$(get_state)" == "deactivating" || "$
         shell
     else
         err-servfail
-        echo "DEBUG: systemd unit detected as failed in inner loop"
         exec env SUBSYSTEM_USER=bypass bash -l
     fi
 else
     err-servfail
-    echo "DEBUG: systemd unit detected as failed in outer loop"
     exec env SUBSYSTEM_USER=bypass bash -l
 fi
