@@ -37,12 +37,13 @@ throbber() {
 }
 
 shell() {
+    rm -f "$HOME"/.cache/subsys-restart
+    
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
         if podman exec -u "$(id -u)" -e "TERM=$CTERM" -it "subsystem-$SUBSYS_ID" /bin/fish; then
             exit 0
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
             clear
-            rm -f "$HOME"/.cache/subsys-restart
             exec env TMSG="Restarting..." /usr/lib/subsystem/bin/shell
         else
             TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))
@@ -90,7 +91,7 @@ if [[ "$(get_state)" == "active" ]]; then
     shell
 elif [[ "$(get_state)" == "activating" || "$(get_state)" == "deactivating" || "$(get_state)" == "reloading" || "$(get_state)" == inactive ]]; then
     while [[ "$(get_state)" == "activating" || "$(get_state)" == "deactivating" || "$(get_state)" == "reloading" || "$(get_state)" == inactive ]]; do
-        throbber ${TSMG:-Starting...}
+        throbber ${TMSG:-Starting...}
         WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
 
         if [[ "$WAITED_SECONDS" -gt "30" ]]; then
