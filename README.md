@@ -40,8 +40,8 @@ tartaria:<channel>-<edition>-<flavor>
 
 - `berbere`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with nothing extra.
 - `amchoor`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with preinstalled NVIDIA drivers.
-- `maraska`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with nothing extra.
-- `saffron`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with preinstalled NVIDIA drivers.
+- `maraska`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with Secure Boot support.
+- `saffron`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with Secure Boot support and preinstalled NVIDIA drivers.
 
 ### Notes
 
@@ -55,6 +55,9 @@ tartaria:<channel>-<edition>-<flavor>
 > [!WARNING]
 > ISO installation is highly experimental. Install with caution and an expectation for something to go **kaboom**.
 
+> [!IMPORTANT]
+> When booting Tartaria after ISO installation, you will see a prompt for enrolling MOK keys (`maraska` has one key, `saffron` has two). They are necessary for Secure Boot to work, so enroll them. The passwords for both are `tartaria`.
+
 Run the following in a Linux terminal and go through the selection/download process:
 
 ```
@@ -62,6 +65,9 @@ Run the following in a Linux terminal and go through the selection/download proc
 ```
 
 ### Rebasing
+
+> [!IMPORTANT]
+> Standard variants have no secure boot support at the moment, but may come in the future once ISO installation is available for them.
 
 If you are already running an OS such as Fedora Atomic or one of the Universal Blue projects, you can rebase with one of the following commands:
 
