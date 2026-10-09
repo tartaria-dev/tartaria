@@ -23,7 +23,6 @@ systemctl enable \
     mok-enroll.service \
     NetworkManager.service \
     opt.mount \
-    pick-cherries.timer \
     polkit.service \
     preinstall-flatpaks.service \
     rechunker-group-fix.service \
@@ -34,7 +33,6 @@ systemctl enable \
     sync-greeter-configs.service \
     tuned-ppd.service \
     tuned.service \
-    usr-share-tartaria-cherries.mount \
     uupd.timer
 
 # system-preset
