@@ -28,27 +28,21 @@ alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 
+function fish_greeting
+    if not test -e ~/.config/subsystem/suppress-notice
+        echo "Welcome! You are inside a host-based container whose default shell is fish."
+        echo "All system changes reset on system reboot/shutdown. Some commands may have undefined behavior."
+        echo "Run 'synergy --help' to see how to manage host command execution/linking."
+        echo
+        echo "Linked commands: distrobox, podman, flatpak, niri, noctalia, systemctl, journalctl, bootc"
+        echo "Brew is also accessible, just not directly in the container. Just run: synergy brew [...]"
+        echo
+        echo "To hide this lovely notice, run: touch ~/.config/subsystem/suppress-notice"
+    end
+end
+
 if status is-interactive
     atuin init fish | source
-
-    if not test -f ~/.config/subsystem/suppress-notice
-        echo "Hello there!"
-        echo
-        echo "Your shell is running inside a host-based container. Changes besides those to your homedir persist until system reboot/shutdown."
-        echo
-        echo "Due to this, commands may have undefined or unexpected behavior. To see how to run/link/unlink commands from the host, run:"
-        echo "synergy --help"
-        echo
-        echo "Some commands are also linked into this container from the host by default for your convenience:"
-        echo "distrobox podman flatpak niri noctalia systemctl journalctl bootc"
-        echo
-        echo "Brew is also available, but isn't integrated into this container by default. Just run the following:"
-        echo "synergy brew [...]"
-        echo
-        echo "To suppress this lovely notice, execute:"
-        echo "touch ~/.config/subsystem/suppress-notice"
-        echo
-    end
 end
 EOF
 
