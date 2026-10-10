@@ -17,13 +17,14 @@ fi
 help() {
     cat <<EOF
 usage:
-    subsys <command> [options...]
+    subsys <command>
 
 synopsis:
     per-user subsystem management tools
 
 commands:
-    diag                            view journalctl logs
+    help                            show this help message
+    diag                            view subsystem logs
     restart                         restart subsystem
     disable                         disable subsystem
 
@@ -32,6 +33,10 @@ EOF
 
 # iterate through args
 case $1 in
+    help)
+        # help msg
+        help
+        ;;
     diag)
         # pull up journalctl logs
         journalctl --user -xeu subsystem-containerd

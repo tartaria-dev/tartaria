@@ -30,8 +30,11 @@ alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 
 function fish_greeting
     if not test -e ~/.config/subsystem/suppress-notice
-        echo "Welcome! You are inside a host-based container whose default shell is fish."
-        echo "All system changes reset on system reboot/shutdown. Some commands may have undefined behavior."
+        echo "Welcome! You are inside a mutable, host-based container whose default shell is fish."
+        echo "All system changes besides those to your home directory reset on system reboot/shutdown."
+        echo "Also note that some commands may have undefined behavior, so be cautious."
+        echo
+        echo "Run 'subsys help' to see some useful commands for managing this container."
         echo "Run 'synergy --help' to see how to manage host command execution/linking."
         echo
         echo "Linked commands: distrobox, podman, flatpak, niri, noctalia, systemctl, journalctl, bootc"
