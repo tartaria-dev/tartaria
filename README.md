@@ -7,9 +7,6 @@
 </p>
 
 
-> [!WARNING]
-> Tartaria is currently unstable and not safe to install due to the efforts towards v2. Please wait for v2 to exit beta and release.
-
 ## Description
 Tartaria is a custom Arch/CachyOSv3 bootc image built for general-day-to-day usage, providing a nice modern experience that lets you get stuff done.
 
