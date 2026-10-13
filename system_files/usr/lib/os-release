@@ -1,11 +1,11 @@
-NAME="Arch"
-PRETTY_NAME="Arch"
-ID=arch
-BUILD_ID=rolling
+NAME="Tartaria"
+PRETTY_NAME="placeholder_name"
+ID=tartaria
+LOGO=tartaria-logo
+BUILD_ID=placeholder_date
 ANSI_COLOR="38;2;23;147;209"
 HOME_URL="https://github.com/tartaria-dev/tartaria"
 DOCUMENTATION_URL="https://github.com/tartaria-dev/tartaria"
 SUPPORT_URL="https://github.com/tartaria-dev/tartaria/issues"
 BUG_REPORT_URL="https://github.com/tartaria-dev/tartaria/issues"
 PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
-LOGO=tartaria-logo
