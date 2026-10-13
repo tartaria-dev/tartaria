@@ -8,52 +8,57 @@
 
 
 ## Description
-Tartaria is a custom Arch/CachyOSv3 bootc image built for general-day-to-day usage, providing a nice modern experience that lets you get stuff done.
 
-The name is inspired by the **[Black Tartarian](https://shop.arborday.org/treeguide/210)** cherry species - tender, juicy, and sweet. Also sounds cool.
+Tartaria is a custom Arch/CachyOSv3 bootc image built for general day-to-day usage, providing a nice modern experience that lets you get stuff done.
+
+Note that despite my best efforts, this image is still **largely experimental** as a whole, with some aspects being more so than others.
+
+The name is inspired by the **[Black Tartarian](https://shop.arborday.org/treeguide/210)** cherry species - tastes great, and it sounds cool.
 
 
 ## Variants
 
-In total, there are sixteen variants of Tartaria.
+In total, Tartaria has sixteen variants. You've got choices.
 
-Variants are composed as follows:
-
-```
-tartaria:<channel>-<edition>-<flavor>
-```
+Variants are composed as `tartaria:<channel>-<edition>-<flavor>`.
 
 ### Channels
 
-- `stable`: Built every **72 hours** and on **every new release**. Does not receive the latest, untested changes immediately.
-- `unstable`: Built **daily** and on **every new change**. Not recommended for usage, unless you are testing changes and/or like to live on the edge. Be aware that your system may break at any moment in time.
+| Channel    | Description                                                                                            |
+|------------|--------------------------------------------------------------------------------------------------------|
+| `stable`   | **Built every 72 hours** and on **every new release**; lags slightly behind new changes for stability  |
+| `unstable` | **Built daily** and on **every new change**; may break at any moment, so use only for testing          |
 
 ### Editions
 
-- `arch`: Based on **Arch Linux** with the **Arch kernel**.
-- `cachy`: Based on **CachyOS-v3** with the **CachyOS-v3 BORE kernel**.
+| Edition | Description                                              |
+|---------|----------------------------------------------------------|
+| `arch`  | **Arch Linux** with the standard Arch kernel             |
+| `cachy` | **CachyOS-v3** with the CachyOS-v3 BORE scheduler kernel |
 
 ### Flavors
 
-- `berbere`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with nothing extra.
-- `amchoor`: **[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** image layout with preinstalled NVIDIA drivers.
-- `maraska`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with Secure Boot support.
-- `saffron`: **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** image layout with Secure Boot support and preinstalled NVIDIA drivers.
+| Flavor    | Layout                                                                                           | Secure Boot | NVIDIA drivers |
+|-----------|--------------------------------------------------------------------------------------------------|:-----------:|:--------------:|
+| `berbere` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✗              |
+| `amchoor` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✓              |
+| `maraska` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✗              |
+| `saffron` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✓              |
 
 ### Notes
 
-**[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** images are only installable via rebasing. **[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** images are only installable via ISO, **and are highly experimental.** You cannot rebase to a sealed image, and cannot install a standard image via ISO.
+**[Standard](https://bootc.dev/bootc/bootc-filesystem.7.html)** images are only installable via rebasing.
+
+**[Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)** images are only installable via ISO, **and are highly experimental.**
+
+You **cannot** rebase to a sealed image, and **cannot** install a standard image via ISO.
 
 
 ## Installing
 
 ### ISO
 
-> [!WARNING]
-> ISO installation is highly experimental. Install with caution and an expectation for something to go **kaboom**.
-
-> [!IMPORTANT]
-> When booting Tartaria after ISO installation, you will see a prompt for enrolling MOK keys (`maraska` has one key, `saffron` has two). They are necessary for Secure Boot to work, so enroll them. The passwords for both are `tartaria`.
+ISO installation is **highly experimental**. Install with caution and an expectation for something to go **kaboom**.
 
 Run the following in a Linux terminal and go through the selection/download process:
 
@@ -61,10 +66,11 @@ Run the following in a Linux terminal and go through the selection/download proc
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
 ```
 
-### Rebasing
+On first boot, you will see a prompt for enrolling MOK keys; `maraska` has one key, `saffron` has two.
 
-> [!IMPORTANT]
-> Standard variants have no secure boot support at the moment, but may come in the future once ISO installation is available for them.
+They are necessary for Secure Boot to work, so enroll them. The passwords for both are `tartaria`.
+
+### Rebasing
 
 If you are already running an OS such as Fedora Atomic or one of the Universal Blue projects, you can rebase with one of the following commands:
 
@@ -77,12 +83,24 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/tartaria-dev/tartaria:<vari
 
 ### Notes
 
-Refer to the **[Variants](https://github.com/tartaria-dev/tartaria#Variants)** section above for choosing a variant. Ensure you choose the **correct installation method** for the variant you choose, **otherwise unexpected behavior can occur.**
+Refer to the **[Variants](https://github.com/tartaria-dev/tartaria#Variants)** section above for choosing a variant.
+
+Ensure you choose the **correct installation method** for the variant you choose, **otherwise things can and will go kaboom.**
 
 
 ## Credits
-Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making this project possible (and for general help)! I'd also like to thank the (now archived :<) **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and (not archived :>) **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
+
+Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making this project possible (and for general help)!
+
+I'd also like to thank the super duper cool **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
 
 
-## Metrics
-![Alt](https://repobeats.axiom.co/api/embed/e1ddc95a13421c83c1bb9958fb3fc28c8fb02cce.svg "Repobeats analytics image")
+## Stars
+
+<a href="https://www.star-history.com/?repos=tartaria-dev%2Ftartaria&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tartaria-dev/tartaria&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tartaria-dev/tartaria&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tartaria-dev/tartaria&type=date&legend=top-left" />
+ </picture>
+</a>
