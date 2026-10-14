@@ -7,13 +7,19 @@ echo "::group::===========================> Install subsystem"
 source /config/00-functions
 set -ouex pipefail
 
+# fix os-release files
+rm -f /etc/os-release
+sed -i "s/placeholder_name/Tartaria v2.0.2 $IMAGE_VARIANT/g" /usr/lib/os-release
+sed -i "s/placeholder_date/$(date +%F.%H%M%S%N)/g" /usr/lib/os-release
+ln -sT /usr/lib/os-release /etc/os-release
+
 # install mkosi
 retry pacman -S --noconfirm --needed mkosi
 
 # create dirs
 mkdir -p /usr/lib/subsystem/segments
 
-# build dummy arch rootfs - provides minimal /var and /etc
+# build dummy arch rootfs - provides minimal /var
 if ! retry bash -c "mkosi build --force --directory='/mkosi' --environment=\"IMAGE_VARIANT=$IMAGE_VARIANT\" >/tmp/build/mkosi.log 2>&1"; then
     cat /tmp/build/mkosi.log
     exit 1

@@ -41,11 +41,6 @@ sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.servi
 # pick random gender flag and set it as default face
 cp "/usr/share/tartaria/faces/face-$(shuf -i 1-10 -n 1).png" /usr/share/tartaria/faces/default-face.png
 
-# fix os-release files
-rm -f /etc/os-release
-sed -i "s/Arch/Tartaria ($IMAGE_VARIANT)/g" /usr/lib/os-release
-ln -sT /usr/lib/os-release /etc/os-release
-
 # install default icon theme
 retry git clone https://github.com/vinceliuice/MacTahoe-icon-theme
 bash ./MacTahoe-icon-theme/install.sh -t grey -n default-icons -d /usr/share/icons
