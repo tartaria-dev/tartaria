@@ -62,7 +62,7 @@ retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/hos
 chmod +x /usr/lib/subsystem/bin/host-spawn
 
 # hide some desktop entries
-sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{avahi-discover,bssh,bvnc,lstopo,nvim,dev.noctalia.Noctalia,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
+sed -i '/^NoDisplay=/d;$aNoDisplay=true' /usr/share/applications/{lstopo,nvim,dev.noctalia.Noctalia,tuned-gui,assistant,designer,linguist,mpv,qdbusviewer,qv4l2,qvidcap,vim}.desktop
 update-desktop-database
 
 # export secureboot cert for saffron/maraska
