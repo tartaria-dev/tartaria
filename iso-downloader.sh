@@ -40,19 +40,19 @@ while true; do
 done
 clear
 
-# read user answer (NVIDIA drivers)
+# read user answer (shell selection)
 while true; do
     echo "[---] ISO Selection"
-    echo "[---] Do you need preinstalled NVIDIA drivers? (enter the corresponding number)"
+    echo "[---] Which shell would you like? (enter the corresponding number)"
     echo
-    options=( "Yes" "No" )
+    options=( "Dux Shell" "Noctalia Shell" )
     for i in "${!options[@]}"; do
         printf "[-%d-] %s\n" "$((i + 1))" "${options[$i]}"
     done
     echo
-    read -n 1 -p "[-?-] >> " nvidia_answer
+    read -n 1 -p "[-?-] >> " shell_answer
 
-    if (( nvidia_answer < 1 || nvidia_answer > ${#options[@]} )); then
+    if (( shell_answer < 1 || shell_answer > ${#options[@]} )); then
         echo -e "\n[!!!] Invalid choice. Please try again."
         sleep 1
         clear
@@ -72,7 +72,7 @@ podman pull ghcr.io/oras-project/oras:v1.3.4
 clear
 
 # download iso
-idx=$(( (base_answer - 1) * 2 + (nvidia_answer - 1) ))
+idx=$(( (base_answer - 1) * 2 + (shell_answer - 1) ))
 tag="${tags[$idx]}"
 name="${names[$idx]}"
 

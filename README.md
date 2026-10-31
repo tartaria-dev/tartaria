@@ -38,12 +38,12 @@ Variants are composed as `tartaria:<channel>-<edition>-<flavor>`.
 
 ### Flavors
 
-| Flavor    | Layout                                                                                           | Secure Boot | NVIDIA drivers |
-|-----------|--------------------------------------------------------------------------------------------------|:-----------:|:--------------:|
-| `berbere` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✗              |
-| `amchoor` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✓              |
-| `maraska` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✗              |
-| `saffron` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✓              |
+| Flavor    | Layout                                                                                           | Secure Boot | Noctalia Shell | Dux Shell / DMS |
+|-----------|--------------------------------------------------------------------------------------------------|:-----------:|:--------------:|:---------------:|
+| `berbere` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✓              | ✗               |
+| `amchoor` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✗              | ✓               |
+| `maraska` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✓              | ✗               |
+| `saffron` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✗              | ✓               |
 
 ### Notes
 
@@ -66,9 +66,7 @@ Run the following in a Linux terminal and go through the selection/download proc
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tartaria-dev/tartaria/refs/heads/live/iso-downloader.sh)"
 ```
 
-On first boot, you will see a prompt for enrolling MOK keys; `maraska` has one key, `saffron` has two.
-
-They are necessary for Secure Boot to work, so enroll them. The passwords for both are `tartaria`.
+On first boot, you will see a prompt for enrolling the secureboot key; the password is `tartaria`.
 
 ### Rebasing
 

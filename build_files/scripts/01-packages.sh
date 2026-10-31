@@ -12,19 +12,19 @@ set -ouex pipefail
 # import package list as an array
 mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /config/01-sys-pkgs)
 
-# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
+# based on image flavor, install arch/cachy kernel and noctalia/dux shell
 case "$IMAGE_FLAVOR" in
     arch-maraska|arch-berbere)
         packages+=("linux")
         ;;
     arch-saffron|arch-amchoor)
-        packages+=("linux" "nvidia-open" "nvidia-utils")
+        packages+=("linux")
         ;;
     cachy-maraska|cachy-berbere)
         packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager")
         ;;
     cachy-saffron|cachy-amchoor)
-        packages+=("linux-cachyos-bore-nvidia-open" "linux-cachyos-bore" "scx-scheds" "scx-manager" "nvidia-utils")
+        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager")
         ;;
 esac
 
