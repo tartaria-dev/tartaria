@@ -54,7 +54,7 @@ systemctl --global enable \
     chezmoi-init.service \
     chezmoi-update.timer \
     enable-flathub-repo.service \
-    noctalia-shell.service \
+    desktop-shell.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
     udiskie.service \
@@ -65,7 +65,7 @@ systemctl preset --global \
     chezmoi-init.service \
     chezmoi-update.timer \
     enable-flathub-repo.service \
-    noctalia-shell.service \
+    desktop-shell.service \
     refresh-font-cache.service \
     subsystem-containerd.service \
     udiskie.service \
@@ -73,5 +73,5 @@ systemctl preset --global \
 
 # user-wants for Niri
 systemctl add-wants --global niri.service \
-    noctalia-shell.service \
+    desktop-shell.service \
     udiskie.service

@@ -6,4 +6,4 @@ set -eo pipefail
 
 # sync config files
 cp -a /usr/share/greeter-defaults/config.toml /etc/greetd/config.toml
-cp -a /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml
+# cp -a /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml

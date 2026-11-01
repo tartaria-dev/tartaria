@@ -66,16 +66,12 @@ jobs:
         id: build_base
         uses: redhat-actions/buildah-build@v3.1.0
         env:
-          MODULE_KEY: ${{ secrets.MODULE_KEY }}
-          MODULE_CERT: ${{ secrets.MODULE_CERT }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --target base
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
-            --secret id=module_key,env=MODULE_KEY
-            --secret id=module_cert,env=MODULE_CERT
             --security-opt=label=disable
           image: stage-base
           tags: ${{ github.run_id }}
@@ -90,16 +86,12 @@ jobs:
         id: build_split
         uses: redhat-actions/buildah-build@v3.1.0
         env:
-          MODULE_KEY: ${{ secrets.MODULE_KEY }}
-          MODULE_CERT: ${{ secrets.MODULE_CERT }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --target split-kernel
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
-            --secret id=module_key,env=MODULE_KEY
-            --secret id=module_cert,env=MODULE_CERT
             --security-opt=label=disable
           image: stage-split
           tags: ${{ github.run_id }}
@@ -114,16 +106,12 @@ jobs:
         id: build_chunk
         uses: redhat-actions/buildah-build@v3.1.0
         env:
-          MODULE_KEY: ${{ secrets.MODULE_KEY }}
-          MODULE_CERT: ${{ secrets.MODULE_CERT }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
         with:
           containerfiles: ${{ matrix.containerfile }}
           extra-args: |
             --target chunkah
             --secret id=secureboot_cert,env=SECUREBOOT_CERT
-            --secret id=module_key,env=MODULE_KEY
-            --secret id=module_cert,env=MODULE_CERT
             --volume ${{ github.workspace }}:/src
             --security-opt=label=disable
           image: stage-chunked
@@ -140,10 +128,8 @@ jobs:
         env:
           SECUREBOOT_KEY: ${{ secrets.SECUREBOOT_KEY }}
           SECUREBOOT_CERT: ${{ secrets.SECUREBOOT_CERT }}
-          MODULE_KEY: ${{ secrets.MODULE_KEY }}
-          MODULE_CERT: ${{ secrets.MODULE_CERT }}
         with:
-          containerfiles: build_files/addons/Containerfile.ukify
+          containerfiles: build_files/images/Containerfile.seal-finalize
           extra-args: |
             --secret id=secureboot_key,env=SECUREBOOT_KEY
             --secret id=secureboot_cert,env=SECUREBOOT_CERT

@@ -19,6 +19,7 @@ udev
 atuin
 bash
 bash-completion
+cava
 curl
 fastfetch
 fish
@@ -63,6 +64,7 @@ bluez
 bluez-utils
 cups
 cups-browsed
+cups-pk-helper
 ddcutil
 fprintd
 intel-media-driver
@@ -149,7 +151,6 @@ archlinux-xdg-menu
 brightnessctl
 chezmoi
 cliphist
-dgop
 espeak-ng
 evolution-data-server
 frameworkintegration
@@ -160,7 +161,6 @@ greetd
 inotify-tools
 libappindicator
 niri
-noctalia
 orca
 orchis-theme
 shared-mime-info
@@ -168,6 +168,7 @@ tuned
 tuned-ppd
 wl-clip-persist
 wlsunset
+wtype
 xdg-desktop-portal
 xdg-desktop-portal-gnome
 xdg-user-dirs

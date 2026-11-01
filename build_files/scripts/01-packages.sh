@@ -12,19 +12,19 @@ set -ouex pipefail
 # import package list as an array
 mapfile -t packages < <(grep -vE '^[[:space:]]*(#|$)' /config/01-sys-pkgs)
 
-# based on image flavor, install arch/cachy kernel and/or nvidia-open drivers
+# based on image flavor, install arch/cachy kernel and noctalia/dux shell
 case "$IMAGE_FLAVOR" in
     arch-maraska|arch-berbere)
-        packages+=("linux")
+        packages+=("linux" "noctalia" "noctalia-greeter")
         ;;
     arch-saffron|arch-amchoor)
-        packages+=("linux" "nvidia-open" "nvidia-utils")
+        packages+=("linux" "dux-shell" "dux-gop" "qt6-multimedia")
         ;;
     cachy-maraska|cachy-berbere)
-        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager")
+        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager" "noctalia" "noctalia-greeter")
         ;;
     cachy-saffron|cachy-amchoor)
-        packages+=("linux-cachyos-bore-nvidia-open" "linux-cachyos-bore" "scx-scheds" "scx-manager" "nvidia-utils")
+        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager" "dux-shell" "dux-gop" "qt6-multimedia")
         ;;
 esac
 
@@ -49,6 +49,14 @@ if ! retry runuser -u builder -- bash -c "xargs -a /config/02-aur-pkgs yay -S --
     cat /tmp/build/yay.log
     exit 1
 fi
+
+# install extra dux-shell stuffs if saffron/amchoor
+if [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
+    if ! retry runuser -u builder -- bash -c "yay -S --noconfirm --needed dux-greeter dux-search-bin >/tmp/build/yay.log 2>&1"; then
+        cat /tmp/build/yay.log
+        exit 1
+    fi
+fi 
 
 # cleanup
 userdel builder

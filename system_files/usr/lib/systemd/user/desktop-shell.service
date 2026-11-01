@@ -1,11 +1,11 @@
 [Unit]
-Description=Noctalia Shell Service
+Description=Desktop Shell Service
 PartOf=graphical-session.target
 Requisite=graphical-session.target
 After=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/noctalia
+ExecStart=/usr/bin/bash -c 'if [[ -x /usr/bin/noctalia ]]; then exec /usr/bin/noctalia; elif [[ -x /usr/bin/dms ]]; then exec /usr/bin/dms run; fi'
 Restart=on-failure
 RestartSec=1
 
