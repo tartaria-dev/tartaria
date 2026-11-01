@@ -61,6 +61,13 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O /usr/lib/subsystem/bin/host-spawn
 chmod +x /usr/lib/subsystem/bin/host-spawn
 
+# configure greeter cmd
+if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
+    sed -i "s|PLACEHOLDER|env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/bin/noctalia-greeter-session -- --session niri|g" /{etc/greetd,usr/share/greeter-defaults}/config.toml
+elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
+    sed -i "s|PLACEHOLDER|env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/bin/dms-greeter --command niri|g" /{etc/greetd,usr/share/greeter-defaults}/config.toml
+fi
+
 # export secureboot cert for saffron/maraska
 if [[ "$IMAGE_VARIANT" == *saffron || "$IMAGE_VARIANT" == *maraska ]]; then
     mkdir -p /usr/share/tartaria/certs
