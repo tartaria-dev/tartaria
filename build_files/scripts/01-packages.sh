@@ -18,13 +18,13 @@ case "$IMAGE_FLAVOR" in
         packages+=("linux" "noctalia" "noctalia-greeter")
         ;;
     arch-saffron|arch-amchoor)
-        packages+=("linux" "dux-shell" "dux-gop" "dux-search-bin" "qt6-multimedia")
+        packages+=("linux" "dux-shell" "dux-gop" "qt6-multimedia")
         ;;
     cachy-maraska|cachy-berbere)
         packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager" "noctalia" "noctalia-greeter")
         ;;
     cachy-saffron|cachy-amchoor)
-        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager" "dux-shell" "dux-gop" "dux-search-bin" "qt6-multimedia")
+        packages+=("linux-cachyos-bore" "scx-scheds" "scx-manager" "dux-shell" "dux-gop" "qt6-multimedia")
         ;;
 esac
 
@@ -50,9 +50,9 @@ if ! retry runuser -u builder -- bash -c "xargs -a /config/02-aur-pkgs yay -S --
     exit 1
 fi
 
-# install dux-greeter if saffron/amchoor
+# install extra dux-shell stuffs if saffron/amchoor
 if [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
-    if ! retry runuser -u builder -- bash -c "yay -S --noconfirm --needed dux-greeter >/tmp/build/yay.log 2>&1"; then
+    if ! retry runuser -u builder -- bash -c "yay -S --noconfirm --needed dux-greeter dux-search-bin >/tmp/build/yay.log 2>&1"; then
         cat /tmp/build/yay.log
         exit 1
     fi
