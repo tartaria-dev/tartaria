@@ -9,7 +9,7 @@ set -ouex pipefail
 
 # fix os-release files
 rm -f /etc/os-release
-sed -i "s/placeholder_name/Tartaria v2.0.2 $IMAGE_VARIANT/g" /usr/lib/os-release
+sed -i "s/placeholder_name/Tartaria v2.1.0 $IMAGE_VARIANT/g" /usr/lib/os-release
 sed -i "s/placeholder_date/$(date +%F.%H%M%S%N)/g" /usr/lib/os-release
 ln -sT /usr/lib/os-release /etc/os-release
 

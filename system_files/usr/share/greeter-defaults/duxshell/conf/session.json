@@ -1,0 +1,75 @@
+{
+  "materialWallpapers": {
+    "": {
+      "shared": {
+        "preset": "dank",
+        "seed": "#d0bcff"
+      }
+    }
+  },
+  "wallpaperPath": "/usr/share/tartaria/wallpapers/cherry_tree.png",
+  "monitorWallpapers": {},
+  "desktopWidgetInstancePositions": {
+    "lock_clock": {
+      "_synced": {
+        "x": 0,
+        "y": -0.056517311608961306,
+        "anchorX": "center",
+        "width": 333,
+        "height": 397,
+        "anchorY": "center"
+      }
+    },
+    "lock_auth": {
+      "_synced": {
+        "x": 0,
+        "y": 0.21486761710794297,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "lock_notifications": {
+      "_synced": {
+        "x": 0.013753581661891117,
+        "y": 0.024439918533604887,
+        "anchorX": "end"
+      }
+    },
+    "lock_status": {
+      "_synced": {
+        "x": 0.013753581661891117,
+        "y": 0.024439918533604887,
+        "anchorX": "end",
+        "anchorY": "end"
+      }
+    }
+  },
+  "lockScreenAutoPositions": {},
+  "idleInhibited": true,
+  "wallpaperTransition": "iris bloom",
+  "includedTransitions": [
+    "fade",
+    "wipe",
+    "disc",
+    "stripes",
+    "iris bloom",
+    "portal"
+  ],
+  "monitorCyclingSettings": {
+    "DP-1": {
+      "enabled": false,
+      "random": false,
+      "recursive": false,
+      "mode": "interval",
+      "interval": 300,
+      "time": "06:00",
+      "folderPath": ""
+    }
+  },
+  "lastPlayerIdentity": "",
+  "niriOutputSettings": {},
+  "lastAppliedIconTheme": "default-icons-grey-dark",
+  "launcherLastQuery": "",
+  "launcherQueryHistory": [],
+  "configVersion": 7
+}

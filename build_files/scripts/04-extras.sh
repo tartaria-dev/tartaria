@@ -61,7 +61,7 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 retry wget -q https://github.com/1player/host-spawn/releases/download/v1.6.2/host-spawn-x86_64 -O /usr/lib/subsystem/bin/host-spawn
 chmod +x /usr/lib/subsystem/bin/host-spawn
 
-# configure dotfiles
+# setup dotfiles
 cp -r /cherries/shared/* /usr/share/tartaria/cherries/
 if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
     cp -r /cherries/noctalia/* /usr/share/tartaria/cherries/
@@ -69,11 +69,14 @@ elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
     cp -r /cherries/duxshell/* /usr/share/tartaria/cherries/
 fi
 
-# configure greeter cmd
+# setup greetd configs
+mkdir -p /etc/greetd
 if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
-    sed -i "s|PLACEHOLDER|env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/bin/noctalia-greeter-session -- --session niri|g" /{etc/greetd,usr/share/greeter-defaults}/config.toml
+    cp -r /usr/share/greeter-defaults/noctalia/config.toml /etc/greetd/
+    cp -a /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/
 elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
-    sed -i "s|PLACEHOLDER|env XCURSOR_THEME=Bibata-Original-Ice XCURSOR_SIZE=28 /usr/bin/dms-greeter --command niri|g" /{etc/greetd,usr/share/greeter-defaults}/config.toml
+    cp -a /usr/share/greeter-defaults/duxshell/config.toml /etc/greetd/
+    cp -a /usr/share/greeter-defaults/duxshell/50-dmsgreeter-settings.conf /usr/lib/tmpfiles.d/
 fi
 
 # export secureboot cert for saffron/maraska
