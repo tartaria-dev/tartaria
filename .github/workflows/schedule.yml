@@ -1,0 +1,18 @@
+--- # workaround for cron jobs running off default branch (stable)
+name: Schedule Tartaria (unstable)
+on:
+  schedule:
+    - cron: "05 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run build-unstable workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build-unstable.yml --repo "$GITHUB_REPOSITORY" --ref unstable

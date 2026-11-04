@@ -1,8 +1,6 @@
 ---
 name: Build Tartaria (unstable)
 on:
-  schedule:
-    - cron: "05 10 * * *"
   pull_request:
     branches:
       - unstable
@@ -19,7 +17,7 @@ on:
       - "**/iso-downloader.sh"
   push:
     tags-ignore:
-      - 'v*'
+      - '*'
     branches:
       - unstable
     paths-ignore:
@@ -74,7 +72,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
-          ref: ${{ github.event_name == 'schedule' && 'unstable' || '' }}
+          ref: ${{ github.event_name != 'pull_request' && 'unstable' || '' }}
 
       - name: Prepare build
         id: prep
@@ -166,7 +164,7 @@ jobs:
           oci: true
 
       - name: Publish build
-        if: github.event_name == 'schedule' || (github.event_name != 'pull_request' && github.ref == 'refs/heads/unstable')
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/unstable'
         uses: ./.github/actions/publish-image
         with:
           tags: ${{ steps.prep.outputs.tags }}
@@ -198,7 +196,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
-          ref: ${{ github.event_name == 'schedule' && 'unstable' || '' }}
+          ref: ${{ github.event_name != 'pull_request' && 'unstable' || '' }}
 
       - name: Prepare build
         id: prep
@@ -227,7 +225,7 @@ jobs:
           oci: true
 
       - name: Publish build
-        if: github.event_name == 'schedule' || (github.event_name != 'pull_request' && github.ref == 'refs/heads/unstable')
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/unstable'
         uses: ./.github/actions/publish-image
         with:
           tags: ${{ steps.prep.outputs.tags }}
