@@ -92,7 +92,7 @@ Thank you to the **[Bootcrew](https://discord.gg/52Qcb4x2w3)** team for making t
 
 I'd also like to thank the super duper cool **[XeniaOS](https://github.com/XeniaMeraki/XeniaOS/)** and **[Zirconium](https://github.com/zirconium-dev/zirconium/)** projects for inspiring the creation of Tartaria!
 
-
+ 
 ## Stars
 
 <a href="https://www.star-history.com/?repos=tartaria-dev%2Ftartaria&type=date&legend=top-left">
