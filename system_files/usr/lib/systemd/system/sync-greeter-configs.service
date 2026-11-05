@@ -7,8 +7,6 @@ ConditionKernelCommandLine=!rd.live.image
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/sync-greeter-configs
-ExecStart=/usr/bin/systemctl disable %n
-ExecStart=/usr/bin/systemctl mask %n
 
 [Install]
 WantedBy=multi-user.target
