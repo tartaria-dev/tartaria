@@ -20,4 +20,3 @@ fi
 
 # cleanup
 rm -f "${hash_file}"
-touch /etc/tartaria/mok-enrolled
