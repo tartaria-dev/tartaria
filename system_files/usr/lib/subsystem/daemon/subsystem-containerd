@@ -20,6 +20,9 @@ readonly RTMEDIR
 source /etc/locale.conf
 readonly LANG
 
+## create conf dir if needed
+mkdir -p "$HOME"/.config/subsystem
+
 ## utilities
 start-subsystem() {
     # trap ERR, SIGTERM
