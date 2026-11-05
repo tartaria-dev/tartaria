@@ -13,7 +13,7 @@
     "lock_clock": {
       "_synced": {
         "x": 0,
-        "y": -0.056517311608961306,
+        "y": -0.10437881873727088,
         "anchorX": "center",
         "width": 333,
         "height": 397,
@@ -30,17 +30,49 @@
     },
     "lock_notifications": {
       "_synced": {
-        "x": 0.013753581661891117,
-        "y": 0.024439918533604887,
-        "anchorX": "end"
+        "width": 210,
+        "height": 32,
+        "x": 0,
+        "y": 0.20672097759674135,
+        "anchorX": "center",
+        "anchorY": "end"
       }
     },
     "lock_status": {
       "_synced": {
-        "x": 0.013753581661891117,
-        "y": 0.024439918533604887,
-        "anchorX": "end",
-        "anchorY": "end"
+        "x": 0,
+        "y": 0.11303462321792261,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "greeter_session": {
+      "_synced": {}
+    },
+    "gw_lock_clock": {
+      "_synced": {
+        "x": 0,
+        "y": -0.09012219959266803,
+        "anchorX": "center",
+        "width": 333,
+        "height": 397,
+        "anchorY": "center"
+      }
+    },
+    "gw_lock_auth": {
+      "_synced": {
+        "x": 0,
+        "y": 0.23014256619144602,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "gw_lock_status": {
+      "_synced": {
+        "x": 0,
+        "y": 0.12729124236252545,
+        "anchorX": "center",
+        "anchorY": "center"
       }
     }
   },

@@ -566,7 +566,7 @@
   ],
   "greeterWidgetInstances": [
     {
-      "id": "lock_clock",
+      "id": "gw_lock_clock",
       "widgetType": "desktopClock",
       "enabled": true,
       "config": {
@@ -588,7 +588,7 @@
       }
     },
     {
-      "id": "lock_date",
+      "id": "gw_lock_date",
       "widgetType": "lockDate",
       "enabled": false,
       "config": {
@@ -602,7 +602,7 @@
       }
     },
     {
-      "id": "lock_auth",
+      "id": "gw_lock_auth",
       "widgetType": "lockAuth",
       "enabled": true,
       "config": {
@@ -616,7 +616,7 @@
       }
     },
     {
-      "id": "lock_status",
+      "id": "gw_lock_status",
       "widgetType": "lockStatus",
       "enabled": true,
       "config": {
@@ -630,7 +630,7 @@
       }
     },
     {
-      "id": "lock_power",
+      "id": "gw_lock_power",
       "widgetType": "lockPower",
       "enabled": false,
       "config": {
@@ -784,5 +784,6 @@
       "row": 2
     }
   ],
-  "niriLayoutGapsOverride": 10
+  "niriLayoutGapsOverride": 10,
+  "greeterFollowLockScreen": false
 }
