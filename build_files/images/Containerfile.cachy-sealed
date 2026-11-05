@@ -2,7 +2,6 @@ FROM docker.io/cachyos/cachyos-v3:latest AS base
 
 COPY system_files /
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
-COPY --from=ghcr.io/tartaria-dev/cherries:latest / /cherries/
 
 ARG IMAGE_FLAVOR
 ARG IMAGE_VARIANT
@@ -11,6 +10,7 @@ RUN --mount=type=bind,src=build_files/scripts,dst=/build \
     --mount=type=bind,src=build_files/config,dst=/config \
     --mount=type=bind,src=build_files/config/04-mkosi-bld,dst=/mkosi/mkosi.conf \
     --mount=type=bind,src=build_files/config/05-mkosi-ext,dst=/mkosi/mkosi.postinst.chroot \
+    --mount=type=bind,from=ghcr.io/tartaria-dev/cherries:latest,src=/,dst=/cherries \
     --mount=type=secret,id=secureboot_cert,required=true \
     --mount=type=tmpfs,dst=/tmp \
     bash /build/00-base.sh && \

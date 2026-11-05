@@ -76,7 +76,6 @@ if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
     cp -a /usr/share/greeter-defaults/noctalia/sync.toml /var/lib/noctalia-greeter/
 elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
     cp -a /usr/share/greeter-defaults/duxshell/config.toml /etc/greetd/
-    cp -a /usr/share/greeter-defaults/duxshell/50-dmsgreeter-settings.conf /usr/lib/tmpfiles.d/
 fi
 
 # export secureboot cert for saffron/maraska

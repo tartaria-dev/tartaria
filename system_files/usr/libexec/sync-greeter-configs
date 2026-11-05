@@ -6,10 +6,13 @@ set -eo pipefail
 
 # sync config files
 if [[ ! -f /etc/greetd/.no-sync ]]; then
+    touch /etc/greetd/.no-sync
+    
     if grep -Eq "maraska|berbere" /usr/lib/os-release; then
-        cp -a /usr/share/greeter-defaults/noctalia/config.toml /etc/greetd/config.toml
-        cp -a /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml
+        cp -af /usr/share/greeter-defaults/noctalia/config.toml /etc/greetd/config.toml
+        cp -af /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml
     elif grep -Eq "saffron|amchoor" /usr/lib/os-release; then
-        cp -a /usr/share/greeter-defaults/duxshell/config.toml /etc/greetd/config.toml
+        cp -af /usr/share/greeter-defaults/duxshell/config.toml /etc/greetd/config.toml
+        cp -arf /usr/share/greeter-defaults/duxshell/*.json /var/cache/dms-greeter/
     fi
 fi
