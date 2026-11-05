@@ -6,6 +6,8 @@
   <img width="1920" height="1080" alt="Desktop image" src="https://github.com/user-attachments/assets/833bd2bd-bd2d-4f90-a2d3-80e9f08a6a12" />
 </p>
 
+> [!IMPORTANT]
+> This is the **development branch** of Tartaria. There are changes here that **may not be present** in `stable` yet.
 
 ## Description
 
