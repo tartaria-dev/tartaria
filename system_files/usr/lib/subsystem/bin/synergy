@@ -48,10 +48,10 @@ case $1 in
             echo "[!!!] No command to link provided."
             help
             exit 1
-        elif ! /usr/libexec/host-spawn command -v "$1" >/dev/null; then
+        elif ! host-spawn command -v "$1" >/dev/null; then
             echo "[!!!] Command $1 not found."
             exit 1
-        elif [[ $(realpath /usr/bin/"$1") == /usr/libexec/host-spawn ]]; then
+        elif [[ $(realpath /usr/bin/"$1") == /usr/local/bin/host-spawn ]]; then
             echo "[!!!] Command $1 is already linked."
             exit 1
         elif command -v "$1" >/dev/null 2>&1; then
@@ -61,7 +61,7 @@ case $1 in
 
         # link command
         echo "[1/1] Linking command $1..."
-        sudo ln -sT /usr/libexec/host-spawn /usr/local/bin/"$1"
+        sudo ln -sT /usr/local/bin/host-spawn /usr/local/bin/"$1"
         echo "[1/1] Linked command $1 to /usr/local/bin/$1"
         ;;
     -u|--unlink)
@@ -73,7 +73,7 @@ case $1 in
             echo "[!!!] No command to unlink provided."
             help
             exit 1
-        elif [[ $(realpath /usr/local/bin/"$1") != /usr/libexec/host-spawn ]]; then
+        elif [[ $(realpath /usr/local/bin/"$1") != /usr/local/bin/host-spawn ]]; then
             echo "[!!!] Command $1 isn't linked."
             exit 1
         fi
@@ -95,7 +95,7 @@ case $1 in
         fi
     
         # execute cmd as root
-        /usr/libexec/host-spawn run0 --background= env SUBSYSTEM_USER=bypass bash -lic "$*"
+        host-spawn run0 --background= env SUBSYSTEM_USER=bypass bash -lic "$*"
         ;;
     *)
         # run checks
@@ -106,6 +106,6 @@ case $1 in
         fi
 
         # execute cmd normally
-        /usr/libexec/host-spawn env SUBSYSTEM_USER=bypass bash -lic "$*"
+        host-spawn env SUBSYSTEM_USER=bypass bash -lic "$*"
         ;;
 esac

@@ -13,17 +13,10 @@ fi
 # logging
 echo "[---] Starting up."
 
-# set up sudo for the user
-echo "[1/5] Configuring sudo."
-if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
-    mkdir -p /etc/sudoers.d
-	echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
-fi
-
 # add shell settings
-echo "[2/5] Configuring shell."
+echo "[1/3] Configuring shell."
 mkdir -p /etc/fish/conf.d
-cat <<EOF >> /etc/fish/conf.d/startup.fish
+cat <<EOF > /etc/fish/conf.d/startup.fish
 alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
@@ -49,28 +42,20 @@ if status is-interactive
 end
 EOF
 
+# remove distrobox prompt
+rm -f /etc/fish/functions/fish_prompt.fish
+
 # link default commands
-echo "[3/5] Linking default commands."
+echo "[2/3] Linking default commands."
 for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do CMDPATH=$(command -v "$cmd"); rm -f "$CMDPATH"; ln -sT /usr/libexec/host-spawn "$CMDPATH"; done
 
 # link bootc
 rm -f /usr/bin/bootc
-echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' | tee -a /usr/bin/bootc
+echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' > /usr/bin/bootc
 chmod +x /usr/bin/bootc
 
-# source user configs
-echo "[4/5] Sourcing user configurations."
-if [[ -d /home/"$SUBSYSTEM_USER"/.config/ignition.d/ ]]; then
-	for script in /home/"$SUBSYSTEM_USER"/.config/ignition.d/*.sh; do
-		echo "[i] Sourcing script $script."
-		. "$script" || true
-	done
-fi
-
 # attempt to configure fastest arch repos
-echo "[5/5] Configuring repositories."
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+echo "[3/3] Dispatching repository configurator." # is there a better way to word this? fuh nah
+reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 &
 
-# keep subsystem alive
 echo "[---] Startup done."
-sleep infinity

@@ -16,10 +16,6 @@ RTMEDIR="$HOME/.cache/subsystem-$HASH"
 readonly HASH
 readonly RTMEDIR
 
-## source configured host lang
-source /etc/locale.conf
-readonly LANG
-
 ## create conf dir if needed
 mkdir -p "$HOME"/.config/subsystem
 
@@ -99,27 +95,56 @@ podman-cmd() {
     podman container run \
         --init \
         --detach \
-        --cgroups=split \
-        --restart=always \
+        --hostname "$HOSTNAME" \
         --name "subsystem-$HASH" \
-        --hostname subsystem \
-        --log-driver journald \
-        --env "LANG=$LANG" \
-        --env "SUBSYSTEM_USER=$USER" \
+        --privileged \
+        --security-opt label=disable \
+        --security-opt apparmor=unconfined \
+        --pids-limit=-1 \
+        --user root:root \
+        --ipc host \
         --network host \
-        --user 0:0 \
-        --userns keep-id \
-        --tmpfs /run \
-        --workdir "/home/$USER" \
-        -v "$HOME":"/home/$USER":rslave \
-        -v /tmp:/tmp:rslave,nosuid,nodev,rbind \
-        -v /run/user/"$UID":/run/user/"$UID":ro,rslave \
-        -v /usr/lib/subsystem/bin/host-spawn:/usr/libexec/host-spawn:ro \
-        -v /usr/lib/subsystem/bin/ignition:/usr/libexec/ignition:ro \
-        -v /usr/lib/subsystem/bin/synergy:/usr/local/bin/synergy:ro \
-        -v /usr/lib/subsystem/bin/subsys:/usr/local/bin/subsys:ro \
+        --log-driver journald \
+        --label "manager=distrobox" \
+        --label "distrobox.unshare_groups=1" \
+        --env "SHELL=fish" \
+        --env "HOME=$HOME" \
+        --env "LANG=$LANG" \
+        --env "container=podman" \
+        --env "TERMINFO_DIRS=/usr/share/terminfo:/run/host/usr/share/terminfo" \
+        --env "CONTAINER_ID=subsystem-$HASH" \
+        --volume /tmp:/tmp:rslave \
+        --volume /usr/bin/distrobox-init:/usr/bin/entrypoint:ro \
+        --volume /usr/lib/subsystem/bin/host-spawn:/usr/local/bin/host-spawn:ro \
+        --volume /usr/lib/subsystem/bin/synergy:/usr/local/bin/synergy:ro \
+        --volume /usr/lib/subsystem/bin/subsys:/usr/local/bin/subsys:ro \
+        --volume /run/user/"$(id -u)":/run/user/"$(id -u)":rslave \
+        --volume "$HOME":"$HOME":rslave \
+        --volume /:/run/host/:rslave \
+        --volume /dev:/dev:rslave \
+        --volume /sys:/sys:rslave \
+        --volume /var/log/journal \
+        --volume /etc/hosts:/etc/hosts:ro \
+        --volume /etc/resolv.conf:/etc/resolv.conf:ro \
+        --volume /etc/hostname:/etc/hostname:ro \
+        --volume /dev/null:/run/.distrobox.rootless:ro \
+        --volume /dev/null:/usr/share/dbus-1/services/org.freedesktop.Flatpak.service \
+        --runtime=crun \
+        --annotation run.oci.keep_original_groups=1 \
+        --ulimit host \
+        --restart=always \
+        --userns keep-id:size=65536 \
+        --entrypoint /usr/bin/entrypoint \
         --rootfs /var/lib/subsystem/"$HASH"/rootfs \
-        /usr/libexec/ignition
+        --name "$USER" \
+        --user "$(id -u)" \
+        --group "$(id -g)" \
+        --home "$HOME" \
+        --init "0" \
+        --nvidia "0" \
+        --pre-init-hooks "" \
+        --additional-packages "" \
+        -- '/usr/lib/subsystem/bin/ignition'
 }
 
 ## main logic
