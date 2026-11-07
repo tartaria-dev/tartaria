@@ -39,7 +39,7 @@ case $1 in
         ;;
     diag)
         # pull up journalctl logs
-        journalctl --user -xeu subsystem-containerd
+        host-spawn journalctl --user -xeu subsystem-containerd
         ;;
     restart)
         # warn user
@@ -54,7 +54,7 @@ case $1 in
         touch "$HOME"/.cache/subsys-restart
 
         # start seperate job to restart the container
-        /usr/libexec/host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
+        host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
         ;;
     disable)
         # warn user
