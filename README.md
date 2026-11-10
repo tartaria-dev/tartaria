@@ -6,9 +6,6 @@
   <img width="1920" height="1080" alt="Desktop image" src="https://github.com/user-attachments/assets/833bd2bd-bd2d-4f90-a2d3-80e9f08a6a12" />
 </p>
 
-> [!IMPORTANT]
-> This is the **development branch** of Tartaria. There are changes here that **may not be present** in `stable` yet.
-
 ## Description
 
 Tartaria is a custom Arch/CachyOSv3 bootc image built for general day-to-day usage, providing a nice modern experience that lets you get stuff done.
@@ -28,7 +25,7 @@ Variants are composed as `tartaria:<channel>-<edition>-<flavor>`.
 
 | Channel    | Description                                                                                            |
 |------------|--------------------------------------------------------------------------------------------------------|
-| `stable`   | **Built every 72 hours** and on **every new release**; lags slightly behind new changes for stability  |
+| `stable`   | **Built daily** based off of **the current release**; recommended option                               |
 | `unstable` | **Built daily** and on **every new change**; may break at any moment, so use only for testing          |
 
 ### Editions
