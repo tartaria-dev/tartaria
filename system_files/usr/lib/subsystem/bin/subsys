@@ -13,7 +13,7 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-### utilities
+### help msg
 
 help() {
     cat <<EOF
@@ -32,58 +32,68 @@ commands:
 EOF
 }
 
-# iterate through args
-case $1 in
-    help)
-        # help msg
-        help
-        ;;
-    diag)
-        # pull up journalctl logs
-        host-spawn journalctl --user -xeu subsystem-containerd
-        ;;
-    restart)
-        # warn user
-        echo "[-i-] Restarting subsystem."
-        echo "[-i-] Any running tasks in the subsystem will be stopped."
-        echo "[-i-] To continue, press any key, or press CTRL+C to abort."
+### invalid arg handler
 
-        # await user input
-        read -srn1
+check_args() {
+    if [[ -z "$*" ]]; then
+        echo "[!!!] No command provided."
+    else
+        echo "[!!!] Invalid argument."
+    fi
 
-        # create file so the shell knows about the restart
-        touch "$HOME"/.cache/subsys-restart
+    help
+    exit 1
+}
 
-        # start seperate job to restart the container
-        host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
-        ;;
-    disable)
-        # warn user
-        echo "[-i-] Disabling subsystem."
-        echo "[-i-] This will disable the subsystem and give you a standard host bash shell."
-        echo "[-i-] Press any key to continue, or CTRL+C to abort."
+### subsystem mgmt
 
-        # await user input
-        read -srn1
+restart_subsys() {
+    echo "[-i-] Restarting subsystem."
+    echo "[-i-] Any running tasks in the subsystem will be stopped."
+    echo "[-i-] To continue, press any key, or press CTRL+C to abort."
 
-        # create file
-        mkdir -p "$HOME"/.config/subsystem
-        touch "$HOME"/.config/subsystem/disable
+    read -srn1
 
-        # notify user of changes
-        echo "[-i-] Subsystem disabled. Log out and back in to apply changes."
-        echo "[-i-] To re-enable the subsystem, remove ~/.config/subsystem/disable."
-        echo "[-i-] You'll then need to log out then back in again."
-        ;;
-    *)
-        # check for no argument or invalid argument
-        if [[ -z "$*" ]]; then
-            echo "[!!!] No command provided."
-        else
-            echo "[!!!] Invalid argument."
-        fi
+    touch "$HOME"/.cache/subsys-restart
 
-        # how to write good comments?
-        help
-        exit 1
-esac
+    host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
+}
+
+disable_subsys() {
+    echo "[-i-] Disabling subsystem."
+    echo "[-i-] This will disable the subsystem and give you a standard host bash shell."
+    echo "[-i-] Press any key to continue, or CTRL+C to abort."
+
+    read -srn1
+
+    mkdir -p "$HOME"/.config/subsystem
+    touch "$HOME"/.config/subsystem/disable
+
+    echo "[-i-] Subsystem disabled. Log out and back in to apply changes."
+    echo "[-i-] To re-enable the subsystem, remove ~/.config/subsystem/disable."
+    echo "[-i-] You'll then need to log out then back in again."
+}
+
+### main logic
+
+main() {
+    case $1 in
+        help)
+            help
+            ;;
+        diag)
+            host-spawn journalctl --user -xeu subsystem-containerd
+            ;;
+        restart)
+            restart_subsys
+            ;;
+        disable)
+            disable_subsys
+            ;;
+        *)
+            check_args "$@"
+            ;;
+    esac
+}
+
+main
