@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# do our checks
+### do our checks
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
@@ -10,13 +10,15 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-# logging
-echo "[---] Starting up."
+### utilities
 
-# add shell settings
-echo "[1/2] Configuring shell."
-mkdir -p /etc/fish/conf.d
-cat <<EOF > /etc/fish/conf.d/startup.fish
+conf_shell() {
+    echo "[1/2] Configuring shell."
+
+    rm -f /etc/fish/functions/fish_prompt.fish
+    mkdir -p /etc/fish/conf.d
+    
+    cat <<EOF > /etc/fish/conf.d/startup.fish
 alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
@@ -41,17 +43,31 @@ if status is-interactive
     atuin init fish | source
 end
 EOF
+}
 
-# remove distrobox prompt
-rm -f /etc/fish/functions/fish_prompt.fish
+link_cmds() {
+    echo "[2/2] Linking default commands."
+    
+    for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do
+        CMDPATH=$(command -v "$cmd")
+        rm -f "$CMDPATH"
+        ln -sT /usr/libexec/host-spawn "$CMDPATH"
+    done
 
-# link default commands
-echo "[2/2] Linking default commands."
-for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do CMDPATH=$(command -v "$cmd"); rm -f "$CMDPATH"; ln -sT /usr/libexec/host-spawn "$CMDPATH"; done
+    rm -f /usr/bin/bootc
+    
+    echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' > /usr/bin/bootc
+    chmod +x /usr/bin/bootc
+}
 
-# link bootc
-rm -f /usr/bin/bootc
-echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' > /usr/bin/bootc
-chmod +x /usr/bin/bootc
+### main logic
 
-echo "[---] Startup done."
+main() {
+    echo "[---] Starting up."
+    conf_shell
+    link_cmds
+    
+    echo "[---] Startup done."
+}
+
+main

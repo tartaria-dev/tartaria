@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# set errexit & pipefail
+### set errexit & pipefail
 set -eo pipefail
 
-# do our checks
+### do our checks
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
@@ -13,7 +13,8 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-# utilities
+### utilities
+
 help() {
     cat <<EOF
 usage:
