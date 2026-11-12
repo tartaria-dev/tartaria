@@ -1,97 +1,98 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-## set errexit, pipefail, errtrace
+### set errexit, pipefail, errtrace
 set -eEo pipefail
 
-## do our checks
+### do our checks
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 fi
 
-## set constants
-HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+### set constants
+HASH=$(printf '%s%s' "$(</etc/machine-id)" "$2" | sha256sum | awk '{print $1}')
 RTMEDIR="$HOME/.cache/subsystem-$HASH"
-readonly HASH
-readonly RTMEDIR
+readonly HASH RTMEDIR
 
-## create conf dir if needed
+### create conf dir if needed
 mkdir -p "$HOME"/.config/subsystem
 
-## utilities
+### subsystem actions
+
 start-subsystem() {
-    # trap ERR, SIGTERM
     trap 'echo "[!!!] Something went wrong during startup, aborting." && return 1' ERR
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
-    # check if filesystemd is still starting; if so, wait
-    if [[ "$(systemctl --user is-failed subsystem-filesystemd)" == "activating" ]]; then
+    if [[ "$(systemctl is-failed subsystem-filesystemd)" == "activating" ]]; then
         echo "[-i-] subsystem-filesystemd has not finished startup, waiting."
 
-        while [[ "$(systemctl --user is-failed subsystem-filesystemd)" == "activating" ]]; do
+        while [[ "$(systemctl is-failed subsystem-filesystemd)" == "activating" ]]; do
             sleep 1
         done
         
-        if [[ "$(systemctl --user is-failed subsystem-filesystemd)" != "active" ]]; then
+        if [[ "$(systemctl is-failed subsystem-filesystemd)" != "active" ]]; then
             echo "[!!!] subsystem-filesystemd has failed to start."
         fi
     fi
 
-    # logging
     echo "[---] Starting subsystem."
 
-    # start container
-    echo "[1/2] Starting container."
+    echo "[1/3] Mounting rootfs."
+    
+    RESP=$(echo "mount-$USER" | socat -t 120 - UNIX-CONNECT:/run/subsystem-filesystemd)
+
+    if [[ "$RESP" != "mounted" ]]; then
+        echo "[!!!] Mount request failed, received response '$RESP'"
+        false
+    fi
+
+    echo "[2/3] Starting container."
+    
     podman-cmd
 
-    # set runtime lock
-    echo "[2/2] Creating runtime lock."
+    echo "[3/3] Creating runtime lock."
+    
     mkdir -p "$RTMEDIR"
     touch "$RTMEDIR"/runtime.lock
 
-    # reset traps
     trap - ERR SIGTERM
 }
 
 stop-subsystem() {
-    # trap ERR, SIGTERM
     trap 'echo "[!!!] Something went wrong during shutdown, aborting." && return 1' ERR
     trap 'echo "[!!!] Received SIGTERM, aborting." && return 0' SIGTERM
 
-    # logging
     echo "[---] Stopping subsystem."
 
-    # clear runtime lock
-    echo "[1/2] Removing runtime lock."
+    echo "[1/3] Removing runtime lock."
+    
     rm -rf "$RTMEDIR"
 
-    # stop container
-    echo "[2/2] Stopping container."
+    echo "[2/3] Stopping container."
+    
     podman container stop -it 30 "subsystem-$HASH"
     podman container rm -if "subsystem-$HASH"
 
-    # reset traps
+    echo "[3/3] Unmounting rootfs."
+    
+    RESP=$(echo "unmount-$USER" | socat -t 120 - UNIX-CONNECT:/run/subsystem-filesystemd)
+
+    if [[ "$RESP" != "unmounted" ]]; then
+        echo "[!!!] Unmount request failed, received response '$RESP'"
+        false
+    fi
+
     trap - ERR SIGTERM
 }
 
-monitor() (
-    # block if subsystem is running
-    if podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
-        podman wait "subsystem-$HASH" &
-        local WAIT_PID=$!
-        wait "$WAIT_PID"
-        echo "[-i-] Subsystem exited with code $?."
-    fi
-)
+### container cmd
 
 podman-cmd() {
-    # remove container if it exists
     if podman container exists "subsystem-$HASH"; then
         podman container rm -if "subsystem-$HASH"
     fi
 
-    # create and start container
     podman container run \
         --init \
         --detach \
@@ -147,16 +148,32 @@ podman-cmd() {
         -- '/usr/lib/subsystem/bin/ignition'
 }
 
-## main logic
-systemd-notify --status "Starting..."
-echo "[-+-] Starting up."
-start-subsystem
+### monitoring
 
-systemd-notify --ready --status "Subsystem is running."
-monitor
+monitor() (
+    if podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
+        podman wait "subsystem-$HASH" &   
+        local WAIT_PID=$!
+        wait "$WAIT_PID"
+        echo "[-i-] Subsystem exited with code $?."
+    fi
+)
 
-systemd-notify --status "Stopping..."
-echo "[-+-] Shutting down."
-stop-subsystem
+### main logic
 
-systemd-notify --status "Stopped."
+main() {
+    systemd-notify --status "Starting..."
+    echo "[-+-] Starting up."
+    start-subsystem
+    
+    systemd-notify --ready --status "Subsystem is running."
+    monitor
+    
+    systemd-notify --status "Stopping..."
+    echo "[-+-] Shutting down."
+    stop-subsystem
+    
+    systemd-notify --status "Stopped."
+}
+
+main

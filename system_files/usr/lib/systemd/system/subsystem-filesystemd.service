@@ -1,6 +1,7 @@
 [Unit]
 Description=Subsystem Filesystem Management
 RequiresMountsFor=/var
+Before=systemd-user-sessions.service user.slice
 ConditionKernelCommandLine=!rd.live.image
 StartLimitIntervalSec=60
 StartLimitBurst=5
@@ -10,6 +11,10 @@ Type=notify
 NotifyAccess=all
 KillSignal=SIGTERM
 KillMode=mixed
+TimeoutStopSec=120
+RuntimeDirectory=subsystem-filesystemd
+RuntimeDirectoryMode=755
+StateDirectory=subsystem-filesystemd
 ExecStart=/usr/lib/subsystem/daemon/subsystem-filesystemd
 Restart=on-failure
 RestartSec=2
