@@ -14,7 +14,7 @@ fi
 echo "[---] Starting up."
 
 # add shell settings
-echo "[1/3] Configuring shell."
+echo "[1/2] Configuring shell."
 mkdir -p /etc/fish/conf.d
 cat <<EOF > /etc/fish/conf.d/startup.fish
 alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
@@ -46,16 +46,12 @@ EOF
 rm -f /etc/fish/functions/fish_prompt.fish
 
 # link default commands
-echo "[2/3] Linking default commands."
+echo "[2/2] Linking default commands."
 for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do CMDPATH=$(command -v "$cmd"); rm -f "$CMDPATH"; ln -sT /usr/libexec/host-spawn "$CMDPATH"; done
 
 # link bootc
 rm -f /usr/bin/bootc
 echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' > /usr/bin/bootc
 chmod +x /usr/bin/bootc
-
-# attempt to configure fastest arch repos
-echo "[3/3] Dispatching repository configurator." # is there a better way to word this? fuh nah
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 &
 
 echo "[---] Startup done."
