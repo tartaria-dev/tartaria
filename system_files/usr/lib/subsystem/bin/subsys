@@ -54,6 +54,7 @@ restart_subsys() {
 
     read -srn1
 
+    mkdir -p "$HOME"/.cache
     touch "$HOME"/.cache/subsys-restart
 
     host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
@@ -96,4 +97,4 @@ main() {
     esac
 }
 
-main
+main "$@"

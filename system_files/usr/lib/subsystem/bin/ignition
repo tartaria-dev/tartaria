@@ -51,12 +51,12 @@ link_cmds() {
     for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do
         CMDPATH=$(command -v "$cmd")
         rm -f "$CMDPATH"
-        ln -sT /usr/libexec/host-spawn "$CMDPATH"
+        ln -sT /usr/local/bin/host-spawn "$CMDPATH"
     done
 
     rm -f /usr/bin/bootc
     
-    echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' > /usr/bin/bootc
+    echo -e '#!/bin/bash\n/usr/local/bin/host-spawn pkexec /usr/bin/bootc "$@"' > /usr/bin/bootc
     chmod +x /usr/bin/bootc
 }
 

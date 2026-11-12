@@ -45,7 +45,7 @@ link_cmd() {
     elif ! host-spawn command -v "$1" >/dev/null; then
         echo "[!!!] Command $1 not found."
         exit 1
-    elif [[ $(realpath /usr/bin/"$1") == /usr/local/bin/host-spawn ]]; then
+    elif [[ $(realpath /usr/local/bin/"$1") == /usr/local/bin/host-spawn ]]; then
         echo "[!!!] Command $1 is already linked."
         exit 1
     elif command -v "$1" >/dev/null 2>&1; then
@@ -66,7 +66,7 @@ unlink_cmd() {
         echo "[!!!] No command to unlink provided."
         help
         exit 1
-    elif [[ $(realpath /usr/local/bin/"$1") != /usr/local/bin/host-spawn ]]; then
+    elif [[ "$(realpath /usr/local/bin/$1)" != "/usr/local/bin/host-spawn" ]]; then
         echo "[!!!] Command $1 isn't linked."
         exit 1
     fi
@@ -88,7 +88,7 @@ exec_root() {
         exit 1
     fi
 
-    host-spawn run0 --background= env SUBSYSTEM_BYPASS=1 bash -lic "$*"
+    host-spawn run0 --background= env SUBSYSTEM_BYPASS=1 bash -lic "$@"
 }
 
 exec_norm() {
@@ -98,7 +98,7 @@ exec_norm() {
         exit 1
     fi
 
-    host-spawn env SUBSYSTEM_BYPASS=1 bash -lic "$*"
+    host-spawn env SUBSYSTEM_BYPASS=1 bash -lic "$@"
 }
 
 ### main logic
@@ -123,4 +123,4 @@ main() {
     esac
 }
 
-main
+main "$@"

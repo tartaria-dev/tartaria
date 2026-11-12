@@ -21,7 +21,7 @@ ROLIBDIR=/usr/lib/subsystem
 readonly RWLIBDIR ROLIBDIR
 
 ### set SIGTERM trap
-trap 'SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
+trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
 
 ### utilities
 
@@ -53,84 +53,85 @@ drop_user() {
 rootfs_mount() {
     local HASH USERDIR MNTERR S{U,G}ID_{START,RANGE}
     
-    HASH=$(printf '%s%s' "$(</etc/machine-id)" "$2" | sha256sum | awk '{print $1}')
+    HASH=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
     USERDIR=$RWLIBDIR/$HASH
 
     readonly HASH USERDIR
     
-    if [[ -z $2 ]]; then
+    if [[ -z $1 ]]; then
         echo "[!!!] No target user given."
         return
-    elif [[ -f "/var/home/$2/.config/subsystem/disable" ]]; then
-        echo "[-!-] Subsystem disabled for user $2."
+    elif [[ -f "/var/home/$1/.config/subsystem/disable" ]]; then
+        echo "[-!-] Subsystem disabled for user $1."
         return
-    elif is_mounted "$2"; then
-        echo "[-!-] Already mounted rootfs for user $2."
+    elif is_mounted "$1"; then
+        echo "[-!-] Already mounted rootfs for user $1."
         return
     elif [[ -f "$USERDIR"/op.lock ]]; then
-        echo "[-!-] Rootfs for user $2 is being operated on."
+        echo "[-!-] Rootfs for user $1 is already being operated on."
         return
     fi
 
-    operational_users+=("$2")
+    operational_users+=("$1")
 
-    echo "[---] Mounting rootfs for user $2."
+    echo "[---] Mounting rootfs for user $1."
 
+    mkdir -p "$USERDIR"
     touch "$USERDIR"/op.lock
 
-    read -r SUID_START SUID_RANGE <<< "$(awk -F: -v u="$2" '$1==u {print $2,$3}' /etc/subuid)"
-    read -r SGID_START SGID_RANGE <<< "$(awk -F: -v u="$2" '$1==u {print $2,$3}' /etc/subgid)"
+    read -r SUID_START SUID_RANGE <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subuid)"
+    read -r SGID_START SGID_RANGE <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subgid)"
     
     if [[ -z $SUID_START || -z $SGID_START || -z $SUID_RANGE || -z $SGID_RANGE ]]; then
-        echo "[!!!] User $2 has improperly configured sub{uid,gid}s."
-        drop_user "$2"
+        echo "[!!!] User $1 has improperly configured sub{uid,gid}s."
+        drop_user "$1"
         return
     fi
 
-    trap "echo '[!!!] Failed to mount rootfs for $2.'; MNTERR=1; return" ERR
+    trap "echo '[!!!] Failed to mount rootfs for $1.'; MNTERR=1; return" ERR
 
     for step in dirs base overlay; do
         if (( SHUTDOWN )); then
-            echo "[-i-] SIGTERM received, cancelling mount."
-            abort_mount "$2"
+            abort_mount "$1"
             return
         fi
 
         "fs_$step"
 
         if (( MNTERR )); then
-            abort_mount "$2"
+            abort_mount "$1"
             return
         fi
     done
 
-    trap - ERR
-
     rm -f "$USERDIR"/op.lock
+
+    trap - ERR
 }
 
 rootfs_unmount() {
     local HASH USERDIR
     
-    HASH=$(printf '%s%s' "$(</etc/machine-id)" "$2" | sha256sum | awk '{print $1}')
+    HASH=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
     USERDIR=$RWLIBDIR/$HASH
 
     readonly HASH USERDIR
     
-    if [[ -z $2 ]]; then
+    if [[ -z $1 ]]; then
         echo "[!!!] No target user given."
         return
-    elif ! is_mounted "$2"; then
-        echo "[-!-] Already unmounted rootfs for user $2."
+    elif ! is_mounted "$1"; then
+        echo "[-!-] Already unmounted rootfs for user $1."
         return
     elif [[ -f "$USERDIR"/op.lock ]]; then
-        echo "[-!-] Rootfs for user $2 is being operated on."
+        echo "[-!-] Rootfs for user $1 is already being operated on."
         return
     fi
 
-    echo "[---] Unmounting rootfs for user $2."
+    echo "[---] Unmounting rootfs for user $1."
     
-    drop_user "$2"
+    drop_user "$1"
+    touch "$USERDIR"/op.lock
 
     trap 'echo "[!!!] Failed to unmount rootfs for $2, manual intervention is required." && return' ERR
 
@@ -143,10 +144,9 @@ rootfs_unmount() {
     echo "[2/2] Cleaning rootfs directories."
     
     rm -rf "${USERDIR:?}"/*
+    rm -f "$USERDIR"/op.lock
 
     trap - ERR
-
-    rm -f "$USERDIR"/op.lock
 }
 
 rootfs_clean_all() {
@@ -233,7 +233,7 @@ monitor() {
     echo "[---] Monitoring for requests on $RUNTIME_DIRECTORY/fsrequests.sock."
 
     while (( ! SHUTDOWN )); do
-        coproc CONN { exec socat -T10 UNIX-LISTEN:"$RUNTIME_DIRECTORY"/fsrequests.sock,mode=666,unlink-early STDIO; }
+        coproc CONN { exec socat -T120 UNIX-LISTEN:"$RUNTIME_DIRECTORY"/fsrequests.sock,mode=666,unlink-early STDIO; }
         
         SOCATPID=$CONN_PID
         WFD=${CONN[1]}

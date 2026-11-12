@@ -11,7 +11,7 @@ fi
 NORM=$(tput sgr0)
 GRAY=$(tput setaf 7)
 RED=$(tput setaf 1)
-HASH=$(echo -n "$(cat /etc/machine-id)$USER" | sha256sum | awk '{print $1}')
+HASH=$(printf '%s%s' "$(</etc/machine-id)" "$2" | sha256sum | awk '{print $1}')
 readonly RED GRAY NORM HASH
 
 ### utilities
@@ -72,7 +72,7 @@ shell() {
     rm -f "$HOME"/.cache/subsys-restart
     
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
-        if distrobox-enter "subsystem-$HASH" -- /bin/fish -l; then
+        if exec distrobox-enter "subsystem-$HASH" -- /bin/fish -l; then
             exit 0
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
             clear
@@ -84,7 +84,7 @@ shell() {
 
     err-entry
 
-    exec bash
+    exec env SUBSYSTEM_BYPASS=1 bash -l
 }
 
 ## main logic
