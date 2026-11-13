@@ -48,8 +48,8 @@ drop_user() {
     local PSWDUSR
     
     for PSWDUSR in "${!OPERATIONALUSRS[@]}"; do
-        if [[ ${OPERATIONALUSRS[i]} == "$1" ]]; then
-            unset 'operational_users[i]'
+        if [[ ${OPERATIONALUSRS[PSWDUSR]} == "$1" ]]; then
+            unset 'OPERATIONALUSRS[PSWDUSR]'
         fi
     done
 }
@@ -190,7 +190,7 @@ fs_dirs() {
         done
         
         if is_dir_active "$USERDIR"; then
-            echo "[!!!] Rootfs mounts still present for user $1."
+            echo "[!!!] Rootfs mounts still present, cannot operate."
             false
         fi
 
@@ -314,7 +314,8 @@ monitor_fs_requests() {
                     REPLY="denied_request"
                 else
                     echo "[-i-] Received request to $ACTION rootfs for $PSWDUSR."
-                    
+
+                    OPFAILED=0
                     "rootfs_$ACTION" "$PSWDUSR"
 
                     if (( OPFAILED )); then
