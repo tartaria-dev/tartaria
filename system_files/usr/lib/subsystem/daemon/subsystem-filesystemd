@@ -150,15 +150,18 @@ rootfs_unmount() {
 }
 
 rootfs_clean_all() {
-    local ALLUSRDIRS ACTIVEUSRDIRS
+    local HASH USERDIR ALLUSRDIRS ACTIVEUSRDIRS PSWDUSR
+
+    HASH=$(printf '%s%s' "$(</etc/machine-id)" "$PSWDUSR" | sha256sum | awk '{print $1}')
+    USERDIR=$RWLIBDIR/$HASH
+
+    readonly HASH USERDIR
     
     for dir in "$RWLIBDIR"/*; do
         ALLUSRDIRS+=("$dir")
     done
 
     while read -r PSWDUSR; do
-        HASH=$(printf '%s%s' "$(</etc/machine-id)" "$PSWDUSR" | sha256sum | awk '{print $1}')
-        USERDIR=$RWLIBDIR/$HASH
         ACTIVEUSRDIRS+=("$USERDIR")
     done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 
@@ -224,10 +227,43 @@ fs_overlay() {
     done
 }
 
+### user key mgmt
+
+issue_user_keys() {
+    local PSWDUSR AUTHDIR KFILE
+
+    AUTHDIR="$RUNTIME_DIRECTORY"/auth
+
+    readonly AUTHDIR
+    
+    mkdir -p "$AUTHDIR"
+    chmod 0711 "$AUTHDIR"
+
+    rm -f "${AUTHDIR:?}"/*
+    
+    while read -r PSWDUSR; do
+        KFILE="$AUTHDIR/$PSWDUSR"
+        ( umask 277; openssl rand -hex 32 > "$KFILE" )
+        chown -- "$PSWDUSR": "$KFILE"
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
+}
+
+verify_user_key() {
+    local UKEY
+    
+    { IFS= read -r UKEY < "$AUTHDIR/$1"; } 2>/dev/null || return 1
+
+    if [[ -n $UKEY && $UKEY == "$2" ]]; then
+        return
+    else
+        return 1
+    fi
+}
+
 ### monitoring
 
 monitor() {
-    local WFD REPLY ACTION PSWDUSR
+    local WFD REPLY KEY REST ACTION PSWDUSR
     
     rm -f "$RUNTIME_DIRECTORY"/fsrequests.sock
     echo "[---] Monitoring for requests on $RUNTIME_DIRECTORY/fsrequests.sock."
@@ -245,13 +281,17 @@ monitor() {
             if [[ $LINE != *-* ]]; then
                 REPLY="invalid_format"
             else
-                ACTION=${LINE%%-*}
-                PSWDUSR=${LINE#*-}
+                KEY=${LINE%%-*}
+                REST=${LINE#*-}
+                ACTION=${REST%%-*}
+                PSWDUSR=${REST#*-}
 
                 if [[ "$ACTION" != "mount" && "$ACTION" != "unmount" ]]; then
                     REPLY="unknown_cmd"
                 elif ! awk -F: -v u="$PSWDUSR" '$1==u && $3>=1000 && $3!=65534 {f=1} END{exit !f}' /etc/passwd; then
                     REPLY="unknown_user"
+                elif ! verify_key "$PSWDUSR" "$KEY"; then
+                    REPLY="denied_request"
                 else
                     echo "[-i-] Received request to $ACTION rootfs for $PSWDUSR."
                     
@@ -282,6 +322,7 @@ monitor() {
 main() {
     systemd-notify --status "Starting..."
     echo "[-+-] Starting up."
+    issue_user_keys
     rootfs_clean_all
     
     systemd-notify --ready --status "Monitoring for requests."

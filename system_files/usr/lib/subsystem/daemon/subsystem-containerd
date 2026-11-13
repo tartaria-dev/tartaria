@@ -39,8 +39,9 @@ start-subsystem() {
     echo "[---] Starting subsystem."
 
     echo "[1/3] Mounting rootfs."
-    
-    RESP=$(echo "mount-$USER" | socat -T120 - UNIX-CONNECT:/run/subsystem-filesystemd/fsrequests.sock)
+
+    KEY=$(<"/run/subsystem-filesystemd/auth/$(id -un)")
+    RESP=$(echo "$KEY-mount-$USER" | socat -T120 - UNIX-CONNECT:/run/subsystem-filesystemd/fsrequests.sock)
 
     if [[ "$RESP" != "mounted" ]]; then
         echo "[!!!] Mount request failed, received response '$RESP'"
