@@ -34,6 +34,7 @@ start-subsystem() {
         
         if [[ "$(systemctl is-failed subsystem-filesystemd)" != "active" ]]; then
             echo "[!!!] Filesystem daemon has failed to start."
+            false
         fi
     fi
 
@@ -52,7 +53,6 @@ start-subsystem() {
     echo "[2/3] Starting container."
     
     podman_cmd
-
 
     echo "[3/3] Creating runtime lock."
     

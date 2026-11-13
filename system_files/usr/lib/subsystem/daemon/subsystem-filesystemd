@@ -11,11 +11,12 @@ if [[ "$EUID" != "0" ]]; then
 fi
 
 ### set arrays
-declare -a operational_users
+declare -a OPERATIONALUSRS
 
 ### set constants
 SOCATPID=
 SHUTDOWN=0
+OPFAILED=0
 RWLIBDIR=/var/lib/subsystem
 ROLIBDIR=/usr/lib/subsystem
 KAUTHDIR="$RUNTIME_DIRECTORY"/auth
@@ -28,8 +29,10 @@ trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID
 ### utilities
 
 is_user_active() {
-    for u in "${operational_users[@]}"; do
-        if [[ $u == "$1" ]]; then
+    local PSWDUSR
+    
+    for PSWDUSR in "${OPERATIONALUSRS[@]}"; do
+        if [[ $PSWDUSR == "$1" ]]; then
             return
         fi
     done
@@ -41,17 +44,19 @@ is_dir_active() {
     awk -v d="$1/" 'index($5, d) == 1 { f = 1 } END { exit !f }' /proc/self/mountinfo
 }
 
-abort_mount() {
-    trap - ERR
-    rootfs_unmount "$1"
-}
-
 drop_user() {
-    for i in "${!operational_users[@]}"; do
-        if [[ ${operational_users[i]} == "$1" ]]; then
+    local PSWDUSR
+    
+    for PSWDUSR in "${!OPERATIONALUSRS[@]}"; do
+        if [[ ${OPERATIONALUSRS[i]} == "$1" ]]; then
             unset 'operational_users[i]'
         fi
     done
+}
+
+abort_mount() {
+    trap - ERR
+    rootfs_unmount "$1"
 }
 
 ### rootfs actions
@@ -73,12 +78,9 @@ rootfs_mount() {
     elif is_user_active "$1"; then
         echo "[-!-] Already mounted rootfs for user $1."
         return
-    elif [[ -f "$USERDIR"/op.lock ]]; then
-        echo "[-!-] Rootfs for user $1 is already being operated on."
-        return
     fi
 
-    operational_users+=("$1")
+    OPERATIONALUSRS+=("$1")
 
     echo "[---] Mounting rootfs for user $1."
 
@@ -96,6 +98,7 @@ rootfs_mount() {
     for step in dirs base overlay; do
         if (( SHUTDOWN )); then
             abort_mount "$1"
+            OPFAILED=1
             return
         fi
 
@@ -103,6 +106,7 @@ rootfs_mount() {
 
         if (( MNTERR )); then
             abort_mount "$1"
+            OPFAILED=1
             return
         fi
     done
@@ -140,11 +144,12 @@ rootfs_unmount() {
 
     if is_dir_active "$USERDIR"; then
         echo "[!!!] Rootfs mounts still present for user $1."
+        trap - ERR
         return
-    else
-        rm --one-file-system -rf "${USERDIR:?}"/*
-        drop_user "$1"
     fi
+
+    rm --one-file-system -rf "${USERDIR:?}"/*
+    drop_user "$1"
 
     trap - ERR
 }
@@ -169,7 +174,7 @@ rootfs_clean_all() {
 }
 
 rootfs_unmount_all() {
-    for activeuser in "${operational_users[@]}"; do
+    for activeuser in "${OPERATIONALUSRS[@]}"; do
         rootfs_unmount "$activeuser"
     done
 }
@@ -186,10 +191,10 @@ fs_dirs() {
         
         if is_dir_active "$USERDIR"; then
             echo "[!!!] Rootfs mounts still present for user $1."
-            return
-        else
-            rm --one-file-system -rf "${USERDIR:?}"/*
+            false
         fi
+
+        rm --one-file-system -rf "${USERDIR:?}"/*
     else
         mkdir -p "$USERDIR"
     fi
@@ -235,18 +240,31 @@ fs_overlay() {
 
 ### user key mgmt
 
+monitor_user_keys() {
+    local EVFILE
+
+    inotifywait -m -q -e moved_to,close_write --format '%f' /etc |
+    while read -r EVFILE; do
+        if [[ $EVFILE == passwd ]]; then
+            issue_user_keys || echo "[!!!] Failed to refresh user keys."
+        fi
+    done
+}
+
 issue_user_keys() {
-    local PSWDUSR KFILE
-    
+    local PSWDUSR KFILE KTMP
+
     mkdir -p "$KAUTHDIR"
     chmod 0711 "$KAUTHDIR"
 
-    rm -f "${KAUTHDIR:?}"/*
-    
     while read -r PSWDUSR; do
         KFILE="$KAUTHDIR/$PSWDUSR"
-        ( umask 277; openssl rand -hex 32 > "$KFILE" )
-        chown -- "$PSWDUSR": "$KFILE"
+        KTMP="$KAUTHDIR/.$PSWDUSR.tmp"
+
+        ( umask 277; openssl rand -hex 32 > "$KTMP" )
+
+        chown -- "$PSWDUSR": "$KTMP"
+        mv -f -- "$KTMP" "$KFILE"
     done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
@@ -264,7 +282,7 @@ verify_user_key() {
 
 ### monitoring
 
-monitor() {
+monitor_fs_requests() {
     local WFD REPLY KEY REST ACTION PSWDUSR
     
     rm -f "$RUNTIME_DIRECTORY"/fsrequests.sock
@@ -299,7 +317,9 @@ monitor() {
                     
                     "rootfs_$ACTION" "$PSWDUSR"
 
-                    if [[ $ACTION == mount ]] && is_user_active "$PSWDUSR"; then
+                    if (( OPFAILED )); then
+                        REPLY="failed"
+                    elif [[ $ACTION == mount ]] && is_user_active "$PSWDUSR"; then
                         REPLY="mounted"
                     elif [[ $ACTION == unmount ]] && ! is_user_active "$PSWDUSR"; then
                         REPLY="unmounted"
@@ -324,14 +344,24 @@ monitor() {
 main() {
     systemd-notify --status "Starting..."
     echo "[-+-] Starting up."
+
+    rm -f "${KAUTHDIR:?}"/*
     issue_user_keys
+
     rootfs_clean_all
+
+    monitor_user_keys &
+    WATCHPID=$!
     
     systemd-notify --ready --status "Monitoring for requests."
-    monitor
+    monitor_fs_requests
+
+    pkill -P "$WATCHPID" 2>/dev/null || true
+    kill "$WATCHPID" 2>/dev/null || true
     
     systemd-notify --status "Stopping..."
     echo "[-+-] Shutting down."
+
     rootfs_unmount_all
     rootfs_clean_all
     
