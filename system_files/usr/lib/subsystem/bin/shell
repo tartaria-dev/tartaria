@@ -11,7 +11,7 @@ fi
 NORM=$(tput sgr0)
 GRAY=$(tput setaf 7)
 RED=$(tput setaf 1)
-HASH=$(printf '%s%s' "$(</etc/machine-id)" "$2" | sha256sum | awk '{print $1}')
+HASH=$(printf '%s%s' "$(</etc/machine-id)" "$USER" | sha256sum | awk '{print $1}')
 readonly RED GRAY NORM HASH
 
 ### utilities
