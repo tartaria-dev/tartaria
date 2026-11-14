@@ -159,6 +159,13 @@ podman_cmd() {
         -- '/usr/lib/subsystem/bin/ignition' >/dev/null
 
     while ! grep -q '^container_setup_done' <<< "$(podman logs "subsystem-$HASH" 2>&1)"; do
+        if (( SHUTDOWN )); then return 0; fi
+
+        if [[ "$(podman container inspect -f '{{.State.Running}}' "subsystem-$HASH" 2>/dev/null)" != "true" ]]; then
+            echo "[!!!] Container exited during startup."
+            false
+        fi
+
         sleep 1
     done
 }
