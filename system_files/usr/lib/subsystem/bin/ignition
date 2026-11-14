@@ -49,7 +49,7 @@ link_cmds() {
     echo "[2/2] Linking default commands."
     
     for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do
-        CMDPATH=$(command -v "$cmd")
+        CMDPATH=$(host-spawn command -v "$cmd")
         rm -f "$CMDPATH"
         ln -sT /usr/local/bin/host-spawn "$CMDPATH"
     done
@@ -63,11 +63,8 @@ link_cmds() {
 ### main logic
 
 main() {
-    echo "[---] Starting up."
     conf_shell
     link_cmds
-    
-    echo "[---] Startup done."
 }
 
 main

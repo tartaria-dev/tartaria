@@ -4,6 +4,9 @@
 ### set errexit, pipefail, errtrace
 set -eEo pipefail
 
+### set SIGTERM trap
+trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$WATCHPID" 2>/dev/null || true' SIGTERM
+
 ### do our checks
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
@@ -11,19 +14,17 @@ if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
 fi
 
 ### set constants
+WATCHPID=
+SHUTDOWN=0
 HASH=$(printf '%s%s' "$(</etc/machine-id)" "$USER" | sha256sum | awk '{print $1}')
 RTMEDIR="$HOME/.cache/subsystem-$HASH"
 
 readonly HASH RTMEDIR
 
-### create conf dir if needed
-mkdir -p "$HOME"/.config/subsystem
-
 ### subsystem actions
 
 start-subsystem() {
     trap 'echo "[!!!] Something went wrong during startup, aborting." && return 1' ERR
-    trap 'echo "[-i-] Received SIGTERM, aborting." && return 0' SIGTERM
 
     if [[ "$(systemctl is-failed subsystem-filesystemd)" == "activating" ]]; then
         echo "[-i-] Filesystem daemon has not finished startup, waiting."
@@ -38,7 +39,11 @@ start-subsystem() {
         fi
     fi
 
+    mkdir -p "$HOME"/.config/subsystem
+
     echo "[---] Starting subsystem."
+
+    if (( SHUTDOWN )); then return; fi
 
     echo "[1/3] Mounting rootfs."
 
@@ -50,16 +55,20 @@ start-subsystem() {
         false
     fi
 
+    if (( SHUTDOWN )); then return; fi
+
     echo "[2/3] Starting container."
     
     podman_cmd
+
+    if (( SHUTDOWN )); then return; fi
 
     echo "[3/3] Creating runtime lock."
     
     mkdir -p "$RTMEDIR"
     touch "$RTMEDIR"/runtime.lock
 
-    trap - ERR SIGTERM
+    trap - ERR
 }
 
 stop-subsystem() {
@@ -74,7 +83,7 @@ stop-subsystem() {
     echo "[2/3] Stopping container."
     
     podman container stop -it 30 "subsystem-$HASH"
-    podman container rm -if "subsystem-$HASH"
+    podman container rm -if "subsystem-$HASH" >/dev/null
 
     echo "[3/3] Unmounting rootfs."
     
@@ -86,7 +95,7 @@ stop-subsystem() {
         false
     fi
 
-    trap - ERR SIGTERM
+    trap - ERR
 }
 
 ### container cmd
@@ -136,7 +145,6 @@ podman_cmd() {
         --runtime=crun \
         --annotation run.oci.keep_original_groups=1 \
         --ulimit host \
-        --restart=always \
         --userns keep-id:size=65536 \
         --entrypoint /usr/bin/entrypoint \
         --rootfs /var/lib/subsystem/"$HASH"/rootfs \
@@ -148,26 +156,39 @@ podman_cmd() {
         --nvidia "0" \
         --pre-init-hooks "" \
         --additional-packages "" \
-        -- '/usr/lib/subsystem/bin/ignition'
+        -- '/usr/lib/subsystem/bin/ignition' >/dev/null
+
+    while ! grep -q '^container_setup_done' <<< "$(podman logs "subsystem-$HASH" 2>&1)"; do
+        sleep 1
+    done
 }
 
 ### monitoring
 
 monitor() {
-    trap 'echo "[-i-] Received SIGTERM, shutting down." && break' SIGTERM 
+    local CODE
 
-    while true; do
+    while (( ! SHUTDOWN )); do
         if podman ps --filter "name=subsystem-$HASH" --filter "status=running" --format "{{.Names}}" | grep -q "^subsystem-$HASH$"; then
-            podman wait "subsystem-$HASH" &   
-            local WAIT_PID=$!
-            wait "$WAIT_PID"
-            echo "[-i-] Subsystem exited with code $?."
+            podman wait "subsystem-$HASH" >/dev/null &
+            WATCHPID=$!
+            wait "$WATCHPID" || true
+            WATCHPID=
+
+            if (( SHUTDOWN )); then
+                break
+            fi
+
+            CODE=$(podman container inspect --format '{{.State.ExitCode}}' "subsystem-$HASH" 2>/dev/null) || CODE="unknown"
+            echo "[-i-] Subsystem exited with code $CODE, restarting."
+        fi
+
+        if (( SHUTDOWN )); then
+            break
         fi
 
         podman_cmd
     done
-
-    trap - SIGTERM
 }
 
 ### main logic

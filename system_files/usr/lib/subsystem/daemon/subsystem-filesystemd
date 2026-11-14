@@ -4,6 +4,9 @@
 ### set errexit, pipefail, errtrace
 set -eEo pipefail
 
+### set SIGTERM trap
+trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
+
 ### do our checks
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
@@ -22,9 +25,6 @@ ROLIBDIR=/usr/lib/subsystem
 KAUTHDIR="$RUNTIME_DIRECTORY"/auth
 
 readonly RWLIBDIR ROLIBDIR KAUTHDIR
-
-### set SIGTERM trap
-trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
 
 ### utilities
 
