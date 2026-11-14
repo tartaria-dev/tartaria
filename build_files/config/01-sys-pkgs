@@ -36,6 +36,7 @@ powertop
 python3
 reflector
 rsync
+socat
 tar
 unzip
 vim
