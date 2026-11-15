@@ -38,7 +38,4 @@ retry pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver
 retry pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
 echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
 
-# perform system update
-retry pacman -Syu --noconfirm --needed >/dev/null
-
 echo "::endgroup::"

@@ -29,7 +29,7 @@ case "$IMAGE_FLAVOR" in
 esac
 
 # install non-AUR packages
-retry pacman -S --noconfirm --needed "${packages[@]}" >/dev/null
+retry pacman -Syu --noconfirm --needed "${packages[@]}" >/dev/null
 retry pacman -S --noconfirm --needed libva-mesa-driver >/dev/null
 
 ## AUR packages
