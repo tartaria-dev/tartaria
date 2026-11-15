@@ -88,7 +88,7 @@ exec_root() {
         exit 1
     fi
 
-    host-spawn run0 --background= env SUBSYSTEM_BYPASS=1 bash -lic "$@"
+    host-spawn pkexec env SUBSYSTEM_BYPASS=1 bash -lic "$(printf '%q ' "$@")"
 }
 
 exec_norm() {
@@ -98,7 +98,7 @@ exec_norm() {
         exit 1
     fi
 
-    host-spawn env SUBSYSTEM_BYPASS=1 bash -lic "$@"
+    host-spawn env SUBSYSTEM_BYPASS=1 bash -lic "$(printf '%q ' "$@")"
 }
 
 ### main logic

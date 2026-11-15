@@ -46,16 +46,22 @@ EOF
 }
 
 link_cmds() {
+    local CMD CMDPATH
+
     echo "[2/2] Linking default commands."
     
-    for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do
-        CMDPATH=$(host-spawn command -v "$cmd")
+    for CMD in /usr/bin/distrobox{,-*}; do
+        rm -f "$CMD"
+        ln -sT /usr/local/bin/host-spawn "$CMD"
+    done
+
+    for CMD in podman flatpak niri noctalia systemctl journalctl; do
+        CMDPATH=$(command -v "$CMD")
         rm -f "$CMDPATH"
         ln -sT /usr/local/bin/host-spawn "$CMDPATH"
     done
 
     rm -f /usr/bin/bootc
-    
     echo -e '#!/bin/bash\n/usr/local/bin/host-spawn pkexec /usr/bin/bootc "$@"' > /usr/bin/bootc
     chmod +x /usr/bin/bootc
 }

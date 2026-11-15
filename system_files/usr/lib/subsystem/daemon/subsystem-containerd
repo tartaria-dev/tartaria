@@ -125,6 +125,7 @@ podman_cmd() {
         --env "LANG=$LANG" \
         --env "container=podman" \
         --env "TERMINFO_DIRS=/usr/share/terminfo:/run/host/usr/share/terminfo" \
+        --env "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus" \
         --env "CONTAINER_ID=subsystem-$HASH" \
         --volume /tmp:/tmp:rslave \
         --volume /usr/bin/distrobox-init:/usr/bin/entrypoint:ro \
@@ -141,7 +142,6 @@ podman_cmd() {
         --volume /etc/resolv.conf:/etc/resolv.conf:ro \
         --volume /etc/hostname:/etc/hostname:ro \
         --volume /dev/null:/run/.distrobox.rootless:ro \
-        --volume /dev/null:/usr/share/dbus-1/services/org.freedesktop.Flatpak.service \
         --volume /dev/null:/.containersetupdone:ro \
         --runtime=crun \
         --annotation run.oci.keep_original_groups=1 \

@@ -12,13 +12,16 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 # re-enable pacman network sandbox
 sed -i '/DisableSandboxNetwork/d' /etc/pacman.conf
 
-# set correct permissions on polkit rules dir
+# set correct perms on polkit rules dir
 chmod 750 /etc/polkit-1/rules.d
 chown -R root:polkitd /etc/polkit-1/rules.d
 
-# remove base-devel, keep sudo
-pacman -Rns --noconfirm base-devel cmake extra-cmake-modules
-retry pacman -S --noconfirm --needed sudo
+# set correct perms on sudo conf
+chmod 0440 /etc/sudoers.d/00-give-wheel-rights
+visudo -cf /etc/sudoers.d/00-give-wheel-rights
+
+# remove cmake stuff
+pacman -Rns --noconfirm cmake extra-cmake-modules
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service

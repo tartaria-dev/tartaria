@@ -21,11 +21,11 @@ get_state() {
 }
 
 throbber() {
-    local msg="$1"
-    local frames=("/" "-" "\\" "|")
+    local MSG="$1"
+    local FRAMES=("/" "-" "\\" "|")
 
-    for frame in "${frames[@]}"; do
-        printf "\r[%s] %s" "$frame" "$msg"
+    for FRAME in "${FRAMES[@]}"; do
+        printf "\r[%s] %s" "$FRAME" "$MSG"
         sleep 0.25
     done
 }
@@ -72,7 +72,7 @@ shell() {
     rm -f "$HOME"/.cache/subsys-restart
     
     while [[ "$TRYCOUNTER" -lt "10" ]]; do
-        if exec distrobox-enter "subsystem-$HASH" -- /bin/fish -l; then
+        if distrobox-enter "subsystem-$HASH" -- /bin/fish -l; then
             exit 0
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
             clear

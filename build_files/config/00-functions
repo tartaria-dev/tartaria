@@ -2,17 +2,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 retry() {
-    local attempt=1
-    local cmd=("$@")
+    local ATTEMPT=1
+    local CMD=("$@")
 
-    until "${cmd[@]}"; do
-        if (( attempt >= 3 )); then
-            echo "Command failed after ${attempt} attempts." >&2
+    until "${CMD[@]}"; do
+        if (( ATTEMPT >= 3 )); then
+            echo "Command failed after ${ATTEMPT} attempts." >&2
             return 1
         fi
-        echo "Attempt ${attempt} failed, retrying." >&2
+        echo "Attempt ${ATTEMPT} failed, retrying." >&2
         rm -rf /tmp/build/*.log
         sleep 2
-        (( attempt++ ))
+        (( ATTEMPT++ ))
     done
 }
