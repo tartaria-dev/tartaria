@@ -7,14 +7,12 @@ echo "::group::===========================> Install subsystem"
 source /config/00-functions
 set -ouex pipefail
 
-# fix os-release files
+# setup os-release
 rm -f /etc/os-release
-sed -i "s/placeholder_name/Tartaria v3.0.0 \"Hades\" $IMAGE_VARIANT/g" /usr/lib/os-release
+sed -i "s/placeholder_name/Tartaria v3.0.0 Hades/g" /usr/lib/os-release
 sed -i "s/placeholder_date/$(date +%F.%H%M%S%N)/g" /usr/lib/os-release
+sed -i "s/placeholder_id/$IMAGE_VARIANT/g" /usr/lib/os-release
 ln -sT /usr/lib/os-release /etc/os-release
-
-# install mkosi
-retry pacman -S --noconfirm --needed mkosi
 
 # create dirs
 mkdir -p /usr/lib/subsystem/segments
@@ -32,7 +30,6 @@ mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L etc /u
 mkfs.erofs -zzstd,19 -C 65536 -E all-fragments,dedupe,fragdedupe=inode -L var /usr/lib/subsystem/segments/var.dsk /output/image/var >/dev/null
 
 # cleanup
-pacman -Rns --noconfirm mkosi
 rm -rf /output /tmp/build/mkosi.log
 
 echo "::endgroup::"

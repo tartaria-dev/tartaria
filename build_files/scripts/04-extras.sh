@@ -20,8 +20,8 @@ chown -R root:polkitd /etc/polkit-1/rules.d
 chmod 0440 /etc/sudoers.d/00-give-wheel-rights
 visudo -cf /etc/sudoers.d/00-give-wheel-rights
 
-# remove cmake stuff
-pacman -Rns --noconfirm cmake extra-cmake-modules
+# remove build stuff
+pacman -Rns --noconfirm cmake extra-cmake-modules mkosi
 
 # fix ttys not starting correctly
 ln -sT /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/autovt@.service

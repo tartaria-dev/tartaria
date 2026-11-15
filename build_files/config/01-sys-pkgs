@@ -59,6 +59,7 @@ erofs-utils
 exfatprogs
 f2fs-tools
 jfsutils
+mkosi
 mtools
 nilfs-utils
 ntfs-3g

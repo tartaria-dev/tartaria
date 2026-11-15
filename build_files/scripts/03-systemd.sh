@@ -18,7 +18,6 @@ systemctl enable \
     firewalld.service \
     greetd.service \
     home.mount \
-    kdeconnect-firewalld-bypass.service \
     mnt.mount \
     mok-enroll.service \
     NetworkManager.service \
@@ -31,6 +30,7 @@ systemctl enable \
     srv.mount \
     subsystem-filesystemd.service \
     sync-greeter-configs.service \
+    valcups-firewalld-bypass.service \
     tuned-ppd.service \
     tuned.service \
     uupd.timer

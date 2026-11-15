@@ -1,7 +1,8 @@
 NAME="Tartaria"
-PRETTY_NAME="placeholder_name"
 ID=tartaria
 LOGO=tartaria-logo
+PRETTY_NAME="placeholder_name"
+VARIANT_ID=placeholder_id
 BUILD_ID=placeholder_date
 ANSI_COLOR="38;2;23;147;209"
 HOME_URL="https://github.com/tartaria-dev/tartaria"
