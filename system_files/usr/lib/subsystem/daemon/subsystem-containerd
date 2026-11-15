@@ -142,6 +142,7 @@ podman_cmd() {
         --volume /etc/hostname:/etc/hostname:ro \
         --volume /dev/null:/run/.distrobox.rootless:ro \
         --volume /dev/null:/usr/share/dbus-1/services/org.freedesktop.Flatpak.service \
+        --volume /dev/null:/.containersetupdone:ro \
         --runtime=crun \
         --annotation run.oci.keep_original_groups=1 \
         --ulimit host \

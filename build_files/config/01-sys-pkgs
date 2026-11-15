@@ -19,8 +19,10 @@ udev
 atuin
 bash
 bash-completion
+bc
 cava
 curl
+diffutils
 fastfetch
 fish
 git
@@ -29,19 +31,25 @@ jq
 less
 lsof
 man-db
+man-pages
 matugen
 nano
+nvim
 openssh
+pigz
 powertop
 python3
 reflector
 rsync
 socat
 tar
+time
+tree
 unzip
 vim
-nvim
 wget
+words
+zip
 
 # ========> filesystems
 btrfs-progs
@@ -68,11 +76,11 @@ cups-browsed
 cups-pk-helper
 ddcutil
 fprintd
+iio-sensor-proxy
 intel-media-driver
 intel-ucode
-iio-sensor-proxy
-lm_sensors
 libva-intel-driver
+lm_sensors
 usbutils
 vpl-gpu-rt
 vulkan-icd-loader
@@ -101,11 +109,15 @@ wireplumber
 
 # ========> network
 firewalld
+inetutils
 libmtp
+mtr
 networkmanager
 nss-mdns
 samba
 smbclient
+tcpdump
+traceroute
 udiskie
 udisks2
 
