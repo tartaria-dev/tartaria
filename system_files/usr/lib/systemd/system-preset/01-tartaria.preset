@@ -1,6 +1,6 @@
 enable enable-flathub-repo.service
 enable home.mount
-enable kdeconnect-firewalld-bypass.service
+enable valcups-firewalld-bypass.service
 enable mnt.mount
 enable mok-enroll.service
 enable opt.mount
