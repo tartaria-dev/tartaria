@@ -6,12 +6,12 @@ set -eo pipefail
 
 ### secureboot cert enrollment
 
-mok_s0() {
+mokroll_prep() {
     mkdir -p /etc/tartaria
     HASHFILE=$(mktemp)
 }
 
-mok_s1() {
+mokroll_import() {
     mokutil --generate-hash="tartaria" > "${HASHFILE}"
     
     if [[ -f "/usr/share/tartaria/certs/secureboot.der" ]]; then
@@ -24,8 +24,8 @@ mok_s1() {
 ### main logic
 
 main() {
-    mok_s0
-    mok_s1
+    mokroll_prep
+    mokroll_import
 }
 
 main

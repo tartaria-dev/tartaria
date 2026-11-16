@@ -6,7 +6,7 @@ set -eo pipefail
 
 ### config syncing
 
-gd_mconf() {
+gdsync_mainconf() {
     if grep -Eq "maraska|berbere" /usr/lib/os-release; then
         cp -af /usr/share/greeter-defaults/noctalia/config.toml /etc/greetd/config.toml
     elif grep -Eq "saffron|amchoor" /usr/lib/os-release; then
@@ -14,7 +14,7 @@ gd_mconf() {
     fi
 }
 
-gd_gconf() {
+gdsync_shellconf() {
     if grep -Eq "maraska|berbere" /usr/lib/os-release; then
         if [[ ! -f /etc/greetd/.no-sync-noctalia ]]; then
             touch /etc/greetd/.no-sync-noctalia
@@ -31,8 +31,8 @@ gd_gconf() {
 ### main logic
 
 main() {
-    gd_mconf
-    gd_gconf
+    gdsync_mainconf
+    gdsync_shellconf
 }
 
 main

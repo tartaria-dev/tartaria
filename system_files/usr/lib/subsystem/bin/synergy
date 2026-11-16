@@ -35,7 +35,7 @@ EOF
 
 ### command actions
 
-link_cmd() {
+cmd_link() {
     shift
 
     if [[ -z "$1" ]]; then
@@ -59,7 +59,7 @@ link_cmd() {
     echo "[1/1] Linked command $1 to /usr/local/bin/$1"
 }
 
-unlink_cmd() {
+cmd_unlink() {
     shift
 
     if [[ -z "$1" ]]; then
@@ -109,10 +109,10 @@ main() {
             help
             ;;
         -l|--link)
-            link_cmd "$@"
+            cmd_link "$@"
             ;;
         -u|--unlink)
-            unlink_cmd "$@"
+            cmd_unlink "$@"
             ;;
         -r|--root)
             exec_root "$@"

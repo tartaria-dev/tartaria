@@ -47,7 +47,7 @@ check_args() {
 
 ### subsystem mgmt
 
-restart_subsys() {
+subsys_restart() {
     echo "[-i-] Restarting subsystem."
     echo "[-i-] Any running tasks in the subsystem will be stopped."
     echo "[-i-] To continue, press any key, or press CTRL+C to abort."
@@ -60,7 +60,7 @@ restart_subsys() {
     host-spawn nohup bash -c "systemctl --user restart subsystem-containerd" >/dev/null 2>&1 &
 }
 
-disable_subsys() {
+subsys_disable() {
     echo "[-i-] Disabling subsystem."
     echo "[-i-] This will disable the subsystem and give you a standard host bash shell."
     echo "[-i-] Press any key to continue, or CTRL+C to abort."
@@ -86,10 +86,10 @@ main() {
             host-spawn journalctl --user -xeu subsystem-containerd
             ;;
         restart)
-            restart_subsys
+            subsys_restart
             ;;
         disable)
-            disable_subsys
+            subsys_disable
             ;;
         *)
             check_args "$@"

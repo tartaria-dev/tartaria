@@ -12,7 +12,7 @@ fi
 
 ### utilities
 
-sconf_s0() {
+subsys_shellprep() {
     echo "[1/2] Configuring shell."
 
     rm -f /etc/fish/functions/fish_prompt.fish
@@ -45,7 +45,7 @@ end
 EOF
 }
 
-sconf_s1() {
+subsys_cmdprep() {
     local CMD CMDPATH
 
     echo "[2/2] Linking default commands."
@@ -69,8 +69,8 @@ sconf_s1() {
 ### main logic
 
 main() {
-    sconf_s0
-    sconf_s1
+    subsys_shellprep
+    subsys_cmdprep
 }
 
 main
