@@ -39,7 +39,7 @@ systemctl enable \
 systemctl preset \
     enable-flathub-repo.service \
     home.mount \
-    kdeconnect-firewalld-bypass.service \
+    valcups-firewalld-bypass.service \
     mnt.mount \
     mok-enroll.service \
     opt.mount \
