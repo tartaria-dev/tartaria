@@ -1,10 +1,12 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit & pipefail
+### set errexit + pipefail
+
 set -eo pipefail
 
 ### do our checks
+
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
@@ -35,7 +37,7 @@ EOF
 
 ### command actions
 
-link_cmd() {
+cmd_link() {
     shift
 
     if [[ -z "$1" ]]; then
@@ -59,7 +61,7 @@ link_cmd() {
     echo "[1/1] Linked command $1 to /usr/local/bin/$1"
 }
 
-unlink_cmd() {
+cmd_unlink() {
     shift
 
     if [[ -z "$1" ]]; then
@@ -109,10 +111,10 @@ main() {
             help
             ;;
         -l|--link)
-            link_cmd "$@"
+            cmd_link "$@"
             ;;
         -u|--unlink)
-            unlink_cmd "$@"
+            cmd_unlink "$@"
             ;;
         -r|--root)
             exec_root "$@"

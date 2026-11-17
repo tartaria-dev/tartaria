@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 ### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
@@ -12,7 +13,7 @@ fi
 
 ### utilities
 
-conf_shell() {
+subsys_shellprep() {
     echo "[1/2] Configuring shell."
 
     rm -f /etc/fish/functions/fish_prompt.fish
@@ -45,7 +46,7 @@ end
 EOF
 }
 
-link_cmds() {
+subsys_cmdprep() {
     local CMD CMDPATH
 
     echo "[2/2] Linking default commands."
@@ -69,8 +70,8 @@ link_cmds() {
 ### main logic
 
 main() {
-    conf_shell
-    link_cmds
+    subsys_shellprep
+    subsys_cmdprep
 }
 
 main

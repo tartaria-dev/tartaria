@@ -1,22 +1,32 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# LOVE MEEEE
+# set errexit + pipefail
+
 set -eo pipefail
 
-# create necessary dirs
-mkdir -p /etc/tartaria
+### secureboot cert enrollment
 
-# create hash file
-hash_file=$(mktemp)
+mokroll_prep() {
+    mkdir -p /etc/tartaria
+    HASHFILE=$(mktemp)
+}
 
-# generate pass
-mokutil --generate-hash="tartaria" > "${hash_file}"
+mokroll_import() {
+    mokutil --generate-hash="tartaria" > "${HASHFILE}"
+    
+    if [[ -f "/usr/share/tartaria/certs/secureboot.der" ]]; then
+        mokutil --import "/usr/share/tartaria/certs/secureboot.der" --hash-file "${HASHFILE}"
+    fi
 
-# enroll secureboot cert if exists
-if [[ -f "/usr/share/tartaria/certs/secureboot.der" ]]; then
-    mokutil --import "/usr/share/tartaria/certs/secureboot.der" --hash-file "${hash_file}"
-fi
+    rm -f "${HASHFILE}"
+}
 
-# cleanup
-rm -f "${hash_file}"
+### main logic
+
+main() {
+    mokroll_prep
+    mokroll_import
+}
+
+main

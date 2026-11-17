@@ -1,13 +1,16 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit, pipefail, errtrace
+### set errexit + pipefail + errtrace
+
 set -eEo pipefail
 
 ### set SIGTERM trap
+
 trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$WATCHPID" 2>/dev/null || true' SIGTERM
 
 ### do our checks
+
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
@@ -21,9 +24,9 @@ RTMEDIR="$HOME/.cache/subsystem-$HASH"
 
 readonly HASH RTMEDIR
 
-### subsystem actions
+### subsystem stuff
 
-start-subsystem() {
+subsys_start() {
     trap 'echo "[!!!] Something went wrong during startup, aborting." && return 1' ERR
 
     if [[ "$(systemctl is-failed subsystem-filesystemd)" == "activating" ]]; then
@@ -59,7 +62,7 @@ start-subsystem() {
 
     echo "[2/3] Starting container."
     
-    podman_cmd
+    subsys_cmd
 
     if (( SHUTDOWN )); then return; fi
 
@@ -71,7 +74,7 @@ start-subsystem() {
     trap - ERR
 }
 
-stop-subsystem() {
+subsys_stop() {
     trap 'echo "[!!!] Something went wrong during shutdown, aborting." && return 1' ERR
 
     echo "[---] Stopping subsystem."
@@ -98,9 +101,7 @@ stop-subsystem() {
     trap - ERR
 }
 
-### container cmd
-
-podman_cmd() {
+subsys_cmd() {
     if podman container exists "subsystem-$HASH"; then
         podman container rm -if "subsystem-$HASH"
     fi
@@ -195,7 +196,7 @@ monitor() {
             break
         fi
 
-        podman_cmd
+        subsys_cmd
     done
 }
 
@@ -204,14 +205,14 @@ monitor() {
 main() {
     systemd-notify --status "Starting..."
     echo "[-+-] Starting up."
-    start-subsystem
+    subsys_start
     
     systemd-notify --ready --status "Subsystem is running."
     monitor
     
     systemd-notify --status "Stopping..."
     echo "[-+-] Shutting down."
-    stop-subsystem
+    subsys_stop
     
     systemd-notify --status "Stopped."
 }

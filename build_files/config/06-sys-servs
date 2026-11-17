@@ -1,0 +1,32 @@
+# ========> tartaria
+enable brew-setup.service
+enable enable-flathub-repo.service
+enable home.mount
+enable kdeconnect-firewalld-bypass.service
+enable mnt.mount
+enable mok-enroll.service
+enable opt.mount
+enable preinstall-flatpaks.service
+enable rechunker-group-fix.service
+enable refresh-font-cache.service
+enable root.mount
+enable srv.mount
+enable subsystem-filesystemd.service
+enable sync-greeter-configs.service
+enable uupd.timer
+
+# ========> system
+enable apparmor.service
+enable bluetooth.service
+enable cups-browsed.service
+enable cups.socket
+enable firewalld.service
+enable greetd.service
+enable NetworkManager-dispatcher.service
+enable NetworkManager-wait-online.service
+enable NetworkManager.service
+enable systemd-resolved-monitor.socket
+enable systemd-resolved-varlink.socket
+enable systemd-resolved.service
+enable tuned-ppd.service
+enable tuned.service

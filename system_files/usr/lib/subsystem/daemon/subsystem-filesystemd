@@ -1,22 +1,27 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit, pipefail, errtrace
+### set errexit + pipefail + errtrace
+
 set -eEo pipefail
 
 ### set SIGTERM trap
+
 trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
 
 ### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
 fi
 
 ### set arrays
-declare -a OPERATIONALUSRS
+
+declare -a operational_users
 
 ### set constants
+
 SOCATPID=
 SHUTDOWN=0
 OPFAILED=0
@@ -28,11 +33,11 @@ readonly RWLIBDIR ROLIBDIR KAUTHDIR
 
 ### utilities
 
-is_user_active() {
-    local PSWDUSR
+util_usr_isactive() {
+    local opusr
     
-    for PSWDUSR in "${OPERATIONALUSRS[@]}"; do
-        if [[ $PSWDUSR == "$1" ]]; then
+    for opusr in "${operational_users[@]}"; do
+        if [[ $opusr == "$1" ]]; then
             return
         fi
     done
@@ -40,21 +45,21 @@ is_user_active() {
     return 1
 }
 
-is_dir_active() {
+util_dir_isactive() {
     awk -v d="$1/" 'index($5, d) == 1 { f = 1 } END { exit !f }' /proc/self/mountinfo
 }
 
-drop_user() {
-    local PSWDUSR
+util_drop_usr() {
+    local opusr
     
-    for PSWDUSR in "${!OPERATIONALUSRS[@]}"; do
-        if [[ ${OPERATIONALUSRS[PSWDUSR]} == "$1" ]]; then
-            unset 'OPERATIONALUSRS[PSWDUSR]'
+    for opusr in "${!operational_users[@]}"; do
+        if [[ ${operational_users[opusr]} == "$1" ]]; then
+            unset 'operational_users[opusr]'
         fi
     done
 }
 
-abort_mount() {
+util_abort_mnt() {
     trap - ERR
     rootfs_unmount "$1"
 }
@@ -62,7 +67,7 @@ abort_mount() {
 ### rootfs actions
 
 rootfs_mount() {
-    local HASH USERDIR MNTERR S{U,G}ID_{START,RANGE}
+    local HASH USERDIR MNTERR S{U,G}ID_{START,RANGE} mntstep
     
     HASH=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
     USERDIR=$RWLIBDIR/$HASH
@@ -75,12 +80,12 @@ rootfs_mount() {
     elif [[ -f "/var/home/$1/.config/subsystem/disable" ]]; then
         echo "[-!-] Subsystem disabled for user $1."
         return
-    elif is_user_active "$1"; then
+    elif util_usr_isactive "$1"; then
         echo "[-!-] Already mounted rootfs for user $1."
         return
     fi
 
-    OPERATIONALUSRS+=("$1")
+    operational_users+=("$1")
 
     echo "[---] Mounting rootfs for user $1."
 
@@ -89,23 +94,23 @@ rootfs_mount() {
     
     if [[ -z $SUID_START || -z $SGID_START || -z $SUID_RANGE || -z $SGID_RANGE ]]; then
         echo "[!!!] User $1 has improperly configured sub{uid,gid}s."
-        drop_user "$1"
+        util_drop_usr "$1"
         return
     fi
 
     trap "echo '[!!!] Failed to mount rootfs for $1.'; MNTERR=1; return" ERR
 
-    for step in dirs base overlay; do
+    for mntstep in dirs base ovly; do
         if (( SHUTDOWN )); then
-            abort_mount "$1"
+            util_abort_mnt "$1"
             OPFAILED=1
             return
         fi
 
-        "fs_$step"
+        "fs_step_$mntstep"
 
         if (( MNTERR )); then
-            abort_mount "$1"
+            util_abort_mnt "$1"
             OPFAILED=1
             return
         fi
@@ -115,7 +120,7 @@ rootfs_mount() {
 }
 
 rootfs_unmount() {
-    local HASH USERDIR
+    local HASH USERDIR dir
     
     HASH=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
     USERDIR=$RWLIBDIR/$HASH
@@ -125,7 +130,7 @@ rootfs_unmount() {
     if [[ -z $1 ]]; then
         echo "[!!!] No target user given."
         return
-    elif ! is_user_active "$1"; then
+    elif ! util_usr_isactive "$1"; then
         echo "[-!-] Already unmounted rootfs for user $1."
         return
     fi
@@ -142,46 +147,48 @@ rootfs_unmount() {
 
     echo "[2/2] Cleaning rootfs directories."
 
-    if is_dir_active "$USERDIR"; then
+    if util_dir_isactive "$USERDIR"; then
         echo "[!!!] Rootfs mounts still present for user $1."
         trap - ERR
         return
     fi
 
     rm --one-file-system -rf "${USERDIR:?}"/*
-    drop_user "$1"
+    util_drop_usr "$1"
 
     trap - ERR
 }
 
 rootfs_clean_all() {
-    local HASH ALLUSRDIRS ACTIVEUSRDIRS PSWDUSR PSWDUSRDIR
+    local HASH all_udirs active_udirs opusr opdir
 
-    while read -r PSWDUSR; do
-        HASH=$(printf '%s%s' "$(</etc/machine-id)" "$PSWDUSR" | sha256sum | awk '{print $1}')
-        ACTIVEUSRDIRS+=("$RWLIBDIR/$HASH")
+    while read -r opusr; do
+        HASH=$(printf '%s%s' "$(</etc/machine-id)" "$opusr" | sha256sum | awk '{print $1}')
+        active_udirs+=("$RWLIBDIR/$HASH")
     done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
     
     shopt -s nullglob
-    ALLUSRDIRS=("$RWLIBDIR"/*)
+    all_udirs=("$RWLIBDIR"/*)
     shopt -u nullglob
 
-    for PSWDUSRDIR in "${ALLUSRDIRS[@]}"; do
-        if [[ " ${ACTIVEUSRDIRS[*]} " != *" $PSWDUSRDIR "* ]] && ! is_dir_active "$PSWDUSRDIR"; then
-            rm --one-file-system -rf "$PSWDUSRDIR"
+    for opdir in "${all_udirs[@]}"; do
+        if [[ " ${active_udirs[*]} " != *" $opdir "* ]] && ! util_dir_isactive "$opdir"; then
+            rm --one-file-system -rf "$opdir"
         fi
     done
 }
 
 rootfs_unmount_all() {
-    for activeuser in "${OPERATIONALUSRS[@]}"; do
+    for activeuser in "${operational_users[@]}"; do
         rootfs_unmount "$activeuser"
     done
 }
 
 ### rootfs mount steps
 
-fs_dirs() {
+fs_step_dirs() {
+    local dir
+    
     echo "[1/3] Preparing rootfs directories."
 
     if [[ -d "$USERDIR" ]]; then
@@ -189,7 +196,7 @@ fs_dirs() {
             umount -q "$USERDIR/$dir" || true
         done
         
-        if is_dir_active "$USERDIR"; then
+        if util_dir_isactive "$USERDIR"; then
             echo "[!!!] Rootfs mounts still present, cannot operate."
             false
         fi
@@ -206,7 +213,9 @@ fs_dirs() {
     mount -o remount,bind,ro "$USERDIR"/overlay/base
 }
 
-fs_base() {
+fs_step_base() {
+    local dir
+    
     echo "[2/3] Mounting base directories."
     
     mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/rfs,upperdir="$USERDIR"/overlay/data/rfs,workdir="$USERDIR"/overlay/work/rfs "$USERDIR"/rootfs
@@ -230,7 +239,9 @@ fs_base() {
     done
 }
 
-fs_overlay() {
+fs_step_ovly() {
+    local dir
+    
     echo "[3/3] Mounting overlay directories."
     
     for dir in etc var srv opt usr lib{,64} {,s}bin; do
@@ -240,35 +251,18 @@ fs_overlay() {
 
 ### user key mgmt
 
-monitor_user_keys() {
-    local EVFILE
+ukeys_monitor() {
+    local evfile
 
     inotifywait -m -q -e moved_to,close_write --format '%f' /etc |
-    while read -r EVFILE; do
-        if [[ $EVFILE == passwd ]]; then
-            issue_user_keys || echo "[!!!] Failed to refresh user keys."
+    while read -r evfile; do
+        if [[ $evfile == passwd ]]; then
+            ukeys_issue || echo "[!!!] Failed to refresh user keys."
         fi
     done
 }
 
-issue_user_keys() {
-    local PSWDUSR KFILE KTMP
-
-    mkdir -p "$KAUTHDIR"
-    chmod 0711 "$KAUTHDIR"
-
-    while read -r PSWDUSR; do
-        KFILE="$KAUTHDIR/$PSWDUSR"
-        KTMP="$KAUTHDIR/.$PSWDUSR.tmp"
-
-        ( umask 277; openssl rand -hex 32 > "$KTMP" )
-
-        chown -- "$PSWDUSR": "$KTMP"
-        mv -f -- "$KTMP" "$KFILE"
-    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
-}
-
-verify_user_key() {
+ukeys_verify() {
     local USRKEY
 
     { IFS= read -r USRKEY < "$KAUTHDIR/$1"; } 2>/dev/null || return 1
@@ -280,9 +274,26 @@ verify_user_key() {
     fi
 }
 
+ukeys_issue() {
+    local KFILE KTMP pswdusr
+
+    mkdir -p "$KAUTHDIR"
+    chmod 0711 "$KAUTHDIR"
+
+    while read -r pswdusr; do
+        KFILE="$KAUTHDIR/$pswdusr"
+        KTMP="$KAUTHDIR/.$pswdusr.tmp"
+
+        ( umask 277; openssl rand -hex 32 > "$KTMP" )
+
+        chown -- "$pswdusr": "$KTMP"
+        mv -f -- "$KTMP" "$KFILE"
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
+}
+
 ### monitoring
 
-monitor_fs_requests() {
+monitor() {
     local WFD REPLY KEY REST ACTION PSWDUSR
     
     rm -f "$RUNTIME_DIRECTORY"/fsrequests.sock
@@ -310,7 +321,7 @@ monitor_fs_requests() {
                     REPLY="unknown_cmd"
                 elif ! awk -F: -v u="$PSWDUSR" '$1==u && $3>=1000 && $3!=65534 {f=1} END{exit !f}' /etc/passwd; then
                     REPLY="unknown_user"
-                elif ! verify_user_key "$PSWDUSR" "$KEY"; then
+                elif ! ukeys_verify "$PSWDUSR" "$KEY"; then
                     REPLY="denied_request"
                 else
                     echo "[-i-] Received request to $ACTION rootfs for $PSWDUSR."
@@ -320,9 +331,9 @@ monitor_fs_requests() {
 
                     if (( OPFAILED )); then
                         REPLY="failed"
-                    elif [[ $ACTION == mount ]] && is_user_active "$PSWDUSR"; then
+                    elif [[ $ACTION == mount ]] && util_usr_isactive "$PSWDUSR"; then
                         REPLY="mounted"
-                    elif [[ $ACTION == unmount ]] && ! is_user_active "$PSWDUSR"; then
+                    elif [[ $ACTION == unmount ]] && ! util_usr_isactive "$PSWDUSR"; then
                         REPLY="unmounted"
                     else
                         REPLY="failed"
@@ -347,15 +358,15 @@ main() {
     echo "[-+-] Starting up."
 
     rm -f "${KAUTHDIR:?}"/*
-    issue_user_keys
+    ukeys_issue
 
     rootfs_clean_all
 
-    monitor_user_keys &
+    ukeys_monitor &
     WATCHPID=$!
     
     systemd-notify --ready --status "Monitoring for requests."
-    monitor_fs_requests
+    monitor
 
     pkill -P "$WATCHPID" 2>/dev/null || true
     kill "$WATCHPID" 2>/dev/null || true
