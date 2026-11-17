@@ -35,6 +35,8 @@ main() {
     final_geninit
     final_sortrfs
 
+    script_cleanup
+
     echo "::endgroup::"
 }
 

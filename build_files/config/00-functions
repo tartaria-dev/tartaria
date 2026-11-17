@@ -1,6 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
+mkdir -p /var/tmp
+
 script_cleanup() {
     userdel builder || true
     rm -rf /output/{artifacts,logs}/* /var/tmp
