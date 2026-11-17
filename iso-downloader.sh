@@ -1,26 +1,19 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### once upon a time
+### setup
+
 set -oue pipefail
 
 ### declare arrays
+
 BASES=( "Arch" "CachyOSv3" )
 NAMES=("Arch-Saffron" "Arch-Maraska" "CachyOSv3-Saffron" "CachyOSv3-Maraska")
 TAGS=("arch-saffron" "arch-maraska" "cachy-saffron" "cachy-maraska")
 
-### dep check
-
-dl_dep() {
-    if ! command -v podman >/dev/null; then
-        echo "[!!!] Podman is not installed on this system, please install it."
-        exit 1
-    fi
-}
-
 ### user questions
 
-dl_q1() {
+dl_askbase() {
     while true; do
         echo "[---] ISO Selection"
         echo -e "[---] What base of Tartaria do you want? (enter the corresponding number)\n"
@@ -40,9 +33,11 @@ dl_q1() {
             break
         fi
     done
+
+    clear
 }
 
-dl_q2() {
+dl_askshell() {
     while true; do
         echo "[---] ISO Selection"
         echo -e "[---] Which shell would you like? (enter the corresponding number)\n"
@@ -64,40 +59,53 @@ dl_q2() {
             break
         fi
     done
+
+    clear
 }
 
-### download steps
+### download stuff
 
-dl_s0() {
+dl_depcheck() {
+    if ! command -v podman >/dev/null; then
+        echo "[!!!] Podman is not installed on this system, please install it."
+        exit 1
+    fi
+
+    clear
+}
+
+dl_initvars() {
     IDX=$(( (base_answer - 1) * 2 + (shell_answer - 1) ))
     TAG="${TAGS[$IDX]}"
     NAME="${NAMES[$IDX]}"
 }
 
-dl_s1() {
+dl_prepare() {
     echo "[1/2] Preparing."
 
-    trap 'dl_clean && echo && echo "[!!!] Something went wrong during preperation. Please re-run this script."' ERR
+    trap 'dl_clean && echo -e "\n[!!!] Something went wrong during preperation. Please re-run this script."' ERR
 
     rm -rf "$HOME"/Downloads/tartaria-iso
     mkdir -p "$HOME"/Downloads/tartaria-iso
 
     podman pull ghcr.io/sigstore/cosign/cosign:v3.1.3
     podman pull ghcr.io/oras-project/oras:v1.3.4
+
+    clear
 }
 
-dl_s2() {
+dl_pulliso() {
     echo "[2/2] Downloading ${NAME} ISO."
     echo "[-i-] Please do not interrupt the download process. This may take a while."
 
-    trap 'dl_clean && echo && echo "[!!!] ISO did not pass verification. Report this issue immediately."' ERR
+    trap 'dl_clean && echo -e "\n[!!!] ISO did not pass verification. Report this issue immediately."' ERR
 
     podman run -it --rm ghcr.io/sigstore/cosign/cosign:v3.1.3 verify \
       "ghcr.io/tartaria-dev/tartaria-iso:${TAG}" \
       --certificate-identity="https://github.com/tartaria-dev/tartaria/.github/workflows/build-iso.yml@refs/heads/live" \
       --certificate-oidc-issuer="https://token.actions.githubusercontent.com" >/dev/null
 
-    trap 'dl_clean && echo && echo "[!!!] ISO failed to download. Check your connection and re-run this script."' ERR
+    trap 'dl_clean && echo "\n[!!!] ISO failed to download. Check your connection and re-run this script."' ERR
 
     podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:v1.3.4 \
         pull "ghcr.io/tartaria-dev/tartaria-iso:${TAG}"
@@ -106,6 +114,8 @@ dl_s2() {
     rmdir "$HOME"/Downloads/tartaria-iso/iso
 
     dl_clean
+
+    clear
 }
 
 dl_clean() {
@@ -118,22 +128,14 @@ dl_clean() {
 ### main logic
 
 main() {
-    dl_dep
-    clear
+    dl_depcheck
     
-    dl_q1
-    clear
+    dl_askbase
+    dl_askshell
 
-    dl_q2
-    clear
-
-    dl_s0
-
-    dl_s1
-    clear
-
-    dl_s2
-    clear
+    dl_initvars
+    dl_prepare
+    dl_pulliso
 
     echo "[-i-] Success!"
     echo "[-i-] Your downloaded ISO is located at '$HOME/Downloads/tartaria-iso/tartaria.iso'."

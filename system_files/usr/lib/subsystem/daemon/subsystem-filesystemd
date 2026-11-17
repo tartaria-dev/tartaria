@@ -1,22 +1,27 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit, pipefail, errtrace
+### set errexit + pipefail + errtrace
+
 set -eEo pipefail
 
 ### set SIGTERM trap
+
 trap 'echo "[-i-] Received SIGTERM, shutting down."; SHUTDOWN=1; kill "$SOCATPID" 2>/dev/null || true' SIGTERM
 
 ### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
 fi
 
 ### set arrays
+
 declare -a operational_users
 
 ### set constants
+
 SOCATPID=
 SHUTDOWN=0
 OPFAILED=0
@@ -182,6 +187,8 @@ rootfs_unmount_all() {
 ### rootfs mount steps
 
 fs_step_dirs() {
+    local dir
+    
     echo "[1/3] Preparing rootfs directories."
 
     if [[ -d "$USERDIR" ]]; then
@@ -207,6 +214,8 @@ fs_step_dirs() {
 }
 
 fs_step_base() {
+    local dir
+    
     echo "[2/3] Mounting base directories."
     
     mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/rfs,upperdir="$USERDIR"/overlay/data/rfs,workdir="$USERDIR"/overlay/work/rfs "$USERDIR"/rootfs
@@ -231,6 +240,8 @@ fs_step_base() {
 }
 
 fs_step_ovly() {
+    local dir
+    
     echo "[3/3] Mounting overlay directories."
     
     for dir in etc var srv opt usr lib{,64} {,s}bin; do
@@ -241,31 +252,14 @@ fs_step_ovly() {
 ### user key mgmt
 
 ukeys_monitor() {
-    local EVFILE
+    local evfile
 
     inotifywait -m -q -e moved_to,close_write --format '%f' /etc |
-    while read -r EVFILE; do
-        if [[ $EVFILE == passwd ]]; then
+    while read -r evfile; do
+        if [[ $evfile == passwd ]]; then
             ukeys_issue || echo "[!!!] Failed to refresh user keys."
         fi
     done
-}
-
-ukeys_issue() {
-    local PSWDUSR KFILE KTMP
-
-    mkdir -p "$KAUTHDIR"
-    chmod 0711 "$KAUTHDIR"
-
-    while read -r PSWDUSR; do
-        KFILE="$KAUTHDIR/$PSWDUSR"
-        KTMP="$KAUTHDIR/.$PSWDUSR.tmp"
-
-        ( umask 277; openssl rand -hex 32 > "$KTMP" )
-
-        chown -- "$PSWDUSR": "$KTMP"
-        mv -f -- "$KTMP" "$KFILE"
-    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
 ukeys_verify() {
@@ -278,6 +272,23 @@ ukeys_verify() {
     else
         return 1
     fi
+}
+
+ukeys_issue() {
+    local KFILE KTMP pswdusr
+
+    mkdir -p "$KAUTHDIR"
+    chmod 0711 "$KAUTHDIR"
+
+    while read -r pswdusr; do
+        KFILE="$KAUTHDIR/$pswdusr"
+        KTMP="$KAUTHDIR/.$pswdusr.tmp"
+
+        ( umask 277; openssl rand -hex 32 > "$KTMP" )
+
+        chown -- "$pswdusr": "$KTMP"
+        mv -f -- "$KTMP" "$KFILE"
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
 ### monitoring

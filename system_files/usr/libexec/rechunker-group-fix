@@ -2,12 +2,14 @@
 # thank your Zirconium devs for this fix :vlone:
 
 ### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
 fi
 
 ### set constants
+
 GSHADOW_FILE="/etc/gshadow"
 GROUP_FILE="/etc/group"
 readonly G{SHADOW,ROUP}_FILE

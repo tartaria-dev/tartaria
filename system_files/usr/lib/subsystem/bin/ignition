@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 ### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77

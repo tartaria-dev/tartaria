@@ -1,6 +1,11 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
+script_cleanup() {
+    userdel builder || true
+    rm -rf /output/{artifacts,logs}/* /var/tmp
+}
+
 retry() {
     local ATTEMPT=1
     local CMD=("$@")
@@ -10,9 +15,12 @@ retry() {
             echo "Command failed after ${ATTEMPT} attempts." >&2
             return 1
         fi
+
         echo "Attempt ${ATTEMPT} failed, retrying." >&2
-        rm -rf /tmp/build/*.log
+
+        rm -rf /output/logs/*
         sleep 2
+
         (( ATTEMPT++ ))
     done
 }

@@ -13,12 +13,11 @@ RUN --mount=type=bind,src=build_files/scripts,dst=/build \
     --mount=type=bind,from=ghcr.io/tartaria-dev/cherries:latest,src=/,dst=/cherries \
     --mount=type=secret,id=secureboot_cert,required=true \
     --mount=type=tmpfs,dst=/tmp \
-    bash /build/00-base.sh && \
+    bash /build/00-setup.sh && \
     bash /build/01-packages.sh && \
     bash /build/02-subsystem.sh && \
-    bash /build/03-systemd.sh && \
-    bash /build/04-extras.sh && \
-    bash /build/05-finalize.sh
+    bash /build/03-sysconfig.sh && \
+    bash /build/04-finalize.sh
 
 RUN rm -rf /tmp/* /tmp/.* /run/* && \
     bootc container lint

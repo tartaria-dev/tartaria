@@ -3,7 +3,7 @@ Distribution=arch
 
 [Output]
 Format=directory
-OutputDirectory=/output
+OutputDirectory=/output/artifacts/mkosi
 
 [Content]
 Bootable=no

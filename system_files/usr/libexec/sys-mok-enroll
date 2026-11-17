@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # set errexit + pipefail
+
 set -eo pipefail
 
 ### secureboot cert enrollment
