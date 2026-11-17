@@ -28,13 +28,6 @@ setup_pacdirs() {
     fi
 }
 
-setup_pacrepos() {
-    retry pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
-    retry pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
-
-    echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
-}
-
 setup_packeys() {
     pacman-key --init
 
@@ -45,16 +38,22 @@ setup_packeys() {
     fi
 }
 
+setup_pacrepos() {
+    retry pacman-key --recv-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB --keyserver keyserver.ubuntu.com
+    retry pacman-key --lsign-key 5DE6BF3EBC86402E7A5C5D241FA48C960F9604CB
+
+    echo -e '\n[bootc]\nSigLevel = Required\nServer=https://github.com/hecknt/arch-bootc-pkgs/releases/download/$repo' >> /etc/pacman.conf
+}
+
 ### main logic
 
 main() {
     echo "::group::===========================> Prepare image build"
 
     setup_buildlogs
-
     setup_pacdirs
-    setup_pacrepos
     setup_packeys
+    setup_pacrepos
 
     script_cleanup
 
