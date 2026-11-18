@@ -5,16 +5,16 @@
 
 set -eEuo pipefail
 
-### set SIGTERM trap
-
-trap 'echo "[-i-] Received SIGTERM, shutting down."; shutdown=1; kill "$socat_pid" 2>/dev/null || true' SIGTERM
-
 ### do our checks
 
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
 fi
+
+### set SIGTERM trap
+
+trap 'echo "[-i-] Received SIGTERM, shutting down."; shutdown=1; kill "$socat_pid" 2>/dev/null || true' SIGTERM
 
 ### set arrays
 

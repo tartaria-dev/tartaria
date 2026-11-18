@@ -5,16 +5,16 @@
 
 set -eEuo pipefail
 
-### set SIGTERM trap
-
-trap 'echo "[-i-] Received SIGTERM, shutting down."; shutdown=1; kill "$watch_pid" 2>/dev/null || true' SIGTERM
-
 ### do our checks
 
 if [[ "$EUID" == "0" ]] || [[ "$EUID" -lt "1000" ]]; then
     echo "[!!!] Please do not run this as an administrator or system user."
     exit 77
 fi
+
+### set SIGTERM trap
+
+trap 'echo "[-i-] Received SIGTERM, shutting down."; shutdown=1; kill "$watch_pid" 2>/dev/null || true' SIGTERM
 
 ### set global vars
 

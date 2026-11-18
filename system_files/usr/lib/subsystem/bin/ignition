@@ -11,7 +11,7 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-### utilities
+### container prep
 
 subsys_shellprep() {
     echo "[1/2] Configuring shell."
