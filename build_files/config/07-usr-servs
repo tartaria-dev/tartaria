@@ -7,6 +7,12 @@ enable refresh-font-cache.service
 enable subsystem-containerd.service
 
 # ========> system
+enable gnome-keyring-daemon.socket
 enable iio-niri.service
+enable pipewire.socket
+enable pipewire-pulse.socket
+enable speech-dispatcher.socket
 enable udiskie.service
 enable wl-clip-persist.service
+enable wireplumber.service
+enable xdg-user-dirs.service
