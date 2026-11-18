@@ -7,4 +7,4 @@ ModuleName=script
 ImageDir=/usr/share/plymouth/themes/tartaria
 ScriptFile=/usr/share/plymouth/themes/tartaria/tartaria.script
 Font=Overpass
-TitleFont=Overpass:style=ExtraBold
+TitleFont=Overpass

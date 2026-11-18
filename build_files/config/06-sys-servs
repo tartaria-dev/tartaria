@@ -8,7 +8,6 @@ enable mok-enroll.service
 enable opt.mount
 enable preinstall-flatpaks.service
 enable rechunker-group-fix.service
-enable refresh-font-cache.service
 enable root.mount
 enable srv.mount
 enable subsystem-filesystemd.service

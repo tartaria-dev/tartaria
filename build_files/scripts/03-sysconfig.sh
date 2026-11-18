@@ -16,11 +16,15 @@ config_system() {
     
     sed -i '/DisableSandboxNetwork/d' /etc/pacman.conf
     sed -i '1s|/usr/bin/tty )|/usr/bin/tty 2>/dev/null )|' /etc/profile.d/gpm.sh
-    sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
     sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
+    sed -i 's|^HOME=.*|HOME=/var/home|g' "/etc/default/useradd"
+    sed -i 's|/var/cache/fontconfig|/usr/lib/fontconfig/cache|g' /etc/fonts/fonts.conf
     
     pacman -Rns --noconfirm cmake extra-cmake-modules mkosi
     find /etc/ -name "*.pacnew" -type f -delete
+
+    mkdir -p /usr/lib/fontconfig/cache
+    fc-cache -rsfv
     
     chmod 750 /etc/polkit-1/rules.d
     chown -R root:polkitd /etc/polkit-1/rules.d
