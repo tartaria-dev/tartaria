@@ -1,8 +1,8 @@
 # ========> tartaria
 enable chezmoi-init.service
 enable chezmoi-update.timer
-enable enable-flathub-repo.service
 enable desktop-shell.service
+enable enable-flathub-repo.service
 enable refresh-font-cache.service
 enable subsystem-containerd.service
 
