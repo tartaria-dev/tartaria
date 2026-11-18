@@ -3,7 +3,7 @@
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia/DMS</h3>
 <p align="center">
-  <img width="1920" height="1080" alt="Desktop image" src="https://github.com/user-attachments/assets/833bd2bd-bd2d-4f90-a2d3-80e9f08a6a12" />
+  <img width="1920" height="1080" alt="ame" src="https://github.com/user-attachments/assets/f7738a28-b35d-460e-b2fb-995dcfda9bdf" />
 </p>
 
 ## Description
