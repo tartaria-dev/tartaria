@@ -7,9 +7,9 @@ set -oue pipefail
 
 ### declare arrays
 
-BASES=( "Arch" "CachyOSv3" )
-NAMES=("Arch-Saffron" "Arch-Maraska" "CachyOSv3-Saffron" "CachyOSv3-Maraska")
-TAGS=("arch-saffron" "arch-maraska" "cachy-saffron" "cachy-maraska")
+bases=( "Arch" "CachyOSv3" )
+names=("Arch-Saffron" "Arch-Maraska" "CachyOSv3-Saffron" "CachyOSv3-Maraska")
+tags=("arch-saffron" "arch-maraska" "cachy-saffron" "cachy-maraska")
 
 ### user questions
 
@@ -18,14 +18,14 @@ dl_askbase() {
         echo "[---] ISO Selection"
         echo -e "[---] What base of Tartaria do you want? (enter the corresponding number)\n"
 
-        for i in "${!BASES[@]}"; do
-            printf "[-%d-] %s\n" "$((i + 1))" "${BASES[$i]}"
+        for i in "${!bases[@]}"; do
+            printf "[-%d-] %s\n" "$((i + 1))" "${bases[$i]}"
         done
 
         echo
         read -n 1 -p "[-?-] >> " base_answer
     
-        if (( base_answer < 1 || base_answer > ${#BASES[@]} )); then
+        if (( base_answer < 1 || base_answer > ${#bases[@]} )); then
             echo -e "\n[!!!] Invalid choice. Please try again."
             sleep 1
             clear
@@ -75,9 +75,9 @@ dl_depcheck() {
 }
 
 dl_initvars() {
-    IDX=$(( (base_answer - 1) * 2 + (shell_answer - 1) ))
-    TAG="${TAGS[$IDX]}"
-    NAME="${NAMES[$IDX]}"
+    idx=$(( (base_answer - 1) * 2 + (shell_answer - 1) ))
+    tag="${tags[$idx]}"
+    name="${names[$idx]}"
 }
 
 dl_prepare() {
@@ -95,22 +95,22 @@ dl_prepare() {
 }
 
 dl_pulliso() {
-    echo "[2/2] Downloading ${NAME} ISO."
+    echo "[2/2] Downloading ${name} ISO."
     echo "[-i-] Please do not interrupt the download process. This may take a while."
 
     trap 'dl_clean && echo -e "\n[!!!] ISO did not pass verification. Report this issue immediately."' ERR
 
     podman run -it --rm ghcr.io/sigstore/cosign/cosign:v3.1.3 verify \
-      "ghcr.io/tartaria-dev/tartaria-iso:${TAG}" \
+      "ghcr.io/tartaria-dev/tartaria-iso:${tag}" \
       --certificate-identity="https://github.com/tartaria-dev/tartaria/.github/workflows/build-iso.yml@refs/heads/live" \
       --certificate-oidc-issuer="https://token.actions.githubusercontent.com" >/dev/null
 
     trap 'dl_clean && echo "\n[!!!] ISO failed to download. Check your connection and re-run this script."' ERR
 
     podman run -it --rm -v "$HOME"/Downloads/tartaria-iso:/workspace ghcr.io/oras-project/oras:v1.3.4 \
-        pull "ghcr.io/tartaria-dev/tartaria-iso:${TAG}"
+        pull "ghcr.io/tartaria-dev/tartaria-iso:${tag}"
 
-    mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-${TAG}.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
+    mv "$HOME"/Downloads/tartaria-iso/iso/tartaria-${tag}.iso "$HOME"/Downloads/tartaria-iso/tartaria.iso
     rmdir "$HOME"/Downloads/tartaria-iso/iso
 
     dl_clean

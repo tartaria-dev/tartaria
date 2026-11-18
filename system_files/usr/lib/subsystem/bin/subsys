@@ -1,9 +1,9 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit + pipefail
+### set errexit + nounset + pipefail
 
-set -eo pipefail
+set -euo pipefail
 
 ### do our checks
 
@@ -32,19 +32,6 @@ commands:
     disable                         disable subsystem
 
 EOF
-}
-
-### invalid arg handler
-
-check_args() {
-    if [[ -z "$*" ]]; then
-        echo "[!!!] No command provided."
-    else
-        echo "[!!!] Invalid argument."
-    fi
-
-    help
-    exit 1
 }
 
 ### subsystem mgmt
@@ -80,7 +67,7 @@ subsys_disable() {
 ### main logic
 
 main() {
-    case $1 in
+    case ${1:-} in
         help)
             help
             ;;
@@ -94,7 +81,14 @@ main() {
             subsys_disable
             ;;
         *)
-            check_args "$@"
+            if [[ -z "${1:-}" ]]; then
+                echo "[!!!] No command provided."
+            else
+                echo "[!!!] Invalid argument."
+            fi
+        
+            help
+            exit 1
             ;;
     esac
 }

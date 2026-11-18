@@ -1,9 +1,9 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-### set errexit + pipefail
+### set errexit + nounset + pipefail
 
-set -eo pipefail
+set -euo pipefail
 
 ### config syncing
 

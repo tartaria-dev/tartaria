@@ -47,19 +47,19 @@ EOF
 }
 
 subsys_cmdprep() {
-    local CMD CMDPATH
+    local cmd cmd_path
 
     echo "[2/2] Linking default commands."
     
-    for CMD in /usr/bin/distrobox{,-*}; do
-        rm -f "$CMD"
-        ln -sT /usr/local/bin/host-spawn "$CMD"
+    for cmd in /usr/bin/distrobox{,-*}; do
+        rm -f "$cmd"
+        ln -sT /usr/local/bin/host-spawn "$cmd"
     done
 
-    for CMD in podman flatpak niri noctalia systemctl journalctl; do
-        CMDPATH=$(command -v "$CMD")
-        rm -f "$CMDPATH"
-        ln -sT /usr/local/bin/host-spawn "$CMDPATH"
+    for cmd in podman flatpak niri noctalia systemctl journalctl; do
+        cmd_path=$(command -v "$cmd")
+        rm -f "$cmd_path"
+        ln -sT /usr/local/bin/host-spawn "$cmd_path"
     done
 
     rm -f /usr/bin/bootc
