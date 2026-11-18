@@ -9,20 +9,20 @@ script_cleanup() {
 }
 
 retry() {
-    local ATTEMPT=1
-    local CMD=("$@")
+    local attempt=1
+    local cmd=("$@")
 
-    until "${CMD[@]}"; do
-        if (( ATTEMPT >= 3 )); then
-            echo "Command failed after ${ATTEMPT} attempts." >&2
+    until "${cmd[@]}"; do
+        if (( attempt >= 3 )); then
+            echo "Command failed after ${attempt} attempts." >&2
             return 1
         fi
 
-        echo "Attempt ${ATTEMPT} failed, retrying." >&2
+        echo "Attempt ${attempt} failed, retrying." >&2
 
         rm -rf /output/logs/*
         sleep 2
 
-        (( ATTEMPT++ ))
+        (( attempt++ ))
     done
 }

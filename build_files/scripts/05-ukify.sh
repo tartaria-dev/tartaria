@@ -14,15 +14,15 @@ uki_setup() {
 }
 
 uki_create() {
-    local KERNEL_VERSION
+    local kernel_version
 
-    KERNEL_VERSION=$(ls /kernel)
+    kernel_version=$(ls /kernel)
     
     bootc container ukify \
         --rootfs /target \
-        --kernel-dir "/kernel/${KERNEL_VERSION}" \
+        --kernel-dir "/kernel/${kernel_version}" \
         -- \
-        --output "/out/uki/${KERNEL_VERSION}.efi" \
+        --output "/out/uki/${kernel_version}.efi" \
         --signtool sbsign \
         --secureboot-private-key /run/secrets/secureboot_key \
         --secureboot-certificate /run/secrets/secureboot_cert

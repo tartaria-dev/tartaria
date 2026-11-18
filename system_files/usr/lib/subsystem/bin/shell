@@ -24,11 +24,11 @@ util_getstate() {
 }
 
 util_throbber() {
-    local MSG="$1"
-    local FRAMES=("/" "-" "\\" "|")
+    local msg="$1"
+    local frames=("/" "-" "\\" "|")
 
-    for FRAME in "${FRAMES[@]}"; do
-        printf "\r[%s] %s" "$FRAME" "$MSG"
+    for frame in "${frames[@]}"; do
+        printf "\r[%s] %s" "$frame" "$msg"
         sleep 0.25
     done
 }
@@ -70,18 +70,18 @@ EOF
 ### shell logic
 
 shell() {
-    local TRYCOUNTER=0
+    local try_counter=0
     
     rm -f "$HOME"/.cache/subsys-restart
     
-    while [[ "$TRYCOUNTER" -lt "10" ]]; do
+    while [[ "$try_counter" -lt "10" ]]; do
         if distrobox-enter "subsystem-$HASH" -- /bin/fish -l; then
             exit 0
         elif [[ -f "$HOME/.cache/subsys-restart" ]]; then
             clear
             exec env TMSG="Restarting..." /usr/lib/subsystem/bin/shell
         else
-            TRYCOUNTER=$(( "$TRYCOUNTER" + 1 ))
+            try_counter=$(( "$try_counter" + 1 ))
         fi
     done
 
@@ -93,7 +93,7 @@ shell() {
 ## main logic
 
 main() {
-    local WAITED_SECONDS=0
+    local waited_seconds=0
     
     if [[ "$(util_getstate)" == "active" ]]; then
         shell
@@ -101,9 +101,9 @@ main() {
         while [[ "$(util_getstate)" == "activating" || "$(util_getstate)" == "deactivating" || "$(util_getstate)" == "reloading" || "$(util_getstate)" == inactive ]]; do
             util_throbber ${TMSG:-Starting...}
             
-            WAITED_SECONDS=$(( "WAITED_SECONDS" + 1 ))
+            waited_seconds=$(( "waited_seconds" + 1 ))
     
-            if [[ "$WAITED_SECONDS" -gt "30" ]]; then
+            if [[ "$waited_seconds" -gt "30" ]]; then
                 emsg_entry
                 exec env SUBSYSTEM_BYPASS=1 bash -l
             fi
