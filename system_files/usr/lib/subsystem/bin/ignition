@@ -70,8 +70,12 @@ subsys_cmdprep() {
 ### main logic
 
 main() {
+    echo "[---] Preparing container..."
+    
     subsys_shellprep
     subsys_cmdprep
+
+    echo "[---] Ready."
 }
 
 main

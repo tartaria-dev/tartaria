@@ -91,7 +91,7 @@ rootfs_mount() {
 
     operational_users+=("$1")
 
-    echo "[---] Mounting rootfs for user $1."
+    echo "[---] Mounting rootfs for user $1..."
 
     read -r suid_start suid_range <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subuid)"
     read -r sgid_start sgid_range <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subgid)"
@@ -120,6 +120,8 @@ rootfs_mount() {
         fi
     done
 
+    echo "[---] Mounted rootfs for user $1."
+
     trap - ERR
 }
 
@@ -142,7 +144,7 @@ rootfs_unmount() {
         return
     fi
 
-    echo "[---] Unmounting rootfs for user $1."
+    echo "[---] Unmounting rootfs for user $1..."
 
     trap 'echo "[!!!] Failed to unmount rootfs for $1, manual intervention is required."; trap - ERR; return' ERR
 
@@ -162,6 +164,8 @@ rootfs_unmount() {
 
     rm --one-file-system -rf "${user_dir:?}"/*
     util_drop_usr "$1"
+
+    echo "[---] Unmounted rootfs for user $1."
 
     trap - ERR
 }
