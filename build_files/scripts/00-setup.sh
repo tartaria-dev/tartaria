@@ -50,9 +50,6 @@ setup_pacrepos() {
 main() {
     echo "::group::===========================> Prepare image build"
 
-    # temp line - REMOVE LATER
-    ls /etc/fonts/conf.d
-
     setup_buildlogs
     setup_pacdirs
     setup_packeys
