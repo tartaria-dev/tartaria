@@ -39,7 +39,6 @@ config_services() {
 
     mkdir -p /usr/lib/systemd/user-preset
     cp /config/07-usr-servs /usr/lib/systemd/user-preset/00-tartaria.preset
-    echo "disable *" | tee -a /usr/lib/systemd/user-preset/99-default.preset
 
     systemctl preset-all
     systemctl --global preset-all
