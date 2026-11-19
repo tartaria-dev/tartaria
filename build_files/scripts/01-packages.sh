@@ -74,9 +74,6 @@ main() {
     aurpkgs_setup
     aurpkgs_install
 
-    # temp line - REMOVE LATER
-    ls /etc/fonts/conf.d
-
     script_cleanup
 
     echo "::endgroup::"
