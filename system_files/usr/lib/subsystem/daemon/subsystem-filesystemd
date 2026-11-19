@@ -70,7 +70,8 @@ util_abort_mnt() {
 ### rootfs actions
 
 rootfs_mount() {
-    local hash user_dir mnt_err suid_start suid_range sgid_start sgid_range mntstep
+    local mnt_err=0
+    local hash user_dir suid_start suid_range sgid_start sgid_range mntstep
     
     hash=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
     user_dir=$RW_LIB_DIR/$hash
@@ -133,6 +134,9 @@ rootfs_unmount() {
     if [[ -z $1 ]]; then
         echo "[!!!] No target user given."
         return
+    elif [[ ! -d $user_dir ]]; then
+        echo "[-!-] User $1 has no rootfs."
+        return        
     elif ! util_usr_isactive "$1"; then
         echo "[-!-] Already unmounted rootfs for user $1."
         return
@@ -140,12 +144,12 @@ rootfs_unmount() {
 
     echo "[---] Unmounting rootfs for user $1."
 
-    trap 'echo "[!!!] Failed to unmount rootfs for $1, manual intervention is required." && return' ERR
+    trap 'echo "[!!!] Failed to unmount rootfs for $1, manual intervention is required."; trap - ERR; return' ERR
 
     echo "[1/2] Unmounting rootfs directories."
     
     for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do
-        umount "$user_dir/$dir" || true
+        umount "$user_dir/$dir" >/dev/null || true
     done
 
     echo "[2/2] Cleaning rootfs directories."
@@ -163,7 +167,8 @@ rootfs_unmount() {
 }
 
 rootfs_clean_all() {
-    local hash all_udirs active_udirs opusr opdir
+    local -a all_udirs=() active_udirs=()
+    local hash opusr opdir
 
     while read -r opusr; do
         hash=$(printf '%s%s' "$(</etc/machine-id)" "$opusr" | sha256sum | awk '{print $1}')
@@ -196,7 +201,7 @@ fs_step_dirs() {
 
     if [[ -d "$user_dir" ]]; then
         for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do
-            umount -q "$user_dir/$dir" || true
+            umount "$user_dir/$dir" >/dev/null || true
         done
         
         if util_dir_isactive "$user_dir"; then

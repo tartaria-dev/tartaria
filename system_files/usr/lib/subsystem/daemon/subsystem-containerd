@@ -31,7 +31,7 @@ readonly HASH RTME_DIR
 ### subsystem stuff
 
 subsys_start() {
-    trap 'echo "[!!!] Something went wrong during startup, aborting." && return 1' ERR
+    trap 'echo "[!!!] Something went wrong during startup, aborting."; return 1' ERR
 
     if [[ "$(systemctl is-failed subsystem-filesystemd)" == "activating" ]]; then
         echo "[-i-] Filesystem daemon has not finished startup, waiting."
@@ -79,7 +79,7 @@ subsys_start() {
 }
 
 subsys_stop() {
-    trap 'echo "[!!!] Something went wrong during shutdown, aborting." && return 1' ERR
+    trap 'echo "[!!!] Something went wrong during shutdown, aborting."; return 1' ERR
 
     echo "[---] Stopping subsystem."
 
