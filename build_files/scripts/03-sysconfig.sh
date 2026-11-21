@@ -60,8 +60,6 @@ config_branding() {
 }
 
 config_dsession() {    
-    cp -r /cherries/shared/* /usr/share/tartaria/cherries/
-
     if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
         cp -r /cherries/noctalia/* /usr/share/tartaria/cherries/
     elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
