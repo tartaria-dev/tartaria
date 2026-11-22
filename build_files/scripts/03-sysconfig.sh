@@ -60,6 +60,8 @@ config_branding() {
 }
 
 config_dsession() {    
+    mkdir -p /etc/greetd /usr/share/tartaria/cherries
+    
     if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
         cp -r /cherries/noctalia/* /usr/share/tartaria/cherries/
     elif [[ "$IMAGE_FLAVOR" == *saffron || "$IMAGE_FLAVOR" == *amchoor ]]; then
@@ -68,8 +70,6 @@ config_dsession() {
 
     install -d /etc/niri/
     ln -sT /usr/share/tartaria/cherries/dot_config/niri/config.kdl /etc/niri/config.kdl
-
-    mkdir -p /etc/greetd
     
     if [[ "$IMAGE_FLAVOR" == *maraska || "$IMAGE_FLAVOR" == *berbere ]]; then
         cp -r /usr/share/greeter-defaults/noctalia/config.toml /etc/greetd/
