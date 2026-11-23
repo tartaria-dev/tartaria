@@ -10,11 +10,12 @@
       "showOnLastDisplay": true,
       "position": 1,
       "mode": "compact",
+      "middleClickAction": "close",
       "taskbarAlign": "center",
       "widgetExpansion": "popout",
       "iconSize": 40,
-      "spacing": 4,
-      "itemSpacing": 4,
+      "spacing": 8,
+      "itemSpacing": 8,
       "margin": 0,
       "bottomGap": 0,
       "transparency": 1,
@@ -77,7 +78,7 @@
       "id": "default",
       "name": "Main Bar",
       "enabled": true,
-      "position": 1,
+      "position": 0,
       "screenPreferences": [
         "all"
       ],
@@ -161,17 +162,17 @@
           "clockCompactMode": true
         }
       ],
-      "spacing": 8,
+      "spacing": 0,
       "innerPadding": 4,
       "bottomGap": 0,
       "transparency": 1,
       "widgetTransparency": 1,
-      "squareCorners": false,
+      "squareCorners": true,
       "noBackground": false,
       "gothCornersEnabled": false,
       "gothCornerRadiusOverride": false,
       "gothCornerRadiusValue": 12,
-      "borderEnabled": true,
+      "borderEnabled": false,
       "borderColor": "surfaceText",
       "borderOpacity": 0.64,
       "borderThickness": 1,
@@ -187,14 +188,16 @@
       "island": false,
       "dot": false,
       "barLengthMode": "full",
-      "widgetStyle": "flat",
+      "widgetStyle": "segments",
       "widgetPadding": 8,
       "maximizeWidgetIcons": false,
       "maximizeWidgetText": false,
       "widgetOutlineEnabled": false,
       "iconScale": 0.9,
       "barLengthPadding": 0,
-      "barInsetPadding": 6
+      "barInsetPadding": 6,
+      "attachToScreenEdge": false,
+      "hoverPopouts": false
     },
     {
       "id": "dot1793578438469",
@@ -429,7 +432,7 @@
       "style": "analog"
     }
   },
-  "notificationPopupPosition": 3,
+  "notificationPopupPosition": 0,
   "notificationIgnoreAppTimeout": true,
   "notificationShowTimeoutBar": true,
   "notificationHistoryMaxAgeDays": 3,
@@ -671,7 +674,7 @@
   "matugenTemplateMangowc": false,
   "matugenTemplateHyprland": false,
   "blurBorderColor": "outline",
-  "blurBorderOpacity": 1,
+  "blurBorderOpacity": 0.2,
   "widgetBackgroundColor": "default",
   "controlCenterWidgets": [
     {
@@ -785,5 +788,17 @@
     }
   ],
   "niriLayoutGapsOverride": 10,
-  "greeterFollowLockScreen": false
+  "greeterFollowLockScreen": false,
+  "modalDarkenBackground": true,
+  "spotlightSectionViewModes": {
+    "apps": "list"
+  },
+  "launcherHistoryEnabled": true,
+  "launcherUseOverlayLayer": true,
+  "dankLauncherV2UnloadOnClose": false,
+  "dankLauncherV2Size": "compact",
+  "fontWeight": 500,
+  "fontScale": 1.04,
+  "density": "comfortable",
+  "blurStrength": 30
 }
