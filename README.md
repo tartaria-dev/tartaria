@@ -3,23 +3,21 @@
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
 <h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia/DMS</h3>
 <p align="center">
-  <img width="1920" height="1080" alt="ame" src="https://github.com/user-attachments/assets/1597230d-6874-414d-aadb-751c65201da5" />
+  <img width="1920" height="1080" alt="ame" src="https://github.com/user-attachments/assets/aeb290d3-5da8-42d6-a320-0d91e9090a4b" />
 </p>
 
 ## Description
 
-Tartaria is a custom Arch/CachyOSv3 bootc image built for general day-to-day usage, providing a nice modern experience that lets you get stuff done.
+Tartaria is a custom opinionated Arch/CachyOSv3 bootc image built for general day-to-day usage, offering both Noctalia and Dux Shell.
 
-Note that despite my best efforts, this image is still **largely experimental** as a whole, with some aspects being more so than others.
-
-The name is inspired by the **[Black Tartarian](https://shop.arborday.org/treeguide/210)** cherry species - tastes great, and it sounds cool.
+The name is inspired by the **[Black Tartarian](https://shop.arborday.org/treeguide/210)** cherry species; tastes great, and it sounds cool.
 
 
 ## Variants
 
 In total, Tartaria has sixteen variants. You've got choices.
 
-Variants are composed as `tartaria:<channel>-<edition>-<flavor>`.
+Variants are composed as `<channel>-<edition>-<flavor>`.
 
 ### Channels
 
@@ -39,10 +37,10 @@ Variants are composed as `tartaria:<channel>-<edition>-<flavor>`.
 
 | Flavor    | Layout                                                                                           | Secure Boot | Noctalia Shell | Dux Shell / DMS |
 |-----------|--------------------------------------------------------------------------------------------------|:-----------:|:--------------:|:---------------:|
-| `berbere` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✓              | ✗               |
-| `amchoor` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | ✗           | ✗              | ✓               |
-| `maraska` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✓              | ✗               |
-| `saffron` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | ✓           | ✗              | ✓               |
+| `berbere` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | No          | Yes            | No              |
+| `amchoor` | [Standard](https://docs.fedoraproject.org/uk/bootc/filesystem/)                                  | No          | No             | Yes             |
+| `maraska` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | Yes         | Yes            | No              |
+| `saffron` | [Sealed](https://bootc.dev/bootc/bootc-experimental-composefs.7.html#how-sealed-images-work)     | Yes         | No             | Yes             |
 
 ### Notes
 

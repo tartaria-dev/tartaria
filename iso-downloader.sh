@@ -40,9 +40,9 @@ dl_askbase() {
 dl_askshell() {
     while true; do
         echo "[---] ISO Selection"
-        echo -e "[---] Which shell would you like? (enter the corresponding number)\n"
+        echo -e "[---] Do you want Dux Shell or Noctalia? (enter the corresponding number)\n"
 
-        options=( "Dux Shell" "Noctalia Shell" )
+        options=( "Dux Shell" "Noctalia" )
 
         for i in "${!options[@]}"; do
             printf "[-%d-] %s\n" "$((i + 1))" "${options[$i]}"
