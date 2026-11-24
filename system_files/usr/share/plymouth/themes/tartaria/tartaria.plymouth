@@ -1,10 +1,28 @@
 [Plymouth Theme]
 Name=tartaria
-Description=Default plymouth theme for Tartaria
-ModuleName=script
+Description=Tartaria plymouth theme
+ModuleName=two-step
 
-[script]
-ImageDir=/usr/share/plymouth/themes/tartaria
-ScriptFile=/usr/share/plymouth/themes/tartaria/tartaria.script
-Font=Overpass
-TitleFont=Overpass:style=ExtraBold
+[two-step]
+ImageDir=/usr/share/plymouth/themes/tartaria/assets
+Font=Overpass 14
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.5
+HorizontalAlignment=.5
+VerticalAlignment=.9
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.9
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=false
+
+[shutdown]
+UseEndAnimation=false
+
+[reboot]
+UseEndAnimation=false

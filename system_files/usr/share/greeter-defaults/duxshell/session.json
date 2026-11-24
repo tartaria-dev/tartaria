@@ -1,0 +1,107 @@
+{
+  "materialWallpapers": {
+    "": {
+      "shared": {
+        "preset": "dank",
+        "seed": "#d0bcff"
+      }
+    }
+  },
+  "wallpaperPath": "/usr/share/tartaria/wallpaper/cherry_tree.png",
+  "monitorWallpapers": {},
+  "desktopWidgetInstancePositions": {
+    "lock_clock": {
+      "_synced": {
+        "x": 0,
+        "y": -0.10437881873727088,
+        "anchorX": "center",
+        "width": 333,
+        "height": 397,
+        "anchorY": "center"
+      }
+    },
+    "lock_auth": {
+      "_synced": {
+        "x": 0,
+        "y": 0.21486761710794297,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "lock_notifications": {
+      "_synced": {
+        "width": 210,
+        "height": 32,
+        "x": 0,
+        "y": 0.20672097759674135,
+        "anchorX": "center",
+        "anchorY": "end"
+      }
+    },
+    "lock_status": {
+      "_synced": {
+        "x": 0,
+        "y": 0.11303462321792261,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "greeter_session": {
+      "_synced": {}
+    },
+    "gw_lock_clock": {
+      "_synced": {
+        "x": 0,
+        "y": -0.09012219959266803,
+        "anchorX": "center",
+        "width": 333,
+        "height": 397,
+        "anchorY": "center"
+      }
+    },
+    "gw_lock_auth": {
+      "_synced": {
+        "x": 0,
+        "y": 0.23014256619144602,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    },
+    "gw_lock_status": {
+      "_synced": {
+        "x": 0,
+        "y": 0.12729124236252545,
+        "anchorX": "center",
+        "anchorY": "center"
+      }
+    }
+  },
+  "lockScreenAutoPositions": {},
+  "idleInhibited": true,
+  "wallpaperTransition": "iris bloom",
+  "includedTransitions": [
+    "fade",
+    "wipe",
+    "disc",
+    "stripes",
+    "iris bloom",
+    "portal"
+  ],
+  "monitorCyclingSettings": {
+    "DP-1": {
+      "enabled": false,
+      "random": false,
+      "recursive": false,
+      "mode": "interval",
+      "interval": 300,
+      "time": "06:00",
+      "folderPath": ""
+    }
+  },
+  "lastPlayerIdentity": "",
+  "niriOutputSettings": {},
+  "lastAppliedIconTheme": "default-icons-grey-dark",
+  "launcherLastQuery": "",
+  "launcherQueryHistory": [],
+  "configVersion": 7
+}

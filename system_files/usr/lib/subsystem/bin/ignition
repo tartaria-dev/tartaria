@@ -1,7 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-# do our checks
+### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
@@ -10,20 +11,15 @@ elif [[ ! -f /run/.containerenv ]]; then
 	exit 64
 fi
 
-# logging
-echo "[---] Starting up."
+### container prep
 
-# set up sudo for the user
-echo "[1/5] Configuring sudo."
-if [[ ! -f /etc/sudoers.d/nopasswd-for-subsystem ]]; then
-    mkdir -p /etc/sudoers.d
-	echo "$SUBSYSTEM_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nopasswd-for-subsystem
-fi
+subsys_shellprep() {
+    echo "[1/2] Configuring shell."
 
-# add shell settings
-echo "[2/5] Configuring shell."
-mkdir -p /etc/fish/conf.d
-cat <<EOF >> /etc/fish/conf.d/startup.fish
+    rm -f /etc/fish/functions/fish_prompt.fish
+    mkdir -p /etc/fish/conf.d
+    
+    cat <<EOF > /etc/fish/conf.d/startup.fish
 alias fastfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias neofetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
 alias hyfetch="fastfetch --logo /usr/share/tartaria/ascii-logo/logo.txt"
@@ -48,29 +44,38 @@ if status is-interactive
     atuin init fish | source
 end
 EOF
+}
 
-# link default commands
-echo "[3/5] Linking default commands."
-for cmd in "$(command -v distrobox)"{,-*} podman flatpak niri noctalia systemctl journalctl; do CMDPATH=$(command -v "$cmd"); rm -f "$CMDPATH"; ln -sT /usr/libexec/host-spawn "$CMDPATH"; done
+subsys_cmdprep() {
+    local cmd cmd_path
 
-# link bootc
-rm -f /usr/bin/bootc
-echo -e '#!/bin/bash\n/usr/libexec/host-spawn pkexec /usr/bin/bootc $@' | tee -a /usr/bin/bootc
-chmod +x /usr/bin/bootc
+    echo "[2/2] Linking default commands."
+    
+    for cmd in /usr/bin/distrobox{,-*}; do
+        rm -f "$cmd"
+        ln -sT /usr/local/bin/host-spawn "$cmd"
+    done
 
-# source user configs
-echo "[4/5] Sourcing user configurations."
-if [[ -d /home/"$SUBSYSTEM_USER"/.config/ignition.d/ ]]; then
-	for script in /home/"$SUBSYSTEM_USER"/.config/ignition.d/*.sh; do
-		echo "[i] Sourcing script $script."
-		. "$script" || true
-	done
-fi
+    for cmd in podman flatpak niri noctalia systemctl journalctl; do
+        cmd_path=$(command -v "$cmd")
+        rm -f "$cmd_path"
+        ln -sT /usr/local/bin/host-spawn "$cmd_path"
+    done
 
-# attempt to configure fastest arch repos
-echo "[5/5] Configuring repositories."
-reflector --latest 20 --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1 || true
+    rm -f /usr/bin/bootc
+    echo -e '#!/bin/bash\n/usr/local/bin/host-spawn pkexec /usr/bin/bootc "$@"' > /usr/bin/bootc
+    chmod +x /usr/bin/bootc
+}
 
-# keep subsystem alive
-echo "[---] Startup done."
-sleep infinity
+### main logic
+
+main() {
+    echo "[---] Preparing container..."
+    
+    subsys_shellprep
+    subsys_cmdprep
+
+    echo "[---] Ready."
+}
+
+main

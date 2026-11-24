@@ -1,159 +1,395 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 
-## set errexit, pipefail, errtrace
-set -eEo pipefail
+### set errexit + errtrace + nounset + pipefail
 
-## do our checks
+set -eEuo pipefail
+
+### do our checks
+
 if [[ "$EUID" != "0" ]]; then
     echo "[!!!] Please run this as an administrator."
     exit 77
 fi
 
-## set arrays
+### set SIGTERM trap
+
+trap 'echo "[-i-] Received SIGTERM, shutting down."; shutdown=1; kill "$socat_pid" 2>/dev/null || true' SIGTERM
+
+### set arrays
+
 declare -a operational_users
 
-## set vars
-RWLIBDIR=/var/lib/subsystem
-ROLIBDIR=/usr/lib/subsystem
+### set global vars
 
-## utilities
-is_mounted() {
-    local u
-    for u in "${operational_users[@]}"; do
-        [[ $u == "$1" ]] && return 0
+socat_pid=
+shutdown=0
+op_failed=0
+
+### set constants
+
+RW_LIB_DIR=/var/lib/subsystem
+RO_LIB_DIR=/usr/lib/subsystem
+KEY_AUTH_DIR="$RUNTIME_DIRECTORY"/auth
+
+readonly RW_LIB_DIR RO_LIB_DIR KEY_AUTH_DIR
+
+### utilities
+
+util_usr_isactive() {
+    local opusr
+    
+    for opusr in "${operational_users[@]}"; do
+        if [[ $opusr == "$1" ]]; then
+            return
+        fi
     done
+    
     return 1
 }
 
-drop_user() {
-    local i
-    for i in "${!operational_users[@]}"; do
-        if [[ ${operational_users[i]} == "$1" ]]; then
-            unset 'operational_users[i]'
+util_dir_isactive() {
+    awk -v d="$1/" 'index($5, d) == 1 { f = 1 } END { exit !f }' /proc/self/mountinfo
+}
+
+util_drop_usr() {
+    local opusr
+    
+    for opusr in "${!operational_users[@]}"; do
+        if [[ ${operational_users[opusr]} == "$1" ]]; then
+            unset 'operational_users[opusr]'
         fi
     done
 }
 
-userfs() {
-    local USERDIR HASH SUID_START SUID_RANGE SGID_START SGID_RANGE
+util_abort_mnt() {
+    trap - ERR
+    rootfs_unmount "$1"
+}
 
-    while read -r TARGETUSR; do
-        case "$1" in
-            mount)
-                if [[ -f "/var/home/$TARGETUSR/.config/subsystem/disable" ]]; then
-                    echo "[-!-] Subsystem disabled for user $TARGETUSR, skipping."
-                elif is_mounted "$TARGETUSR"; then
-                    echo "[-!-] Already mounted rootfs for user $TARGETUSR."
-                    continue
-                fi
-                
-                echo "[---] Mounting rootfs for user $TARGETUSR."
-                operational_users+=("$TARGETUSR")
+### rootfs actions
 
-                read -r SUID_START SUID_RANGE <<< "$(awk -F: -v u="$TARGETUSR" '$1==u {print $2,$3}' /etc/subuid)"
-                read -r SGID_START SGID_RANGE <<< "$(awk -F: -v u="$TARGETUSR" '$1==u {print $2,$3}' /etc/subgid)"
-                if [[ -z $SUID_START || -z $SGID_START || -z $SUID_RANGE || -z $SGID_RANGE ]]; then
-                    echo "[!!!] User $TARGETUSR has improperly configured sub{uid,gid}s, skipping."
-                    drop_user "$TARGETUSR"
-                    continue
-                fi
+rootfs_mount() {
+    local mnt_err=0
+    local hash user_dir suid_start suid_range sgid_start sgid_range mntstep
+    
+    hash=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
+    user_dir=$RW_LIB_DIR/$hash
 
-                HASH=$(printf '%s%s' "$(</etc/machine-id)" "$TARGETUSR" | sha256sum | awk '{print $1}')
-                USERDIR=$RWLIBDIR/$HASH
+    readonly hash user_dir
+    
+    if [[ -z $1 ]]; then
+        echo "[!!!] No target user given."
+        return
+    elif [[ -f "/var/home/$1/.config/subsystem/disable" ]]; then
+        echo "[-!-] Subsystem disabled for user $1."
+        return
+    elif util_usr_isactive "$1"; then
+        echo "[-!-] Already mounted rootfs for user $1."
+        return
+    fi
 
-                trap 'echo "[!!!] Failed to mount rootfs for $TARGETUSR, skipping." && userfs umount' ERR
-                trap 'echo "[!!!] Received SIGTERM, stopping." && return 0' SIGTERM
+    operational_users+=("$1")
 
-                echo "[1/4] Setting up rootfs directories."
-                for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do umount -q "$USERDIR/$dir" || true; done
-                rm -rf "${USERDIR:?}"/*
-                mkdir -p "$USERDIR"/{rootfs,overlay/{base,data,work}/{rfs,bin,sbin,lib,lib64,etc,var,srv,opt,usr},overlay/base/rfs/{home,root,bin,sbin,lib,lib64,etc,var,srv,opt,usr,tmp,run,sys,dev,proc}}
-                chown -R "$SUID_START":"$SGID_START" "$USERDIR"/
+    echo "[---] Mounting rootfs for user $1..."
 
-                echo "[2/4] Locking rootfs directories."
-                mount --bind "$USERDIR"/overlay/base "$USERDIR"/overlay/base
-                mount -o remount,bind,ro "$USERDIR"/overlay/base
+    read -r suid_start suid_range <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subuid)"
+    read -r sgid_start sgid_range <<< "$(awk -F: -v u="$1" '$1==u {print $2,$3}' /etc/subgid)"
+    
+    if [[ -z $suid_start || -z $sgid_start || -z $suid_range || -z $sgid_range ]]; then
+        echo "[!!!] User $1 has improperly configured sub{uid,gid}s."
+        util_drop_usr "$1"
+        return
+    fi
 
-                echo "[3/4] Mounting base directories."
-                mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/rfs,upperdir="$USERDIR"/overlay/data/rfs,workdir="$USERDIR"/overlay/work/rfs "$USERDIR"/rootfs
-                for dir in etc var; do mount --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro,acl,loop,user_xattr -t erofs "$ROLIBDIR"/segments/"$dir".dsk "$USERDIR"/overlay/base/"$dir"; done
-                for dir in srv opt; do mount --bind --map-users 0:"$SUID_START":"$SUID_RANGE" --map-groups 0:"$SGID_START":"$SGID_RANGE" -o ro /var/"$dir" "$USERDIR"/overlay/base/"$dir"; done
-                bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr "$USERDIR"/overlay/base/usr
-                for dir in "$USERDIR"/overlay/base/lib{,64}; do bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr/lib "$dir"; done
-                for dir in "$USERDIR"/overlay/base/{,s}bin; do bindfs --uid-offset="$SUID_START" --gid-offset="$SGID_START" -o ro /usr/bin "$dir"; done
+    trap "echo '[!!!] Failed to mount rootfs for $1.'; mnt_err=1; return" ERR
 
-                echo "[4/4] Mounting overlay directories."
-                for dir in etc var srv opt usr lib{,64} {,s}bin; do mount -t overlay overlay -o index=off,lowerdir="$USERDIR"/overlay/base/"$dir",upperdir="$USERDIR"/overlay/data/"$dir",workdir="$USERDIR"/overlay/work/"$dir" "$USERDIR"/rootfs/"$dir"; done
+    for mntstep in dirs base ovly; do
+        if (( shutdown )); then
+            util_abort_mnt "$1"
+            op_failed=1
+            return
+        fi
 
-                trap - ERR SIGTERM
-                ;;
+        "fs_step_$mntstep"
 
-            umount)
-                if [[ -f "/var/home/$TARGETUSR/.config/subsystem/disable" ]]; then
-                    echo "[-!-] Subsystem disabled for user $TARGETUSR, skipping."
-                elif ! is_mounted "$TARGETUSR"; then
-                    echo "[-!-] Already unmounted rootfs for user $TARGETUSR."
-                    continue
-                fi
+        if (( mnt_err )); then
+            util_abort_mnt "$1"
+            op_failed=1
+            return
+        fi
+    done
 
-                echo "[---] Unmounting rootfs for user $TARGETUSR."
-                drop_user "$TARGETUSR"
+    echo "[---] Mounted rootfs for user $1."
 
-                HASH=$(printf '%s%s' "$(</etc/machine-id)" "$TARGETUSR" | sha256sum | awk '{print $1}')
-                USERDIR=$RWLIBDIR/$HASH
+    trap - ERR
+}
 
-                trap 'echo "[!!!] Failed to unmount rootfs for $TARGETUSR, manual intervention is required." && continue' ERR
+rootfs_unmount() {
+    local hash user_dir dir
+    
+    hash=$(printf '%s%s' "$(</etc/machine-id)" "$1" | sha256sum | awk '{print $1}')
+    user_dir=$RW_LIB_DIR/$hash
 
-                echo "[1/2] Unmounting rootfs directories."
-                for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do umount "$USERDIR/$dir" || true; done
+    readonly hash user_dir
+    
+    if [[ -z $1 ]]; then
+        echo "[!!!] No target user given."
+        return
+    elif [[ ! -d $user_dir ]]; then
+        echo "[-!-] User $1 has no rootfs."
+        return        
+    elif ! util_usr_isactive "$1"; then
+        echo "[-!-] Already unmounted rootfs for user $1."
+        return
+    fi
 
-                echo "[2/2] Cleaning rootfs directories."
-                rm -rf "${USERDIR:?}"/*
-                echo "Why on earth are you reading this? Anywho, since you're here, you notice now no one talks about the Epstein files anymore?" > "$USERDIR"/user-inactive
+    echo "[---] Unmounting rootfs for user $1..."
 
-                trap - ERR
-                ;;
-        esac
+    trap 'echo "[!!!] Failed to unmount rootfs for $1, manual intervention is required."; trap - ERR; return' ERR
+
+    echo "[1/2] Unmounting rootfs directories."
+    
+    for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do
+        umount "$user_dir/$dir" >/dev/null || true
+    done
+
+    echo "[2/2] Cleaning rootfs directories."
+
+    if util_dir_isactive "$user_dir"; then
+        echo "[!!!] Rootfs mounts still present for user $1."
+        trap - ERR
+        return
+    fi
+
+    rm --one-file-system -rf "${user_dir:?}"/*
+    util_drop_usr "$1"
+
+    echo "[---] Unmounted rootfs for user $1."
+
+    trap - ERR
+}
+
+rootfs_clean_all() {
+    local -a all_udirs=() active_udirs=()
+    local hash opusr opdir
+
+    while read -r opusr; do
+        hash=$(printf '%s%s' "$(</etc/machine-id)" "$opusr" | sha256sum | awk '{print $1}')
+        active_udirs+=("$RW_LIB_DIR/$hash")
+    done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
+    
+    shopt -s nullglob
+    all_udirs=("$RW_LIB_DIR"/*)
+    shopt -u nullglob
+
+    for opdir in "${all_udirs[@]}"; do
+        if [[ " ${active_udirs[*]} " != *" $opdir "* ]] && ! util_dir_isactive "$opdir"; then
+            rm --one-file-system -rf "$opdir"
+        fi
+    done
+}
+
+rootfs_unmount_all() {
+    for activeuser in "${operational_users[@]}"; do
+        rootfs_unmount "$activeuser"
+    done
+}
+
+### rootfs mount steps
+
+fs_step_dirs() {
+    local dir
+    
+    echo "[1/3] Preparing rootfs directories."
+
+    if [[ -d "$user_dir" ]]; then
+        for dir in {rootfs,overlay/base}/{bin,sbin,lib,lib64,etc,var,srv,opt,usr} rootfs overlay/base; do
+            umount "$user_dir/$dir" >/dev/null || true
+        done
+        
+        if util_dir_isactive "$user_dir"; then
+            echo "[!!!] Rootfs mounts still present, cannot operate."
+            false
+        fi
+
+        rm --one-file-system -rf "${user_dir:?}"/*
+    else
+        mkdir -p "$user_dir"
+    fi
+    
+    mkdir -p "$user_dir"/{rootfs,overlay/{base,data,work}/{rfs,bin,sbin,lib,lib64,etc,var,srv,opt,usr},overlay/base/rfs/{home,root,bin,sbin,lib,lib64,etc,var,srv,opt,usr,tmp,run,sys,dev,proc}}
+    chown -R "$suid_start":"$sgid_start" "$user_dir"/
+
+    mount --bind "$user_dir"/overlay/base "$user_dir"/overlay/base
+    mount -o remount,bind,ro "$user_dir"/overlay/base
+}
+
+fs_step_base() {
+    local dir
+    
+    echo "[2/3] Mounting base directories."
+    
+    mount -t overlay overlay -o index=off,lowerdir="$user_dir"/overlay/base/rfs,upperdir="$user_dir"/overlay/data/rfs,workdir="$user_dir"/overlay/work/rfs "$user_dir"/rootfs
+    
+    for dir in etc var; do
+        mount --map-users 0:"$suid_start":"$suid_range" --map-groups 0:"$sgid_start":"$sgid_range" -o ro,acl,loop,user_xattr -t erofs "$RO_LIB_DIR"/segments/"$dir".dsk "$user_dir"/overlay/base/"$dir"
+    done
+    
+    for dir in srv opt; do
+        mount --bind --map-users 0:"$suid_start":"$suid_range" --map-groups 0:"$sgid_start":"$sgid_range" -o ro /var/"$dir" "$user_dir"/overlay/base/"$dir"
+    done
+    
+    bindfs --uid-offset="$suid_start" --gid-offset="$sgid_start" -o ro /usr "$user_dir"/overlay/base/usr
+
+    for dir in "$user_dir"/overlay/base/lib{,64}; do
+        bindfs --uid-offset="$suid_start" --gid-offset="$sgid_start" -o ro /usr/lib "$dir"
+    done
+
+    for dir in "$user_dir"/overlay/base/{,s}bin; do
+        bindfs --uid-offset="$suid_start" --gid-offset="$sgid_start" -o ro /usr/bin "$dir"
+    done
+}
+
+fs_step_ovly() {
+    local dir
+    
+    echo "[3/3] Mounting overlay directories."
+    
+    for dir in etc var srv opt usr lib{,64} {,s}bin; do
+        mount -t overlay overlay -o index=off,lowerdir="$user_dir"/overlay/base/"$dir",upperdir="$user_dir"/overlay/data/"$dir",workdir="$user_dir"/overlay/work/"$dir" "$user_dir"/rootfs/"$dir"
+    done
+}
+
+### user key mgmt
+
+ukeys_monitor() {
+    local evfile
+
+    inotifywait -m -q -e moved_to,close_write --format '%f' /etc |
+    while read -r evfile; do
+        if [[ $evfile == passwd ]]; then
+            ukeys_issue || echo "[!!!] Failed to refresh user keys."
+        fi
+    done
+}
+
+ukeys_verify() {
+    local usr_key
+
+    { IFS= read -r usr_key < "$KEY_AUTH_DIR/$1"; } 2>/dev/null || return 1
+
+    if [[ -n $usr_key && $usr_key == "$2" ]]; then
+        return
+    else
+        return 1
+    fi
+}
+
+ukeys_issue() {
+    local key_file key_tmp pswdusr
+
+    mkdir -p "$KEY_AUTH_DIR"
+    chmod 0711 "$KEY_AUTH_DIR"
+
+    while read -r pswdusr; do
+        key_file="$KEY_AUTH_DIR/$pswdusr"
+        key_tmp="$KEY_AUTH_DIR/.$pswdusr.tmp"
+
+        ( umask 277; openssl rand -hex 32 > "$key_tmp" )
+
+        chown -- "$pswdusr": "$key_tmp"
+        mv -f -- "$key_tmp" "$key_file"
     done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
 }
 
+### monitoring
+
 monitor() {
-    trap 'kill "$NOTIFY_PID" 2>/dev/null; break' SIGTERM
+    local wfd reply key rest action pswd_usr
+    
+    rm -f "$RUNTIME_DIRECTORY"/fsrequests.sock
+    echo "[---] Monitoring for requests on $RUNTIME_DIRECTORY/fsrequests.sock."
 
-    echo "[---] Monitoring for new users."
+    while (( ! shutdown )); do
+        coproc conn { exec socat -t120 -T120 UNIX-LISTEN:"$RUNTIME_DIRECTORY"/fsrequests.sock,mode=666,unlink-early STDIO; }
+        
+        socat_pid=$conn_PID
+        wfd=${conn[1]}
+        reply=""
 
+        if IFS= read -rn 200 line <&"${conn[0]}"; then
+            line=${line%$'\r'}
 
-    while true; do
-        inotifywait -e close_write /etc/passwd &
-        local NOTIFY_PID=$!
+            if [[ $line != *-*-* ]]; then
+                reply="unknown_format"
+            else
+                key=${line%%-*}
+                rest=${line#*-}
+                action=${rest%%-*}
+                pswd_usr=${rest#*-}
 
-        if ! wait $NOTIFY_PID 2>/dev/null; then
-            break
+                if [[ "$action" != "mount" && "$action" != "unmount" ]]; then
+                    reply="unknown_cmd"
+                elif ! awk -F: -v u="$pswd_usr" '$1==u && $3>=1000 && $3!=65534 {f=1} END{exit !f}' /etc/passwd; then
+                    reply="unknown_user"
+                elif ! ukeys_verify "$pswd_usr" "$key"; then
+                    reply="denied_request"
+                else
+                    echo "[-i-] Received request to $action rootfs for $pswd_usr."
+
+                    op_failed=0
+                    "rootfs_$action" "$pswd_usr"
+
+                    if (( op_failed )); then
+                        reply="failed"
+                    elif [[ $action == mount ]] && util_usr_isactive "$pswd_usr"; then
+                        reply="mounted"
+                    elif [[ $action == unmount ]] && ! util_usr_isactive "$pswd_usr"; then
+                        reply="unmounted"
+                    else
+                        reply="failed"
+                    fi
+                fi
+            fi
+
+            printf '%s\n' "$reply" >&"$wfd" || true
         fi
 
-        while read -r user; do
-            if ! is_mounted "$user"; then
-                echo "[-i-] New user(s) added, refreshing mounts."
-                userfs mount
-                break
-            fi
-        done < <(awk -F: '$3 >= 1000 && $3 != 65534 {print $1}' /etc/passwd)
+        exec {wfd}>&-
+        wait "$socat_pid" 2>/dev/null || true
     done
 
-    trap - SIGTERM
+    rm -f "$RUNTIME_DIRECTORY"/fsrequests.sock
 }
 
-## main logic
-systemd-notify --status "Starting..."
-echo "[-+-] Starting up."
-userfs mount
+### main logic
 
-systemd-notify --ready --status "Filesystems are mounted."
-monitor
+main() {
+    systemd-notify --status "Starting..."
+    echo "[-+-] Starting up."
 
-systemd-notify --status "Stopping..."
-echo "[-+-] Shutting down."
-userfs umount
+    rm -f "${KEY_AUTH_DIR:?}"/*
+    ukeys_issue
 
-systemd-notify --status "Stopped."
+    rootfs_clean_all
+
+    ukeys_monitor &
+    watch_pid=$!
+    
+    systemd-notify --ready --status "Monitoring for requests."
+    monitor
+
+    pkill -P "$watch_pid" 2>/dev/null || true
+    kill "$watch_pid" 2>/dev/null || true
+    
+    systemd-notify --status "Stopping..."
+    echo "[-+-] Shutting down."
+
+    rootfs_unmount_all
+    rootfs_clean_all
+    
+    systemd-notify --status "Stopped."
+}
+
+main

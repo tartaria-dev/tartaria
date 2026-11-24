@@ -1,6 +1,7 @@
 [Unit]
-Description=Enroll Signing Certs Using MOK
+Description=Enroll Secureboot Certificate
 Before=systemd-modules-load.service
+ConditionKernelCommandLine=rd.live.image
 
 [Service]
 Type=oneshot

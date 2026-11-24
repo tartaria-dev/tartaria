@@ -5,38 +5,44 @@
 # [output] layout/transforms/scales
 
 [appearance]
-corner_radius_scale = 1.3500000238418579
+corner_radius_scale = 0.69999998807907104
 font_family = "Overpass ExtraBold"
 scheme = "Synced"
 theme_mode = "dark"
 
     [appearance.palette]
     error = "#FFB4AB"
-    hover = "#D4BFE0"
+    hover = "#B5CEA4"
     on_error = "#690005"
-    on_hover = "#392A45"
-    on_primary = "#253049"
-    on_secondary = "#2C303B"
-    on_surface = "#E4E2E4"
-    on_surface_variant = "#C6C6CE"
-    on_tertiary = "#392A45"
-    outline = "#45464D"
-    primary = "#BBC6E6"
-    secondary = "#C3C6D4"
+    on_hover = "#213618"
+    on_primary = "#432C00"
+    on_secondary = "#3D2E16"
+    on_surface = "#ECE1D4"
+    on_surface_variant = "#D2C5B4"
+    on_tertiary = "#213618"
+    outline = "#4E4539"
+    primary = "#F0BF6D"
+    secondary = "#DBC3A1"
     shadow = "#000000"
-    surface = "#131315"
-    surface_variant = "#1F1F21"
-    tertiary = "#D4BFE0"
+    surface = "#17130B"
+    surface_variant = "#241F17"
+    tertiary = "#B5CEA4"
 
     [appearance.wallpaper]
+    blur = 0.2
     fill_mode = "crop"
-    path = "/usr/share/tartaria/wallpapers/cherry_tree.png"
+    path = "/usr/share/tartaria/wallpaper/cherry_tree.png"
+    tint = 0.3
 
 [session]
 last = "Niri"
 
     [[session.actions]]
     action = "lock"
+
+    [[session.actions]]
+    action = "lock_and_suspend"
+    glyph = "lock-bolt"
 
     [[session.actions]]
     action = "suspend"
@@ -49,9 +55,3 @@ last = "Niri"
 
     [[session.actions]]
     action = "shutdown"
-
-    [[session.actions]]
-    action = "command"
-    command = "systemctl hibernate"
-    glyph = "hibernate"
-    label = "Hibernate"
