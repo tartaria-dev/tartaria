@@ -1,10 +1,13 @@
 <p align="center">
   <img src="system_files/usr/share/pixmaps/tartaria-text-logo.svg" alt="Tartaria Logo" width="450">
 <h3 align="center">/tɑːrˈtɛəriə/</h3>
-<h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia/DMS</h3>
+<h3 align="center">Arch/CachyOSv3 Bootc | Niri | Noctalia/Dux</h3>
 <p align="center">
   <img width="1920" height="1080" alt="ame" src="https://github.com/user-attachments/assets/fa25ea63-b146-4626-8e5c-554a62549996" />
 </p>
+
+> [!WARNING]
+> **NVIDIA variants have been replaced with Dux Shell variants** due to a lack of testing and need for space. If you would prefer to keep Noctalia Shell, **switch to `berbere`/`maraska` ASAP**.
 
 ## Description
 
