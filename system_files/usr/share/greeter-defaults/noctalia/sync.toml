@@ -31,7 +31,7 @@ theme_mode = "dark"
     [appearance.wallpaper]
     blur = 0.2
     fill_mode = "crop"
-    path = "/usr/share/tartaria/wallpapers/cherry_tree.png"
+    path = "/usr/share/tartaria/wallpaper/cherry_tree.png"
     tint = 0.3
 
 [session]

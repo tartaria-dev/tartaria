@@ -9,7 +9,6 @@ enable firewalld.service
 enable greetd.service
 enable home.mount
 enable install-flatpak-sysapps.service
-enable kdeconnect-firewalld-bypass.service
 enable mnt.mount
 enable mok-enroll.service
 enable NetworkManager.service

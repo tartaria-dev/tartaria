@@ -19,7 +19,7 @@ gdsync_shellconf() {
     if grep -Eq "maraska|berbere" /usr/lib/os-release; then
         if [[ ! -f /etc/greetd/.no-sync-noctalia ]]; then
             touch /etc/greetd/.no-sync-noctalia
-            cp -af /usr/share/greeter-defaults/sync.toml /var/lib/noctalia-greeter/sync.toml
+            cp -af /usr/share/greeter-defaults/noctalia/sync.toml /var/lib/noctalia-greeter/sync.toml
         fi
     elif grep -Eq "saffron|amchoor" /usr/lib/os-release; then
         if [[ ! -f /etc/greetd/.no-sync-duxshell ]]; then
